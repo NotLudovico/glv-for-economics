@@ -1,0 +1,16 @@
+[project]
+name = "glv"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "altair>=6.0.0",
+    "marimo>=0.19.11",
+    "matplotlib>=3.10.8",
+    "networkx>=3.6.1",
+    "numpy>=2.4.2",
+    "polars>=1.38.1",
+    "ruff>=0.15.1",
+    "scipy>=1.17.0",
+]

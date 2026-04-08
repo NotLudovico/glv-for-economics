@@ -380,7 +380,7 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(all_avg_sizes, all_volatilities, mo, np, plt):
+def _(all_avg_sizes, all_volatilities, np):
     N_BINS = 25
 
     # Pool all average sizes across runs to define bin edges once
@@ -400,7 +400,9 @@ def _(all_avg_sizes, all_volatilities, mo, np, plt):
 
     for _sizes, _vols in zip(all_avg_sizes, all_volatilities):
         # np.digitize returns 1-indexed bins; clip to [1, actual_n_bins]
-        bin_idx = np.digitize(_sizes, bin_edges[1:-1])  # 0-indexed result
+        bin_idx = np.digitize(
+            _sizes, bin_edges[1:-1]
+        )  # 0-indexed result
         for _b in range(actual_n_bins):
             mask = bin_idx == _b
             bin_vol_sum[_b] += _vols[mask].sum()
@@ -411,8 +413,11 @@ def _(all_avg_sizes, all_volatilities, mo, np, plt):
         avg_vol_per_bin = np.where(
             bin_counts > 0, bin_vol_sum / bin_counts, np.nan
         )
+    return actual_n_bins, avg_vol_per_bin, bin_centers, bin_counts, bin_edges
 
-    # ── Plot ──────────────────────────────────────────────────────────────
+
+@app.cell(hide_code=True)
+def _(avg_vol_per_bin, bin_centers, mo, plt):
     _fig, _axes = plt.subplots(1, 2, figsize=(14, 5))
 
     # Left: volatility vs average size (bin centers)
@@ -440,7 +445,7 @@ def _(all_avg_sizes, all_volatilities, mo, np, plt):
 
     plt.tight_layout()
     mo.center(plt.gcf())
-    return avg_vol_per_bin, bin_centers, bin_counts
+    return
 
 
 @app.cell(hide_code=True)
@@ -452,6 +457,104 @@ def _(avg_vol_per_bin, bin_centers, bin_counts, mo, np):
         if not np.isnan(avg_vol_per_bin[b])
     ]
     mo.ui.table(_rows)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## PDF of volatility $\sigma$ per bin
+
+    Each line is the KDE-estimated PDF of individual node volatilities $\sigma_i$ within one size bin.
+    The second plot shows the same PDFs after normalising each node's volatility by its bin mean
+    $\hat{\sigma}(S)$, so different bins can be compared on a common scale.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(
+    actual_n_bins,
+    all_avg_sizes,
+    all_volatilities,
+    avg_vol_per_bin,
+    bin_centers,
+    bin_edges,
+    mo,
+    np,
+    plt,
+):
+    from scipy.stats import gaussian_kde as _gaussian_kde
+
+    # Collect individual volatility values per bin
+    _bin_vol_lists = [[] for _ in range(actual_n_bins)]
+    for _sizes, _vols in zip(all_avg_sizes, all_volatilities):
+        _bin_idx = np.digitize(_sizes, bin_edges[1:-1])  # 0-indexed
+        for _b in range(actual_n_bins):
+            _mask = _bin_idx == _b
+            _bin_vol_lists[_b].extend(_vols[_mask].tolist())
+
+    _cmap = plt.get_cmap("plasma", actual_n_bins)
+    _norm = plt.Normalize(vmin=bin_centers[0], vmax=bin_centers[-1])
+
+    _fig, (_ax1, _ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    # --- Left: PDF of σ per bin ---
+    for _b in range(actual_n_bins):
+        _vals = np.array(_bin_vol_lists[_b])
+        _vals = _vals[_vals > 0]
+        if len(_vals) < 5:
+            continue
+        _kde = _gaussian_kde(_vals)
+        _x = np.linspace(_vals.min(), _vals.max(), 300)
+        _ax1.plot(
+            _x, _kde(_x), color=_cmap(_b), alpha=0.85, linewidth=1.2
+        )
+
+    _ax1.set_xlabel(r"Growth volatility $\sigma$")
+    _ax1.set_xlim(0.01, 10)
+    _ax1.set_xscale("log")
+    _ax1.set_ylim(0.001, 10)
+    _ax1.set_yscale("log")
+    _ax1.set_ylabel("PDF")
+    _ax1.set_title(r"PDF of $\sigma$ per size bin")
+    _ax1.grid(alpha=0.4)
+    _sm1 = plt.cm.ScalarMappable(cmap=_cmap, norm=_norm)
+    _sm1.set_array([])
+    _fig.colorbar(_sm1, ax=_ax1, label=r"Bin centre $\bar{s}$")
+
+    # --- Right: PDF of σ(S) / σ̂(S) per bin ---
+    for _b in range(actual_n_bins):
+        _sigma_hat = avg_vol_per_bin[_b]
+        if np.isnan(_sigma_hat) or _sigma_hat == 0:
+            continue
+        _vals = np.array(_bin_vol_lists[_b])
+        _vals = _vals[_vals > 0]
+        if len(_vals) < 5:
+            continue
+        _ratio = _vals / _sigma_hat
+        _kde = _gaussian_kde(_ratio)
+        _x = np.linspace(_ratio.min(), _ratio.max(), 300)
+        _ax2.plot(
+            _x, _kde(_x), color=_cmap(_b), alpha=0.85, linewidth=1.2
+        )
+
+    _ax2.set_xlabel(r"$\sigma(S)\,/\,\bar{\sigma}(S)$")
+    _ax2.set_ylabel("PDF")
+    _ax2.set_title(
+        r"PDF of $\sigma(S)\,/\,\bar{\sigma}(S)$ per size bin"
+    )
+    _ax2.grid(alpha=0.4)
+    _ax2.set_xlim(0.01, 10)
+    _ax2.set_xscale("log")
+    _ax2.set_ylim(0.0001, 10)
+    _ax2.set_yscale("log")
+    _sm2 = plt.cm.ScalarMappable(cmap=_cmap, norm=_norm)
+    _sm2.set_array([])
+    _fig.colorbar(_sm2, ax=_ax2, label=r"Bin centre $\bar{s}$")
+
+    plt.tight_layout()
+    mo.center(plt.gcf())
     return
 
 

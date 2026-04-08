@@ -122,7 +122,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(np):
     def get_degree_sequence(N, C, topology="regular"):
         """
@@ -267,7 +267,59 @@ def _(
            - Maximum Degree in Network: **{max(dict(G.degree()).values())}**
            - $\mu_c = 1/\langle g^2 \rangle = {mu_c:.4f}$ &nbsp;|&nbsp; using ${mu_label}$
         """)
-    return A, mu_c
+    return A, G, mu_c, mu_eff
+
+
+@app.cell(hide_code=True)
+def _(C, G, mo, np, plt):
+    _degrees = np.array([d for _, d in G.degree()])
+    _fig, _ax = plt.subplots(figsize=(8, 4))
+    _ax.hist(
+        _degrees,
+        bins=range(0, _degrees.max() + 2),
+        align="left",
+        edgecolor="white",
+        color="steelblue",
+        density=True,
+    )
+    _ax.set_xlabel("Degree $k$")
+    _ax.set_ylabel("PDF")
+    _ax.set_title(
+        rf"Degree Distribution  |  $\langle k \rangle = {_degrees.mean():.2f}$,  target $C = {C}$"
+    )
+    plt.grid(alpha=0.4, axis="y")
+    plt.tight_layout()
+    mo.center(plt.gca())
+    return
+
+
+@app.cell(hide_code=True)
+def _(G, mo, nx):
+    _components = sorted(
+        nx.connected_components(G), key=len, reverse=True
+    )
+    _sizes = [len(c) for c in _components]
+    mo.vstack(
+        [
+            mo.md(rf"""
+        ### Connected Components
+        - **Number of components:** {len(_components)}
+        - **Largest connected component:** {_sizes[0]} nodes ({_sizes[0] / G.number_of_nodes() * 100:.1f}% of graph)
+        - **Isolated nodes (size 1):** {sum(1 for s in _sizes if s == 1)}
+        """),
+            mo.ui.table(
+                data=[
+                    {
+                        "#": i + 1,
+                        "Nodes": s,
+                        "% of graph": f"{s / G.number_of_nodes() * 100:.1f}%",
+                    }
+                    for i, s in enumerate(_sizes)
+                ],
+            ),
+        ]
+    )
+    return
 
 
 @app.cell(hide_code=True)
@@ -278,7 +330,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(A, log_x, np, tmax, x0_dist, x0_mean):
     from scipy.integrate import solve_ivp
     from scipy.stats import truncnorm
@@ -288,9 +340,9 @@ def _(A, log_x, np, tmax, x0_dist, x0_mean):
     if x0_dist == "uniform":
         x0 = np.random.uniform(0, 1, N_sim)
     else:  # truncated gaussian
-        a_clip, b_clip = x0_mean - 0.5, x0_mean + 0.5
+        a_clip, b_clip = 0,3000
         x0 = truncnorm.rvs(
-            a_clip, b_clip, loc=x0_mean, scale=0.5, size=N_sim
+            a_clip, b_clip, loc=x0_mean, scale=0.1, size=N_sim
         )
 
     if log_x:
@@ -318,6 +370,14 @@ def _(A, log_x, np, tmax, x0_dist, x0_mean):
 
 
 @app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    There's a dependence on initial condition for the stationary state at long time for a competitive environment. This is due to the fact that the initial conditions lead to an effective topology change, for example a node could survive and all of its neighbours will be dead, hence the surviving node will evolve naturally towards 1. There are also interemediate cases that make a node apporach a non 0 and non 1 stationary state.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
 def _(
     C,
     N,
@@ -325,6 +385,7 @@ def _(
     mo,
     mu,
     mu_c,
+    mu_eff,
     np,
     plt,
     sigma,
@@ -363,7 +424,8 @@ def _(
         rf"$N={N}$,  $C={C}$,  {topology}  |  {mu_str},  $\sigma={sigma}$  |  $T={tmax}$,  $x_0$: {x0_dist}",
         fontsize=9,
     )
-    mf_prediction = 1 / (1 - mu)
+    mf_prediction = 1 / (1 - mu_eff)
+
     _ax.axhline(
         y=mf_prediction,
         color="red",
@@ -375,6 +437,43 @@ def _(
     plt.grid(alpha=0.5)
     plt.tight_layout()
     plt.legend()
+    mo.center(plt.gca())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    In the effective stochastic process ($\gamma = 0$)
+    $$
+    \dot{x} = x(1-x+g\mu M(t) + \sqrt{g}\sigma \eta(t))
+    $$
+    means that the growth rates is
+    $$
+    r(t) = 1- x + g\mu M(t) + \sqrt{g}\sigma \eta(t)
+    $$
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(G, mo, np, plt, sol, tmax):
+    _degrees = np.array([d for _, d in G.degree()])
+    _growth_rate = (sol[-1, :] - sol[0, :]) / tmax
+
+    _unique_degrees = np.unique(_degrees)
+    _mean_growth = np.array([_growth_rate[_degrees == k].mean() for k in _unique_degrees])
+
+    _fig, _ax = plt.subplots(figsize=(10, 5))
+    _ax.scatter(_degrees, _growth_rate, alpha=0.15, s=5, color="steelblue", label="species")
+    _ax.plot(_unique_degrees, _mean_growth, color="red", linewidth=2, marker="o", markersize=4, label="mean per degree")
+
+    _ax.set_xlabel("Node degree $k$")
+    _ax.set_ylabel(r"Growth rate $\frac{x_i(T)-x_i(0)}{T}$")
+    _ax.set_title("Degree vs Growth Rate")
+    _ax.legend()
+    plt.grid(alpha=0.4)
+    plt.tight_layout()
     mo.center(plt.gca())
     return
 

@@ -52,13 +52,13 @@ def _(mo):
             """
         )
         .batch(
-            N=mo.ui.number(value=1000),
-            C=mo.ui.number(value=5),
+            N=mo.ui.number(value=5000),
+            C=mo.ui.number(value=50),
             topology=mo.ui.dropdown(
                 options=["regular", "exponential"],
                 value="exponential",
             ),
-            sigma=mo.ui.number(value=0.1),
+            sigma=mo.ui.number(value=0),
             tmax=mo.ui.number(value=10),
             x0_dist=mo.ui.dropdown(
                 options=["uniform", "truncated gaussian"],
@@ -143,7 +143,7 @@ def _(np, nx):
     return (generate_interaction_matrix,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(np):
     def simulate_glv(A, tmax, x0_dist, x0_mean):
         from scipy.integrate import solve_ivp
@@ -155,7 +155,9 @@ def _(np):
             x0 = np.random.uniform(0, 1, N_sim)
         else:
             lo, hi = -0.5, 0.5
-            x0 = truncnorm.rvs(lo, hi, loc=x0_mean, scale=0.5, size=N_sim)
+            x0 = truncnorm.rvs(
+                lo, hi, loc=x0_mean, scale=0.5, size=N_sim
+            )
 
         t_eval = np.linspace(0, tmax, 500)
 
@@ -385,8 +387,11 @@ def _(all_avg_sizes, all_volatilities, np):
 
     bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
 
-    # For each run and each node, assign a bin and accumulate volatility
+    # For each run and each node, assign a bin and accumulate volatility moments
     bin_vol_sum = np.zeros(actual_n_bins)
+    bin_vol_sum2 = np.zeros(actual_n_bins)
+    bin_vol_sum3 = np.zeros(actual_n_bins)
+    bin_vol_sum4 = np.zeros(actual_n_bins)
     bin_counts = np.zeros(actual_n_bins, dtype=int)
 
     for _sizes, _vols in zip(all_avg_sizes, all_volatilities):
@@ -397,23 +402,44 @@ def _(all_avg_sizes, all_volatilities, np):
         for _b in range(actual_n_bins):
             mask = bin_idx == _b
             bin_vol_sum[_b] += _vols[mask].sum()
+            bin_vol_sum2[_b] += (_vols[mask] ** 2).sum()
+            bin_vol_sum3[_b] += (_vols[mask] ** 3).sum()
+            bin_vol_sum4[_b] += (_vols[mask] ** 4).sum()
             bin_counts[_b] += mask.sum()
 
-    # Average volatility per bin (guard against empty bins)
+    # Average volatility moments per bin (guard against empty bins)
     with np.errstate(invalid="ignore"):
         avg_vol_per_bin = np.where(
             bin_counts > 0, bin_vol_sum / bin_counts, np.nan
         )
-    return actual_n_bins, avg_vol_per_bin, bin_centers, bin_counts, bin_edges
+        avg_vol2_per_bin = np.where(
+            bin_counts > 0, bin_vol_sum2 / bin_counts, np.nan
+        )
+        avg_vol3_per_bin = np.where(
+            bin_counts > 0, bin_vol_sum3 / bin_counts, np.nan
+        )
+        avg_vol4_per_bin = np.where(
+            bin_counts > 0, bin_vol_sum4 / bin_counts, np.nan
+        )
+    return (
+        actual_n_bins,
+        avg_vol2_per_bin,
+        avg_vol3_per_bin,
+        avg_vol4_per_bin,
+        avg_vol_per_bin,
+        bin_centers,
+        bin_counts,
+        bin_edges,
+    )
 
 
 @app.cell(hide_code=True)
 def _(avg_vol_per_bin, bin_centers, mo, np, plt):
     _fig, _ax = plt.subplots(figsize=(7, 5))
 
-    valid = (avg_vol_per_bin > 0) & (bin_centers > 0)
-    _x = bin_centers[valid]
-    _y = avg_vol_per_bin[valid]
+    _valid = (avg_vol_per_bin > 0) & (bin_centers > 0)
+    _x = bin_centers[_valid]
+    _y = avg_vol_per_bin[_valid]
 
     _ax.loglog(_x, _y, "o", color="steelblue", linewidth=1.5)
 
@@ -452,6 +478,65 @@ def _(avg_vol_per_bin, bin_centers, bin_counts, mo, np):
         if not np.isnan(avg_vol_per_bin[b])
     ]
     mo.ui.table(_rows)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Moments of volatility vs size (log-log)
+
+    Power-law fits of $\langle\sigma^k\rangle$ vs average size $\bar{s}$, for $k = 1, 2, 3, 4$.
+    Each point is a bin center; dashed line is the least-squares fit in log-log space.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(
+    avg_vol2_per_bin,
+    avg_vol3_per_bin,
+    avg_vol4_per_bin,
+    avg_vol_per_bin,
+    bin_centers,
+    mo,
+    np,
+    plt,
+):
+    _moments = [
+        (avg_vol_per_bin,  r"$\langle\sigma\rangle$",    1),
+        (avg_vol2_per_bin, r"$\langle\sigma^2\rangle$",  2),
+        (avg_vol3_per_bin, r"$\langle\sigma^3\rangle$",  3),
+        (avg_vol4_per_bin, r"$\langle\sigma^4\rangle$",  4),
+    ]
+
+    _fig, _axes = plt.subplots(2, 2, figsize=(8, 8))
+    _axes = _axes.ravel()
+
+    for _ax, (_y_data, _ylabel, _k) in zip(_axes, _moments):
+        _valid = (np.isfinite(_y_data) & (_y_data > 0) & (bin_centers > 0))
+        _x = bin_centers[_valid]
+        _y = _y_data[_valid]
+
+        _ax.loglog(_x, _y, "o", color="steelblue", markersize=5, label="bins")
+
+        _beta, _intercept = np.polyfit(np.log(_x), np.log(_y), 1)
+        _x_fit = np.logspace(np.log10(_x.min()), np.log10(_x.max()), 200)
+        _y_fit = np.exp(_intercept) * _x_fit ** _beta
+        _ax.loglog(
+            _x_fit, _y_fit, "--", color="tomato", linewidth=1.5,
+            label=rf"fit: $\beta = {_beta:.3f}$",
+        )
+
+        _ax.set_xlabel(r"Average size $\bar{s}_i$")
+        _ax.set_ylabel(_ylabel)
+        _ax.set_title(rf"{_ylabel} vs size (log-log), $k={_k}$")
+        _ax.legend(frameon=False, fontsize=9)
+        _ax.grid(alpha=0.4, which="both")
+
+    plt.suptitle(r"Moments of growth volatility $\sigma^k$ vs average size", fontsize=13)
+    plt.tight_layout()
+    mo.center(plt.gcf())
     return
 
 

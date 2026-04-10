@@ -49,7 +49,6 @@ def _(mo):
             - $x_0$ distribution: {x0_dist}
             - $x_0$ mean (truncated Gaussian only): {x0_mean}
             - Number of realizations: {n_runs}
-            - Log x-axis (trajectory plot): {log_x}
             """
         )
         .batch(
@@ -67,7 +66,6 @@ def _(mo):
             ),
             x0_mean=mo.ui.number(value=1),
             n_runs=mo.ui.number(value=10, start=1, stop=500),
-            log_x=mo.ui.checkbox(value=True),
         )
         .form(submit_button_label="Run")
     )
@@ -86,9 +84,8 @@ def _(form, np):
     x0_dist = form.value["x0_dist"]
     x0_mean = form.value["x0_mean"]
     n_runs = form.value["n_runs"]
-    log_x = form.value["log_x"]
     np.random.seed(42)
-    return C, N, log_x, n_runs, sigma, tmax, topology, x0_dist, x0_mean
+    return C, N, n_runs, sigma, tmax, topology, x0_dist, x0_mean
 
 
 @app.cell(hide_code=True)
@@ -146,9 +143,9 @@ def _(np, nx):
     return (generate_interaction_matrix,)
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(np):
-    def simulate_glv(A, tmax, x0_dist, x0_mean, log_x):
+    def simulate_glv(A, tmax, x0_dist, x0_mean):
         from scipy.integrate import solve_ivp
         from scipy.stats import truncnorm
 
@@ -157,13 +154,10 @@ def _(np):
         if x0_dist == "uniform":
             x0 = np.random.uniform(0, 1, N_sim)
         else:
-            lo, hi = x0_mean - 0.5, x0_mean + 0.5
+            lo, hi = -0.5, 0.5
             x0 = truncnorm.rvs(lo, hi, loc=x0_mean, scale=0.5, size=N_sim)
 
-        if log_x:
-            t_eval = np.geomspace(1e-1, tmax, 500)
-        else:
-            t_eval = np.linspace(0, tmax, 500)
+        t_eval = np.linspace(0, tmax, 500)
 
         def glv(t, x, A):
             x = np.maximum(x, 0)
@@ -236,7 +230,6 @@ def _(
     N,
     generate_interaction_matrix,
     get_degree_sequence,
-    log_x,
     mo,
     n_runs,
     np,
@@ -263,7 +256,7 @@ def _(
             )
 
             sol, t_span = simulate_glv(
-                A_run, tmax, x0_dist, x0_mean, log_x
+                A_run, tmax, x0_dist, x0_mean
             )
 
             all_sols.append(sol)
@@ -330,7 +323,6 @@ def _(
     N,
     last_sol,
     last_t_span,
-    log_x,
     mean_mu_c,
     mo,
     np,
@@ -342,7 +334,9 @@ def _(
     _fig, _ax = plt.subplots(figsize=(10, 5))
 
     n_show = min(200, last_sol.shape[1])
-    idx_show = np.random.choice(last_sol.shape[1], n_show, replace=False)
+    idx_show = np.random.choice(
+        last_sol.shape[1], n_show, replace=False
+    )
     for _i in idx_show:
         _ax.plot(
             last_t_span,
@@ -354,14 +348,11 @@ def _(
 
     _ax.set_xlabel("Time")
     _ax.set_ylabel("Abundance $x_i$")
-    if log_x:
-        _ax.set_xscale("log")
-        _ax.set_xlim(left=1e-1)
-
     _ax.set_title(
         rf"$N={N}$, $C={C}$, {topology} | $\mu=\mu_c\approx{mean_mu_c:.4f}$, $\sigma={sigma}$ | $T={tmax}$",
         fontsize=9,
     )
+    _ax.set_xscale("log")
     plt.grid(alpha=0.5)
     plt.tight_layout()
     mo.center(plt.gca())
@@ -417,31 +408,35 @@ def _(all_avg_sizes, all_volatilities, np):
 
 
 @app.cell(hide_code=True)
-def _(avg_vol_per_bin, bin_centers, mo, plt):
-    _fig, _axes = plt.subplots(1, 2, figsize=(14, 5))
+def _(avg_vol_per_bin, bin_centers, mo, np, plt):
+    _fig, _ax = plt.subplots(figsize=(7, 5))
 
-    # Left: volatility vs average size (bin centers)
-    _ax = _axes[0]
-    _ax.plot(bin_centers, avg_vol_per_bin, "o-", color="steelblue", linewidth=1.5)
-    _ax.set_xlabel(r"Average size $\bar{s}_i$ (bin center)")
-    _ax.set_ylabel(r"Mean growth volatility $\sigma_i$")
-    _ax.set_title(r"Growth volatility vs average size")
-    _ax.grid(alpha=0.4)
-
-    # Right: same on log-log scale
-    _ax2 = _axes[1]
     valid = (avg_vol_per_bin > 0) & (bin_centers > 0)
-    _ax2.loglog(
-        bin_centers[valid],
-        avg_vol_per_bin[valid],
-        "o-",
-        color="steelblue",
+    _x = bin_centers[valid]
+    _y = avg_vol_per_bin[valid]
+
+    _ax.loglog(_x, _y, "o", color="steelblue", linewidth=1.5)
+
+    # Linear fit in log-log space: log(σ) = β * log(s) + const
+    _beta, _intercept = np.polyfit(np.log(_x), np.log(_y), 1)
+    _x_fit = np.logspace(np.log10(_x.min()), np.log10(_x.max()), 200)
+    _y_fit = np.exp(_intercept) * _x_fit**_beta
+    _ax.loglog(
+        _x_fit,
+        _y_fit,
+        "--",
+        color="tomato",
         linewidth=1.5,
+        label=rf"fit: $\beta = {_beta:.3f}$",
     )
-    _ax2.set_xlabel(r"Average size $\bar{s}_i$ (bin center, log scale)")
-    _ax2.set_ylabel(r"Mean growth volatility $\sigma_i$ (log scale)")
-    _ax2.set_title(r"Growth volatility vs average size (log-log)")
-    _ax2.grid(alpha=0.4, which="both")
+    _ax.legend(frameon=False)
+
+    _ax.set_xlabel(
+        r"Average size $\bar{s}_i$ (bin center, log scale)"
+    )
+    _ax.set_ylabel(r"Mean growth volatility $\sigma_i$ (log scale)")
+    _ax.set_title(r"Growth volatility vs average size (log-log)")
+    _ax.grid(alpha=0.4, which="both")
 
     plt.tight_layout()
     mo.center(plt.gcf())
@@ -464,10 +459,6 @@ def _(avg_vol_per_bin, bin_centers, bin_counts, mo, np):
 def _(mo):
     mo.md(r"""
     ## PDF of volatility $\sigma$ per bin
-
-    Each line is the KDE-estimated PDF of individual node volatilities $\sigma_i$ within one size bin.
-    The second plot shows the same PDFs after normalising each node's volatility by its bin mean
-    $\hat{\sigma}(S)$, so different bins can be compared on a common scale.
     """)
     return
 
@@ -478,37 +469,51 @@ def _(
     all_avg_sizes,
     all_volatilities,
     avg_vol_per_bin,
-    bin_centers,
     bin_edges,
     mo,
     np,
     plt,
 ):
-    from scipy.stats import gaussian_kde as _gaussian_kde
-
-    # Collect individual volatility values per bin
     _bin_vol_lists = [[] for _ in range(actual_n_bins)]
     for _sizes, _vols in zip(all_avg_sizes, all_volatilities):
-        _bin_idx = np.digitize(_sizes, bin_edges[1:-1])  # 0-indexed
+        _bin_idx = np.digitize(_sizes, bin_edges[1:-1])
         for _b in range(actual_n_bins):
             _mask = _bin_idx == _b
             _bin_vol_lists[_b].extend(_vols[_mask].tolist())
 
-    _cmap = plt.get_cmap("plasma", actual_n_bins)
-    _norm = plt.Normalize(vmin=bin_centers[0], vmax=bin_centers[-1])
+    _custom_colors = {
+        0: "#7A0099",
+        4: "#004D00",
+        9: "#008844",
+        14: "#33AAAA",
+        19: "#77AACC",
+        24: "#DD9922",
+    }
 
     _fig, (_ax1, _ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
-    # --- Left: PDF of σ per bin ---
-    for _b in range(actual_n_bins):
+    bins_to_plot = [0, 4, 9, 14, 19, 24]
+
+    for _b in bins_to_plot:
+        if _b >= actual_n_bins:
+            continue
         _vals = np.array(_bin_vol_lists[_b])
         _vals = _vals[_vals > 0]
         if len(_vals) < 5:
             continue
-        _kde = _gaussian_kde(_vals)
-        _x = np.linspace(_vals.min(), _vals.max(), 300)
-        _ax1.plot(
-            _x, _kde(_x), color=_cmap(_b), alpha=0.85, linewidth=1.2
+
+        _bins1 = np.logspace(
+            np.log10(_vals.min()), np.log10(_vals.max()), 50
+        )
+        _ax1.hist(
+            _vals,
+            bins=_bins1,
+            density=True,
+            histtype="step",
+            color=_custom_colors[_b],
+            alpha=0.85,
+            linewidth=1.2,
+            label=f"size bin {_b + 1}",
         )
 
     _ax1.set_xlabel(r"Growth volatility $\sigma$")
@@ -519,12 +524,11 @@ def _(
     _ax1.set_ylabel("PDF")
     _ax1.set_title(r"PDF of $\sigma$ per size bin")
     _ax1.grid(alpha=0.4)
-    _sm1 = plt.cm.ScalarMappable(cmap=_cmap, norm=_norm)
-    _sm1.set_array([])
-    _fig.colorbar(_sm1, ax=_ax1, label=r"Bin centre $\bar{s}$")
+    _ax1.legend(frameon=False)
 
-    # --- Right: PDF of σ(S) / σ̂(S) per bin ---
-    for _b in range(actual_n_bins):
+    for _b in bins_to_plot:
+        if _b >= actual_n_bins:
+            continue
         _sigma_hat = avg_vol_per_bin[_b]
         if np.isnan(_sigma_hat) or _sigma_hat == 0:
             continue
@@ -532,11 +536,20 @@ def _(
         _vals = _vals[_vals > 0]
         if len(_vals) < 5:
             continue
+
         _ratio = _vals / _sigma_hat
-        _kde = _gaussian_kde(_ratio)
-        _x = np.linspace(_ratio.min(), _ratio.max(), 300)
-        _ax2.plot(
-            _x, _kde(_x), color=_cmap(_b), alpha=0.85, linewidth=1.2
+        _bins2 = np.logspace(
+            np.log10(_ratio.min()), np.log10(_ratio.max()), 50
+        )
+        _ax2.hist(
+            _ratio,
+            bins=_bins2,
+            density=True,
+            histtype="step",
+            color=_custom_colors[_b],
+            alpha=0.85,
+            linewidth=1.2,
+            label=f"size bin {_b + 1}",
         )
 
     _ax2.set_xlabel(r"$\sigma(S)\,/\,\bar{\sigma}(S)$")
@@ -549,9 +562,7 @@ def _(
     _ax2.set_xscale("log")
     _ax2.set_ylim(0.0001, 10)
     _ax2.set_yscale("log")
-    _sm2 = plt.cm.ScalarMappable(cmap=_cmap, norm=_norm)
-    _sm2.set_array([])
-    _fig.colorbar(_sm2, ax=_ax2, label=r"Bin centre $\bar{s}$")
+    _ax2.legend(frameon=False)
 
     plt.tight_layout()
     mo.center(plt.gcf())

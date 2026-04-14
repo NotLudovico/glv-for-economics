@@ -60,3 +60,45 @@ def test_mu_c_formula():
     # mu_c = 1 / 2.5 = 0.4
     degrees = [2, 4]
     assert compute_mu_c(degrees, C=2) == pytest.approx(0.4)
+
+
+# ── generate_matrix ───────────────────────────────────────────────────────────
+
+import scipy.sparse as sp
+from glv.graph import generate_matrix
+
+
+def test_generate_matrix_shape():
+    np.random.seed(0)
+    degrees = [2, 2, 2, 2]  # 4-node 2-regular graph
+    A = generate_matrix(degrees, C=2, mu=1.0, sigma=0.0)
+    assert A.shape == (4, 4)
+
+
+def test_generate_matrix_is_sparse():
+    np.random.seed(0)
+    degrees = [2, 2, 2, 2]
+    A = generate_matrix(degrees, C=2, mu=1.0, sigma=0.0)
+    assert sp.issparse(A)
+
+
+def test_generate_matrix_diagonal_zero():
+    np.random.seed(0)
+    degrees = [2, 2, 2, 2]
+    A = generate_matrix(degrees, C=2, mu=1.0, sigma=0.0)
+    assert A.diagonal().sum() == pytest.approx(0.0)
+
+
+def test_generate_matrix_odd_sum_raises():
+    with pytest.raises(ValueError, match="even"):
+        generate_matrix([1, 2], C=1, mu=1.0, sigma=0.0)
+
+
+def test_generate_matrix_sigma_zero_weight():
+    # sigma=0 means all weights = mu/C
+    np.random.seed(0)
+    degrees = [2, 2, 2, 2]
+    mu, C = 1.0, 2.0
+    A = generate_matrix(degrees, C=C, mu=mu, sigma=0.0)
+    data = A.data
+    assert np.allclose(data, mu / C)

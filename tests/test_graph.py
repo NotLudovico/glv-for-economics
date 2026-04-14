@@ -40,3 +40,23 @@ def test_exponential_sum_even():
 def test_unknown_topology_raises():
     with pytest.raises(ValueError, match="topology"):
         get_degree_sequence(N=10, C=4, topology="ring")
+
+
+# ── compute_mu_c ──────────────────────────────────────────────────────────────
+
+from glv.graph import compute_mu_c
+
+
+def test_mu_c_regular():
+    # Regular topology: all k_i = C, so g_i = 1, <g^2> = 1, mu_c = 1.0
+    degrees = [4, 4, 4, 4]
+    assert compute_mu_c(degrees, C=4) == pytest.approx(1.0)
+
+
+def test_mu_c_formula():
+    # degrees = [2, 4], C = 2
+    # g = [2/2, 4/2] = [1, 2]
+    # <g^2> = (1 + 4) / 2 = 2.5
+    # mu_c = 1 / 2.5 = 0.4
+    degrees = [2, 4]
+    assert compute_mu_c(degrees, C=2) == pytest.approx(0.4)

@@ -34,7 +34,10 @@ def simulate_glv(
         t_eval=t_eval,
         args=(A,),
         dense_output=False,
+        max_step=1,
+        rtol=1e-6,
+        atol=1e-9,
     )
-
+    
     sol = np.maximum(result.y.T, 0.0)  # (n_eval, N)
-    return sol, result.t
+    return sol, t_eval

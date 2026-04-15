@@ -23,8 +23,7 @@ def get_degree_sequence(N: int, C: float, topology: str = "regular") -> list[int
     else:
         raise ValueError(f"Unknown topology '{topology}'. Use 'regular' or 'exponential'.")
 
-    if degrees.sum() % 2 != 0:
-        degrees[np.random.randint(0, N)] += 1
+  
 
     return degrees.tolist()
 
@@ -80,7 +79,7 @@ def generate_matrix(
     rows, cols = A.nonzero()
     z = np.random.normal(0.0, 1.0, len(rows))
     A.data = (mu / C) + (sigma / np.sqrt(C)) * z
-    A.setdiag(0.0)
+    A.setdiag(0.0) # removes self-loops
     A.eliminate_zeros()
 
     return A

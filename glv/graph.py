@@ -23,7 +23,8 @@ def get_degree_sequence(N: int, C: float, topology: str = "regular") -> list[int
     else:
         raise ValueError(f"Unknown topology '{topology}'. Use 'regular' or 'exponential'.")
 
-  
+    if np.sum(degrees) % 2 != 0:
+            degrees[0] += 1
 
     return degrees.tolist()
 
@@ -49,6 +50,7 @@ def generate_matrix(
     C: float,
     mu: float,
     sigma: float,
+    use_mu_c: bool = False,
 ):
     """Build a sparse interaction matrix using the configuration model.
 
@@ -60,6 +62,7 @@ def generate_matrix(
         C: Mean degree used in weight formula.
         mu: Mean interaction strength parameter.
         sigma: Std of interaction strength fluctuations.
+        use_mu_c: If True, use mu_c instead of mu for the interaction strength.
 
     Returns:
         scipy.sparse.csr_array of shape (N, N).
@@ -70,6 +73,9 @@ def generate_matrix(
     if sum(degree_sequence) % 2 != 0:
         raise ValueError("Sum of degree_sequence must be even.")
 
+    # Calculate mu_c if needed
+    mu_effective = compute_mu_c(degree_sequence, C) + 0.01 if use_mu_c else mu
+
     G_multi = nx.configuration_model(degree_sequence)
     G = nx.Graph(G_multi)
     G.remove_edges_from(nx.selfloop_edges(G))
@@ -78,7 +84,7 @@ def generate_matrix(
 
     rows, cols = A.nonzero()
     z = np.random.normal(0.0, 1.0, len(rows))
-    A.data = (mu / C) + (sigma / np.sqrt(C)) * z
+    A.data = (mu_effective / C) + (sigma / np.sqrt(C)) * z
     A.setdiag(0.0) # removes self-loops
     A.eliminate_zeros()
 

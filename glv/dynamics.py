@@ -22,8 +22,10 @@ def simulate_glv(
     """
     t_eval = np.linspace(0.0, tmax, n_eval)
 
+    extinction_floor = 1e-8
+
     def rhs(t, x, A):
-        x = np.maximum(x, 0.0)
+        x = np.where(x < extinction_floor, 0.0, x)
         return x * (1.0 - x + A @ x)
 
     result = solve_ivp(
@@ -34,10 +36,10 @@ def simulate_glv(
         t_eval=t_eval,
         args=(A,),
         dense_output=False,
-        max_step=1,
-        rtol=1e-6,
-        atol=1e-9,
     )
-    
+
+    if not result.success:
+        raise RuntimeError(f"GLV integration failed at t={result.t[-1]:.3f}: {result.message}")
+
     sol = np.maximum(result.y.T, 0.0)  # (n_eval, N)
-    return sol, t_eval
+    return sol, result.t

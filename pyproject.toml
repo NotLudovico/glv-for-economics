@@ -14,6 +14,7 @@ dependencies = [
     "powerlaw>=2.0.0",
     "ruff>=0.15.1",
     "scipy>=1.17.0",
+    "seaborn>=0.13.2",
 ]
 
 [dependency-groups]

@@ -2,6 +2,25 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 
+def rescaled_glv_sparse(tau, state, N, W_sparse):
+    """
+    The ODE system optimized for sparse matrix-vector multiplication.
+    """
+    y = state[:N]
+    M = state[N]
+    t = state[N+1]
+
+    F = W_sparse @ y
+    phi = np.dot(y, F)
+    sq_sum = np.sum(y**2)
+
+    dydtau = y * ((F - phi) - (y - sq_sum))
+    dMdtau = 1.0 + M * (phi - sq_sum)
+    dtdtau = 1.0 / M
+
+    return np.concatenate((dydtau, [dMdtau], [dtdtau]))
+
+
 def simulate_glv(
     A,
     x0: np.ndarray,

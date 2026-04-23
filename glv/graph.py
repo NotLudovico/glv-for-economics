@@ -1,48 +1,41 @@
 import numpy as np
 import networkx as nx
+import scipy.sparse as sp
 
 
-def get_degree_sequence(N: int, C: float, topology: str = "regular") -> list[int]:
-    """Return a degree sequence of length N with mean degree C.
+def generate_network(degree_sequence, sigma, gamma, mu):
+    sequence = [int(round(s)) for s in degree_sequence]
+    if sum(sequence) % 2 != 0:
+        sequence[0] += 1
 
-    Args:
-        N: Number of nodes.
-        C: Mean degree (exact for regular, expected value for exponential).
-        topology: "regular" or "exponential".
+    G_multi = nx.configuration_model(sequence)
+    G = nx.Graph(G_multi)
+    G.remove_edges_from(nx.selfloop_edges(G))
+    A = nx.to_numpy_array(G)
 
-    Returns:
-        List of integer degrees whose sum is even.
+    M = np.random.normal(0, sigma, (len(sequence), len(sequence)))
+    S = (M + M.T) / np.sqrt(2)
+    V = (M - M.T) / np.sqrt(2)
+    Alpha = np.sqrt(1 + gamma) * S + np.sqrt(1 - gamma) * V + mu
 
-    Raises:
-        ValueError: If topology is not recognised.
-    """
-    if topology == "regular":
-        degrees = np.full(N, int(C))
-    elif topology == "exponential":
-        degrees = np.round(np.random.exponential(scale=C, size=N)).astype(int)
-    else:
-        raise ValueError(f"Unknown topology '{topology}'. Use 'regular' or 'exponential'.")
-
-    if np.sum(degrees) % 2 != 0:
-            degrees[0] += 1
-
-    return degrees.tolist()
+    W = A * Alpha
+    return W, G
 
 
-def compute_mu_c(degree_sequence: list[int], C: float) -> float:
-    """Return the critical interaction strength mu_c = 1 / <g^2>.
-
-    g_i = k_i / C is the normalised degree of node i.
+def compute_mu_c(sigma, gamma, nu_pdf, max_g_approx=100.0) -> float:
+    """Return the critical interaction strength mu_c via the 3-variable HDMFT solver.
 
     Args:
-        degree_sequence: Integer degree of each node.
-        C: Mean degree used to normalise.
+        sigma: Std of interaction strength fluctuations.
+        gamma: Asymmetry parameter of interaction pairs.
+        nu_pdf: Callable nu(g) — the continuous degree distribution (g = k/C).
+        max_g_approx: Upper integration limit when no finite cutoff applies.
 
     Returns:
         Critical mu value.
     """
-    g = np.array(degree_sequence, dtype=float) / C
-    return float(1.0 / np.mean(g ** 2))
+    from glv.analysis import calculate_mu_c
+    return calculate_mu_c(sigma, gamma, nu_pdf, max_g_approx)["mu_c"]
 
 
 def generate_matrix(
@@ -50,7 +43,6 @@ def generate_matrix(
     C: float,
     mu: float,
     sigma: float,
-    use_mu_c: bool = False,
 ):
     """Build a sparse interaction matrix using the configuration model.
 
@@ -62,7 +54,6 @@ def generate_matrix(
         C: Mean degree used in weight formula.
         mu: Mean interaction strength parameter.
         sigma: Std of interaction strength fluctuations.
-        use_mu_c: If True, use mu_c instead of mu for the interaction strength.
 
     Returns:
         scipy.sparse.csr_array of shape (N, N).
@@ -73,8 +64,7 @@ def generate_matrix(
     if sum(degree_sequence) % 2 != 0:
         raise ValueError("Sum of degree_sequence must be even.")
 
-    # Calculate mu_c if needed
-    mu_effective = compute_mu_c(degree_sequence, C) + 0.01 if use_mu_c else mu
+    mu_effective = mu
 
     G_multi = nx.configuration_model(degree_sequence)
     G = nx.Graph(G_multi)

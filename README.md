@@ -103,7 +103,7 @@ sol = solve_ivp(glv.rescaled_glv_sparse, [0, 5e4], state0, args=(N, W_sparse), m
 
 **`fixed_point(W, tol=1e-5, max_iter=3000)`**
 
-Solves the GLV fixed-point equation $x^* = (I - W)^{-1}\mathbf{1}$ subject to $x^* \geq 0$ via **Projected Damped Jacobi** (a linear complementarity solver):
+Solves the GLV fixed-point equation $x^{*} = (I - W)^{-1}\mathbf{1}$ subject to $x^{*} \geq 0$ via **Projected Damped Jacobi** (a linear complementarity solver):
 
 $$x^{(k+1)} = x^{(k)} + \eta\,\bigl[\max(1 + Wx^{(k)},\, 0) - x^{(k)}\bigr]$$
 
@@ -116,7 +116,7 @@ survivors = x_star[x_star > 0]
 
 **`stability_matrix(x_star, W)`**
 
-Returns the Jacobian $J = \mathrm{diag}(x^*)(W - I)$ evaluated at the fixed point.
+Returns the Jacobian $J = \mathrm{diag}(x^{*})(W - I)$ evaluated at the fixed point.
 
 **`calculate_mu_c(sigma, gamma, nu_pdf, max_g_approx=100.0)`**
 
@@ -126,13 +126,13 @@ Computes $\mu_c$ by solving the three self-consistent HDMFT equations simultaneo
 
 The HDMFT equations involve a double integral — an outer integral over the degree distribution $\nu(g)$ and an inner integral over the Gaussian measure $Dz$:
 
-$$1 = \mu_c \int_0^{g^*} \nu(g)\, g\, \frac{\sqrt{g q^*}\,\sigma}{1 - g\gamma\sigma^2\chi^*} \left[\int_{-\Delta_g}^\infty Dz\,(\Delta_g + z)\right] dg$$
+$$1 = \mu_c \int_0^{g^{*}} \nu(g)\, g\, \frac{\sqrt{g q^{*}}\,\sigma}{1 - g\gamma\sigma^2\chi^{*}} \left[\int_{-\Delta_g}^\infty Dz\,(\Delta_g + z)\right] dg$$
 
-$$1 = \int_0^{g^*} \nu(g)\, g\, \frac{g\sigma^2}{(1 - g\gamma\sigma^2\chi^*)^2} \left[\int_{-\Delta_g}^\infty Dz\,(\Delta_g + z)^2\right] dg$$
+$$1 = \int_0^{g^{*}} \nu(g)\, g\, \frac{g\sigma^2}{(1 - g\gamma\sigma^2\chi^{*})^2} \left[\int_{-\Delta_g}^\infty Dz\,(\Delta_g + z)^2\right] dg$$
 
-$$\chi^* = \int_0^{g^*} \nu(g)\, g\, \frac{1}{1 - g\gamma\sigma^2\chi^*} \left[\int_{-\Delta_g}^\infty Dz\right] dg$$
+$$\chi^{*} = \int_0^{g^{*}} \nu(g)\, g\, \frac{1}{1 - g\gamma\sigma^2\chi^{*}} \left[\int_{-\Delta_g}^\infty Dz\right] dg$$
 
-where $\Delta_g = \sqrt{g}/(\sqrt{q^*}\,\sigma)$ and $Dz = e^{-z^2/2}/\sqrt{2\pi}$.
+where $\Delta_g = \sqrt{g}/(\sqrt{q^{*}}\,\sigma)$ and $Dz = e^{-z^2/2}/\sqrt{2\pi}$.
 
 The inner Gaussian integrals are solved **analytically** in terms of the standard normal CDF $\Phi$ and PDF $\phi$:
 
@@ -142,7 +142,7 @@ The inner Gaussian integrals are solved **analytically** in terms of the standar
 | $\int_{-\Delta_g}^\infty Dz\,(\Delta_g + z)$ | $\Delta_g\,\Phi(\Delta_g) + \phi(\Delta_g)$ |
 | $\int_{-\Delta_g}^\infty Dz\,(\Delta_g + z)^2$ | $(\Delta_g^2+1)\,\Phi(\Delta_g) + \Delta_g\,\phi(\Delta_g)$ |
 
-Substituting these reduces each equation to a **single numerical integral** over $\nu(g)$, which is then handled by `scipy.integrate.quad`. The three residuals are passed to `scipy.optimize.root` (hybr method) to find $(\mu_c, q^*, \chi^*)$ simultaneously.
+Substituting these reduces each equation to a **single numerical integral** over $\nu(g)$, which is then handled by `scipy.integrate.quad`. The three residuals are passed to `scipy.optimize.root` (hybr method) to find $(\mu_c, q^{*}, \chi^{*})$ simultaneously.
 
 For $\sigma = 0$ the inner integrals degenerate and the system reduces to the closed-form limit $\mu_c = 1/\langle g^2 \rangle$, which is computed directly.
 

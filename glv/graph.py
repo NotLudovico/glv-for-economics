@@ -75,7 +75,7 @@ def generate_matrix(
     rows, cols = A.nonzero()
     z = np.random.normal(0.0, 1.0, len(rows))
     A.data = (mu_effective / C) + (sigma / np.sqrt(C)) * z
-    A.setdiag(0.0) # removes self-loops
+    A.setdiag(0.0) 
     A.eliminate_zeros()
 
     return A

@@ -22,22 +22,6 @@ def generate_network(degree_sequence, sigma, gamma, mu):
     return W, G
 
 
-def compute_mu_c(sigma, gamma, nu_pdf, max_g_approx=100.0) -> float:
-    """Return the critical interaction strength mu_c via the 3-variable HDMFT solver.
-
-    Args:
-        sigma: Std of interaction strength fluctuations.
-        gamma: Asymmetry parameter of interaction pairs.
-        nu_pdf: Callable nu(g) — the continuous degree distribution (g = k/C).
-        max_g_approx: Upper integration limit when no finite cutoff applies.
-
-    Returns:
-        Critical mu value.
-    """
-    from glv.analysis import calculate_mu_c
-    return calculate_mu_c(sigma, gamma, nu_pdf, max_g_approx)["mu_c"]
-
-
 def generate_matrix(
     degree_sequence: list[int],
     C: float,

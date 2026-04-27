@@ -14,7 +14,7 @@ def rescaled_glv_sparse(tau, state, N, W_sparse):
     phi = np.dot(y, F)
     sq_sum = np.sum(y**2)
 
-    dydtau = y * ((F - phi) - (y - sq_sum))
+    dydtau = y * (F - phi - y + sq_sum)
     dMdtau = 1.0 + M * (phi - sq_sum)
     dtdtau = 1.0 / M
 

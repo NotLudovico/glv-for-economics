@@ -59,7 +59,37 @@ def generate_matrix(
     rows, cols = A.nonzero()
     z = np.random.normal(0.0, 1.0, len(rows))
     A.data = (mu_effective / C) + (sigma / np.sqrt(C)) * z
-    A.setdiag(0.0) 
+    A.setdiag(0.0)
     A.eliminate_zeros()
 
     return A
+
+
+def generate_annealed_matrix(
+    degree_sequence,
+    C: float,
+    mu: float,
+    sigma: float,
+):
+    """Build a dense interaction matrix using the annealed approximation.
+
+    Adjacency replaced by its configuration-model expectation
+    A_ij = k_i k_j / (N C). Each entry is multiplied by an independent
+    disordered weight: W_ij = A_ij * (mu/C + sigma/sqrt(C) * z_ij),
+    z_ij ~ N(0,1) i.i.d. (no symmetry, no zeroed diagonal).
+
+    Args:
+        degree_sequence: Degree of each node (length N).
+        C: Mean degree.
+        mu: Mean interaction strength parameter.
+        sigma: Std of interaction strength fluctuations.
+
+    Returns:
+        np.ndarray of shape (N, N), dense.
+    """
+    k = np.asarray(degree_sequence, dtype=float)
+    N = k.size
+    A = np.outer(k, k) / (N * C)
+    Z = np.random.normal(0.0, 1.0, (N, N))
+    alpha = (mu / C) + (sigma / np.sqrt(C)) * Z
+    return A * alpha

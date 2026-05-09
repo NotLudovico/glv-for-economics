@@ -2,7 +2,8 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.integrate import quad
 from scipy.stats import norm
-from scipy.optimize import root
+from scipy.optimize import root, curve_fit
+from glv.sweep import sweep_final_time
 
 
 def fixed_point(W, tol: float = 1e-5, max_iter: int = 3000) -> np.ndarray:
@@ -96,6 +97,105 @@ def calculate_mu_c(sigma, gamma, nu_pdf, max_g_approx=100.0):
         }
     else:
         raise ValueError(f"Solver failed to converge: {solution.message}")
+
+
+def find_empirical_mu_c(
+    mu_c_theoretical: float,
+    A,
+    C: float,
+    sigma: float,
+    initial_conditions,
+    n_mu: int = 40,
+    mu_lo: float = -0.2,
+    mu_hi: float = 0.2,
+    tau_max: float = 1e6,
+    method: str = "RK45",
+    max_step: float | None = 1e2,
+    n_workers: int | None = None,
+) -> dict:
+    """Find empirical mu_c for a fixed graph by sweeping mu and fitting tanh to mean final time.
+
+    For each mu in the sweep, regenerates fresh weights
+    alpha_ij = mu/C + sigma/sqrt(C)*z_ij on the edges of A (z_ij ~ N(0,1)),
+    runs rescaled-GLV integrations from all initial_conditions, then fits a
+    tanh model to mean final-time vs mu and returns the midpoint as mu_c.
+
+    Args:
+        mu_c_theoretical: Theoretical critical value — centres the mu sweep.
+        A: Binary adjacency matrix (sparse or dense).
+        C: Mean degree used in the weight formula.
+        sigma: Std of interaction strength fluctuations.
+        initial_conditions: Sequence of initial state vectors (length N+2).
+        n_mu: Number of mu grid points.
+        mu_lo: Lower offset from mu_c_theoretical for the sweep.
+        mu_hi: Upper offset from mu_c_theoretical for the sweep.
+        tau_max: End of rescaled-time integration.
+        method: scipy solve_ivp method.
+        max_step: Cap on solver step size (None to disable).
+        n_workers: Worker processes (None → all CPUs).
+
+    Returns:
+        dict with keys:
+            mu_c     – empirical critical mu (tanh midpoint).
+            mu_values – full mu grid (length n_mu).
+            mean_t   – mean final time per mu point (NaN where no run converged).
+            popt     – tanh fit parameters (amp, a, mu0, b).
+
+    Raises:
+        RuntimeError: If too few valid runs or the tanh fit fails.
+    """
+    A_sp = sp.csr_array(A, dtype=float)
+
+    mu_values = np.linspace(mu_c_theoretical + mu_lo, mu_c_theoretical + mu_hi, n_mu)
+
+    def _make_W(mu):
+        W = A_sp.copy()
+        W.data = mu / C + (sigma / np.sqrt(C)) * np.random.normal(0.0, 1.0, len(W.data))
+        return W
+
+    Ws = [_make_W(mu) for mu in mu_values]
+    N = len(initial_conditions[0]) - 2
+
+    t_mat = sweep_final_time(
+        Ws=Ws,
+        initial_states=list(initial_conditions),
+        N=N,
+        tau_max=tau_max,
+        method=method,
+        max_step=max_step,
+        n_workers=n_workers,
+    )
+
+    n_ok = np.sum(~np.isnan(t_mat), axis=1)
+    mean_t = np.nanmean(t_mat, axis=1)
+    valid = n_ok > 0
+
+    if valid.sum() < 4:
+        raise RuntimeError(f"Too few valid mu points for tanh fit ({valid.sum()} < 4).")
+
+    x_fit = mu_values[valid]
+    y_fit = mean_t[valid]
+
+    def _tanh(mu, amp, a, mu0, b):
+        return amp * np.tanh(-a * (mu - mu0)) + b
+
+    p0 = [
+        (y_fit.max() - y_fit.min()) / 2,
+        100.0,
+        x_fit[len(x_fit) // 2],
+        (y_fit.max() + y_fit.min()) / 2,
+    ]
+    try:
+        popt, _ = curve_fit(_tanh, x_fit, y_fit, p0=p0, maxfev=10000)
+    except RuntimeError as exc:
+        raise RuntimeError(f"Tanh fit failed: {exc}") from exc
+
+    return {
+        "mu_c": float(popt[2]),
+        "mu_values": mu_values,
+        "mean_t": mean_t,
+        "popt": popt,
+    }
 
 
 def stability_matrix(x_star: np.ndarray, W):

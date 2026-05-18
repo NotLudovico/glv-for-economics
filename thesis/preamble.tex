@@ -1,0 +1,28 @@
+% ---- Math ----
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{cancel}
+\usepackage{siunitx}
+
+% ---- Layout & graphics ----
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{caption}
+
+% ---- Code listings ----
+\usepackage{minted}
+
+% ---- Bibliography ----
+\usepackage[backend=biber,style=numeric-comp,sorting=none]{biblatex}
+\addbibresource{bibliography/references.bib}
+
+% ---- Links & cross-references (load hyperref before cleveref) ----
+\usepackage[colorlinks=true,
+            linkcolor=blue!60!black,
+            citecolor=green!50!black,
+            urlcolor=blue!60!black]{hyperref}
+\usepackage{cleveref}

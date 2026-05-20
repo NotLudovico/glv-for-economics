@@ -108,6 +108,7 @@ def find_empirical_mu_c(
     n_mu: int = 40,
     mu_lo: float = -0.2,
     mu_hi: float = 0.2,
+    mu_center: float | None = None,
     tau_max: float = 1e6,
     method: str = "RK45",
     max_step: float | None = 1e2,
@@ -121,14 +122,18 @@ def find_empirical_mu_c(
     tanh model to mean final-time vs mu and returns the midpoint as mu_c.
 
     Args:
-        mu_c_theoretical: Theoretical critical value — centres the mu sweep.
+        mu_c_theoretical: Theoretical critical value — used as the sweep
+            centre when `mu_center` is None.
         A: Binary adjacency matrix (sparse or dense).
         C: Mean degree used in the weight formula.
         sigma: Std of interaction strength fluctuations.
         initial_conditions: Sequence of initial state vectors (length N+2).
         n_mu: Number of mu grid points.
-        mu_lo: Lower offset from mu_c_theoretical for the sweep.
-        mu_hi: Upper offset from mu_c_theoretical for the sweep.
+        mu_lo: Lower offset from the sweep centre.
+        mu_hi: Upper offset from the sweep centre.
+        mu_center: Centre of the mu sweep. None → use mu_c_theoretical.
+            Set this to a per-C estimate so the empirical transition stays
+            in the middle of the grid (well-conditioned tanh fit).
         tau_max: End of rescaled-time integration.
         method: scipy solve_ivp method.
         max_step: Cap on solver step size (None to disable).
@@ -146,7 +151,8 @@ def find_empirical_mu_c(
     """
     A_sp = sp.csr_array(A, dtype=float)
 
-    mu_values = np.linspace(mu_c_theoretical + mu_lo, mu_c_theoretical + mu_hi, n_mu)
+    center = mu_c_theoretical if mu_center is None else mu_center
+    mu_values = np.linspace(center + mu_lo, center + mu_hi, n_mu)
 
     def _make_W(mu):
         W = A_sp.copy()
@@ -186,9 +192,18 @@ def find_empirical_mu_c(
         (y_fit.max() + y_fit.min()) / 2,
     ]
     try:
-        popt, _ = curve_fit(_tanh, x_fit, y_fit, p0=p0, maxfev=10000)
+        popt, pcov = curve_fit(_tanh, x_fit, y_fit, p0=p0, maxfev=10000)
     except RuntimeError as exc:
         raise RuntimeError(f"Tanh fit failed: {exc}") from exc
+
+    # A non-finite covariance means the mu grid did not constrain the
+    # transition: popt[2] is then meaningless and would pollute the stats
+    # as an outlier. Reject it so the caller drops this realization.
+    if not np.all(np.isfinite(pcov)):
+        raise RuntimeError(
+            "Tanh fit is degenerate (covariance could not be estimated); "
+            "the mu grid does not constrain the transition."
+        )
 
     return {
         "mu_c": float(popt[2]),

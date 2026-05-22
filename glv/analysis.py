@@ -116,15 +116,18 @@ def find_empirical_mu_c(
 ) -> dict:
     """Find empirical mu_c for a fixed graph by sweeping mu and fitting tanh to mean final time.
 
-    For each mu in the sweep, regenerates fresh weights
-    alpha_ij = mu/C + sigma/sqrt(C)*z_ij on the edges of A (z_ij ~ N(0,1)),
-    runs rescaled-GLV integrations from all initial_conditions, then fits a
-    tanh model to mean final-time vs mu and returns the midpoint as mu_c.
+    For each mu in the sweep, builds weights W_ij = A_ij * (mu/C +
+    sigma/sqrt(C)*z_ij), z_ij ~ N(0,1), runs rescaled-GLV integrations from
+    all initial_conditions, then fits a tanh model to mean final-time vs mu
+    and returns the midpoint as mu_c. With a binary adjacency this places
+    fresh disordered weights on the true graph's edges; with the annealed
+    adjacency A_ij = k_i k_j/(NC) it builds the annealed interaction matrix.
 
     Args:
         mu_c_theoretical: Theoretical critical value — used as the sweep
             centre when `mu_center` is None.
-        A: Binary adjacency matrix (sparse or dense).
+        A: Adjacency matrix (sparse or dense). Binary for the true graph,
+            or the weighted annealed adjacency k_i k_j/(NC).
         C: Mean degree used in the weight formula.
         sigma: Std of interaction strength fluctuations.
         initial_conditions: Sequence of initial state vectors (length N+2).
@@ -156,7 +159,8 @@ def find_empirical_mu_c(
 
     def _make_W(mu):
         W = A_sp.copy()
-        W.data = mu / C + (sigma / np.sqrt(C)) * np.random.normal(0.0, 1.0, len(W.data))
+        z = np.random.normal(0.0, 1.0, len(W.data))
+        W.data = W.data * (mu / C + (sigma / np.sqrt(C)) * z)
         return W
 
     Ws = [_make_W(mu) for mu in mu_values]

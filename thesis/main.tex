@@ -1,0 +1,146 @@
+\documentclass{report}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{cancel}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{green!50!black}\itshape,
+  stringstyle=\color{orange!80!black},
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  backgroundcolor=\color{gray!5},
+  tabsize=2,
+  captionpos=b,
+}
+\usepackage[natbib=true]{biblatex}
+\addbibresource{bib.bib}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+{\scshape\LARGE Politecnico di Torino \par}
+\vspace{1cm}
+{\scshape\Large Master's Thesis\par}
+\vspace{1.5cm}
+{\huge\bfseries Can a simple model explain economics?\par}
+\vspace{2cm}
+{\Large\itshape Ludovico Furlanetto\par}
+\vfill
+supervised by\par
+Fabian \textsc{Aguirre-Lopez}
+\vfill
+{\large June 2026\par}
+\end{titlepage}
+
+
+
+
+\begin{abstract}
+Probably not
+\end{abstract}
+
+
+\include{chapters/introduction}
+\include{chapters/dynamical_equations}
+
+\vspace{100pt}
+
+\printbibliography
+
+\appendix
+\renewcommand{\thesection}{Appendix \Alph{section}}
+\chapter{Derivation of the rescaled equations}
+\label{app:derivation}
+
+We start from the Generalized Lotka--Volterra system,
+\begin{equation}
+    \dot{x}_i = x_i \left( 1 - x_i + \sum_j W_{ij} x_j \right),
+    \label{eq:app-glv}
+\end{equation}
+and introduce the total abundance and relative fractions
+\begin{equation}
+    M = \sum_j x_j, \qquad y_i = \frac{x_i}{M}, \qquad x_i = M y_i .
+\end{equation}
+Throughout we use the scalar shorthands
+\begin{equation}
+    y^{\!\top} W y = \sum_{i,j} y_i W_{ij} y_j, \qquad
+    y^{\!\top} y = \sum_i y_i^2 ,
+\end{equation}
+and the identities $\sum_i x_i^2 = M^2\, y^{\!\top} y$ and
+$\sum_{i,j} x_i W_{ij} x_j = M^2\, y^{\!\top} W y$.
+
+\section*{Dynamics of the total abundance}
+
+Summing \eqref{eq:app-glv} over $i$,
+\begin{align}
+    \dot{M} &= \sum_i \dot{x}_i
+            = \sum_i x_i - \sum_i x_i^2 + \sum_{i,j} x_i W_{ij} x_j \nonumber \\
+            &= M - M^2\, y^{\!\top} y + M^2\, y^{\!\top} W y
+            = M + M^2 \left( y^{\!\top} W y - y^{\!\top} y \right).
+    \label{eq:app-Mdot}
+\end{align}
+
+\section*{Dynamics of the relative fractions}
+
+Differentiating $y_i = x_i / M$ with the quotient rule,
+\begin{equation}
+    \dot{y}_i = \frac{\dot{x}_i}{M} - \frac{x_i \dot{M}}{M^2}
+              = \frac{\dot{x}_i}{M} - y_i \frac{\dot{M}}{M}.
+    \label{eq:app-ydot-quotient}
+\end{equation}
+The first term, using $x_i = M y_i$ in \eqref{eq:app-glv}, is
+\begin{equation}
+    \frac{\dot{x}_i}{M}
+    = y_i \left( 1 - M y_i + M \sum_j W_{ij} y_j \right)
+    = y_i \Big[ 1 + M\big( (Wy)_i - y_i \big) \Big].
+\end{equation}
+The second term, using \eqref{eq:app-Mdot}, is
+\begin{equation}
+    y_i \frac{\dot{M}}{M}
+    = y_i \Big[ 1 + M\big( y^{\!\top} W y - y^{\!\top} y \big) \Big].
+\end{equation}
+Subtracting, the two ``$1$''s cancel and an overall factor $M$ survives,
+\begin{equation}
+    \dot{y}_i
+    = M\, y_i \left[ (Wy)_i - y_i - y^{\!\top} W y + y^{\!\top} y \right].
+    \label{eq:app-ydot}
+\end{equation}
+
+\section*{Rescaling time}
+
+We finally pass to the stretched time $\tau$ defined by $d\tau/dt = M$, so that
+$\dfrac{d}{d\tau} = \dfrac{1}{M}\dfrac{d}{dt}$. Applying this to
+\eqref{eq:app-ydot} cancels the factor $M$,
+\begin{equation}
+    \frac{dy_i}{d\tau}
+    = y_i \left[ (Wy)_i - y_i - y^{\!\top} W y + y^{\!\top} y \right],
+\end{equation}
+to \eqref{eq:app-Mdot} it gives
+\begin{equation}
+    \frac{dM}{d\tau} = \frac{\dot{M}}{M}
+    = 1 + M \left( y^{\!\top} W y - y^{\!\top} y \right),
+\end{equation}
+and the physical time follows immediately by inverting the definition of $\tau$,
+\begin{equation}
+    \frac{dt}{d\tau} = \frac{1}{M}.
+\end{equation}
+These are equations \eqref{eq:dydtau}--\eqref{eq:dtdtau} of the main text. Note
+that the $y$-equation no longer contains $M$, confirming that the simplex
+dynamics is closed and insensitive to the divergence of the macroscopic
+envelope.
+
+
+
+\end{document}

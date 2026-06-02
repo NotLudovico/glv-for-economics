@@ -1,0 +1,484 @@
+\chapter{Integrating the GLV model at criticality}
+\label{chap:rescaling}
+
+The Generalized Lotka--Volterra (GLV) system that governs the dynamics of the
+interacting nodes of our network reads
+\begin{equation}
+    \dot{x}_i = x_i \left( 1 - x_i + \sum_j W_{ij} x_j \right),
+    \label{eq:glv}
+\end{equation}
+where $W$ encodes the (signed, weighted) interactions and the diagonal $-x_i$
+term provides logistic self-limitation. Our goal is to probe the system
+precisely at and beyond the cooperative critical point $\mu_c$, where the
+macroscopic abundance ceases to equilibrate. This is exactly the regime in
+which a direct numerical integration of \eqref{eq:glv} fails: as $\mu \to
+\mu_c^{-}$ the total abundance grows without bound, and for $\mu > \mu_c$ it
+diverges in finite time, so any explicit solver is driven either to vanishing
+step sizes or to floating-point overflow.
+
+The strategy of this chapter is to reorganize the dynamics so that the
+divergence no longer obstructs the integration, rather than to fight it head-on.
+We split the system into a bounded ``shape'' degree of freedom living on the
+probability simplex and an unbounded ``scale'' degree of freedom carrying the
+total abundance, and we then stretch time so that the shape is governed by a
+closed, bounded set of equations. This does not make the scale finite---the
+total abundance still diverges for $\mu > \mu_c$---but it changes the
+\emph{character} of the divergence: the finite-time singularity that cripples
+explicit solvers in physical time becomes a smooth, asymptotic growth in the new
+time variable. The bounded shape can then be integrated stably through $\mu_c$,
+and the physical trajectories $x(t)$ reconstructed from it wherever the scale
+remains numerically representable.
+
+\section{Mapping to the probability simplex and time rescaling}
+\label{sec:simplex-mapping}
+
+We separate scale from shape by introducing the total abundance $M(t)$ and the
+relative fractions $y_i(t)$,
+\begin{equation}
+    M(t) = \sum_j x_j(t), \qquad
+    y_i(t) = \frac{x_i(t)}{M(t)} .
+    \label{eq:rescaling-def}
+\end{equation}
+By construction the fractions are confined to the probability simplex,
+\begin{equation}
+    y_i(t) \ge 0 \quad \forall t, \qquad \sum_j y_j(t) = 1,
+\end{equation}
+so they remain bounded for all $\mu$, including the divergent regime. The
+projection of a GLV flow onto the simplex is, up to the choice of time
+parametrization, a replicator equation in the sense of Hofbauer's classical
+correspondence between Lotka--Volterra and replicator dynamics
+\cite{hofbauer81}; what is unusual here is that we retain the equation for the
+total abundance, which is ordinarily discarded because it is finite (and hence
+irrelevant) away from criticality.
+
+Carrying \eqref{eq:rescaling-def} through \eqref{eq:glv} (the step-by-step
+algebra is given in Appendix~\ref{app:derivation}) leaves the shape dynamics
+still coupled to the macroscopic envelope $M(t)$ through a multiplicative
+factor. Since $M(t)$ is precisely the quantity that diverges, this is not yet
+enough. We therefore additionally stretch time by defining a new variable
+$\tau$ through
+\begin{equation}
+    \frac{d\tau}{dt} = M(t).
+    \label{eq:time-rescaling}
+\end{equation}
+Because $M$ grows without bound, $\tau$ accelerates relative to $t$, so the map
+runs the opposite way to what one might first guess: the \emph{finite} physical
+horizon up to the blow-up time $t^\ast$ is stretched onto the \emph{infinite}
+rescaled axis $\tau \in [0,\infty)$. Integrating $dt/d\tau = 1/M$ confirms this,
+since $t(\tau) \to t^\ast$ from below as $\tau \to \infty$. The singularity that
+sat at finite $t^\ast$ is thereby pushed out to $\tau = \infty$, where it is
+approached smoothly rather than hit abruptly---precisely the property that lets
+an adaptive solver march through the critical regime without its step size
+collapsing. With this change of variables the system \eqref{eq:glv} becomes
+\begin{align}
+    \frac{dy_i}{d\tau} &= y_i \left[ \sum_{j=1}^N W_{ij} y_j - y^{\!\top} W y - y_i + y^{\!\top} y \right],
+    \label{eq:dydtau} \\[4pt]
+    \frac{dM}{d\tau}   &= 1 + M \left( y^{\!\top} W y - y^{\!\top} y \right),
+    \label{eq:dMdtau} \\[4pt]
+    \frac{dt}{d\tau}   &= \frac{1}{M}.
+    \label{eq:dtdtau}
+\end{align}
+The shape dynamics \eqref{eq:dydtau} can be written compactly using
+element-wise multiplication ($\odot$) and the all-ones vector $\mathbf{1}$,
+\begin{equation}
+    \frac{dy}{d\tau} = y \odot \left[ Wy - (y^{\!\top} W y)\,\mathbf{1} - y + (y^{\!\top} y)\,\mathbf{1} \right].
+    \label{eq:dydtau-vec}
+\end{equation}
+
+The crucial structural feature is that \eqref{eq:dydtau}--\eqref{eq:dydtau-vec}
+are \emph{closed} in $y$: the evolution of the relative fractions no longer
+references the envelope $M$. The shape can therefore be integrated to arbitrary
+$\tau$ with no risk of overflow, whatever the scale does. The scale and
+physical-time equations \eqref{eq:dMdtau}--\eqref{eq:dtdtau} are then slaved to
+$y(\tau)$ and integrated alongside it for reconstruction, through
+$x(t) = M(t)\,y(t)$.
+
+It must be stressed that this last step does \emph{not} tame $M$ itself. Once
+$y$ has relaxed to its fixed point $y^\ast$, the scalar
+$c \equiv (y^\ast)^{\!\top} W y^\ast - (y^\ast)^{\!\top} y^\ast$ is constant and
+\eqref{eq:dMdtau} reduces to the linear equation $dM/d\tau = 1 + c\,M$, with
+solution
+\begin{equation}
+    M(\tau) \;\longrightarrow\;
+    \begin{cases}
+        -\,1/c & \text{(finite),} \quad c < 0 \ \ (\mu < \mu_c), \\[2pt]
+        \ \sim e^{c\tau} & \text{(divergent),} \quad c > 0 \ \ (\mu > \mu_c).
+    \end{cases}
+    \label{eq:M-asymptotics}
+\end{equation}
+Below the threshold $(I-W)$ is positive definite, $c<0$, and $M$ approaches a
+finite plateau $M^\ast = -1/c$; above it $M$ grows exponentially in $\tau$ and
+will eventually exhaust floating-point range. The gain over the original
+formulation is not that $M$ stays finite---in the supercritical regime it cannot
+---but that this growth is a tame exponential in $\tau$ rather than a finite-time
+blow-up in $t$. The shape $y(\tau)$ is always computed correctly; the
+reconstruction $x = My$ is then available for as long as $M$ remains
+representable, which in practice means integrating to a large but finite $\tau$.
+Integrating \eqref{eq:dtdtau} also yields, for free, the physical time
+$t(\tau) = \int_0^\tau d\tau'/M(\tau')$. By \eqref{eq:M-asymptotics} this grows
+without bound when $M$ plateaus ($\mu<\mu_c$) but converges to a finite limit
+$t^\ast$ when $M$ diverges ($\mu>\mu_c$); the appearance of a finite $t^\ast$ is
+therefore a clean numerical signature of the critical crossing, which we exploit
+in Section~\ref{sec:locating-muc} to locate $\mu_c$ on finite graphs.
+
+\section{Numerical integration}
+\label{sec:numerical-integration}
+
+The right-hand side passed to the solver bundles the state as
+$[\,y_1,\dots,y_N,\,M,\,t\,]$ and exploits the sparsity of $W$ so that the only
+$\mathcal{O}(NC)$ operation is the matrix--vector product $Wy$:
+
+\begin{verbatim}
+def rescaled_glv_sparse(tau, state, N, W_sparse):
+    """
+    Numerically stable, rescaled GLV ODE system.
+    state = [y_1, ..., y_N, M, t]
+    """
+    y = state[:N]
+    M = state[N]
+    # state[N+1] = t is tracked by the solver but does not enter the RHS
+
+    F = W_sparse @ y          # sparse matrix-vector product, (Wy)_i
+
+    phi    = np.dot(y, F)     # average network fitness, y^T W y
+    sq_sum = np.sum(y ** 2)   # self-competition penalty, y^T y
+
+    dydtau = y * (F - phi - y + sq_sum)
+    dMdtau = 1.0 + M * (phi - sq_sum)
+    dtdtau = 1.0 / M
+
+    return np.concatenate((dydtau, [dMdtau], [dtdtau]))
+\end{verbatim}
+
+One numerical subtlety deserves emphasis. The shape variables $y(\tau)$ reach a
+plateau in rescaled time, after which the right-hand side of \eqref{eq:dydtau}
+is essentially zero; an adaptive solver left unconstrained will then take very
+large steps across this flat region. That is harmless for $y$ itself, but it is
+fatal for the \emph{reconstruction} of $x(t)$: a coarse step in $\tau$ where $M$
+is large translates, through $dt/d\tau = 1/M$, into a poorly resolved stretch of
+physical time, and the resulting $x(t) = M(t)\,y(t)$ trajectory acquires
+spurious noise. We therefore cap the maximum step at $\sim 10^3$ in $\tau$:
+small enough to keep the reconstructed $x(t)$ smooth, but large enough that the
+integration of the (already bounded) simplex dynamics remains cheap.
+
+\section{Results}
+\label{sec:rescaling-plots}
+
+Figures~\ref{fig:stable-unscaled} and~\ref{fig:diverging-unscaled} compare the
+rescaled and unscaled trajectories for a sample of $100$ nodes drawn from a
+network with an exponential degree distribution. The left panels show the
+relative fractions $y(\tau)$, which in both cases settle onto a well-defined
+fixed point on the simplex; the right panels show the corresponding physical
+abundances $x(t)$ reconstructed via $x = My$.
+
+Below the critical point (Fig.~\ref{fig:stable-unscaled}, $\mu = -2 \ll \mu_c$)
+the reconstructed abundances relax to a finite stationary state, as expected in
+the regime where $(I - W)$ remains positive definite and an interior
+equilibrium exists. At criticality (Fig.~\ref{fig:diverging-unscaled},
+$\mu = 0.5 \approx \mu_c$) the shape still converges cleanly in $\tau$, but the
+reconstructed $x(t)$ now grows over a sharply truncated physical horizon
+($t^\ast \approx 3$ versus $t^\ast \approx 18$ in the stable case): the same
+amount of rescaled time maps to a much shorter physical time, which is the
+fingerprint of the impending finite-time divergence of $M$. The decoupled
+simplex integration is, by design, blind to this crossing, which is precisely
+what makes it a usable probe of the critical regime.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{rescaled_unscaled_mu_minus_2.png}
+    \caption{Rescaled (left) and reconstructed unscaled (right) trajectories for
+    $N = 10^4$, $C = 50$, $\sigma = 0.5$, and $\mu = -2 < \mu_c \approx 0.5458$.
+    The physical abundances relax to a finite stationary state.}
+    \label{fig:stable-unscaled}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{rescaled_unscaled_mu_05.png}
+    \caption{Same parameters as Fig.~\ref{fig:stable-unscaled} but at
+    $\mu = 0.5 \approx \mu_c \approx 0.5458$. The simplex dynamics still
+    converge, while the reconstructed abundances grow over a much shorter
+    physical horizon, signalling the onset of the finite-time divergence of
+    $M(t)$.}
+    \label{fig:diverging-unscaled}
+\end{figure}
+
+\section{Locating the critical point}
+\label{sec:locating-muc}
+
+The empirical regularities we ultimately wish to reproduce---persistent,
+non-decaying macroscopic fluctuations---require the system to sit in the
+cooperative diverging regime, $\mu > \mu_c$, where the total abundance grows
+without bound. We do not, however, want to sit deep inside it: the further past
+$\mu_c$ we go, the faster $M$ diverges and the shorter-lived the transient
+fluctuations become. The interesting dynamics live at the \emph{slowest possible}
+divergence, i.e.\ as close to the threshold as the system allows. Pinning down
+$\mu_c$ accurately is therefore a prerequisite. We approach it from two sides:
+first the mean-field prediction inherited from the literature, and then a pair of
+empirical estimators read directly off the rescaled dynamics, which we finally
+compare against that prediction.
+
+\section{The theoretical critical point}
+\label{sec:theoretical-muc}
+
+The heterogeneous dynamical mean-field theory of Aguirre-L\'opez \emph{et al.}
+\cite{aguirrelopez} yields a closed set of self-consistency equations for the
+fixed-point statistics, in which the critical degree $g_c$ controls the
+fraction of surviving nodes.
+
+The theory works by reducing the full $N$-node network dynamics to an effective
+stochastic process for the abundance $x(t)$ of a single representative node of
+rescaled degree $g = k/C$. In the high-connectivity limit this effective process
+reads \citep{aguirrelopez}
+\begin{equation}
+    \dot{x} = x\left( 1 - x + g\mu M(t) + \sqrt{g}\,\sigma\,\eta(t)
+              + g\gamma\sigma^2 \int_0^t \mathrm{d}s\, G(t,s)\, x(s) \right),
+    \label{eq:dmft-effective}
+\end{equation}
+where $M(t)$ is the mean abundance, $\eta(t)$ is a Gaussian noise with zero mean
+and self-consistent autocorrelation $\langle \eta(t)\eta(s)\rangle =
+\langle x(t)x(s)\rangle$, and the retarded friction term encodes the feedback of a
+node on itself through the reciprocity $\gamma$ of the couplings. The disorder in
+the interactions, averaged over, thus resurfaces as a coloured noise whose
+statistics must be determined self-consistently from the very trajectories it
+generates. The kernel of the friction term is the \emph{response function}
+\begin{equation}
+    G(t,s) = \left\langle \frac{1}{\sqrt{g}\,\sigma}
+             \frac{\delta x(t)}{\delta \eta(s)} \right\rangle,
+    \label{eq:response-def}
+\end{equation}
+the linear response of the abundance at time $t$ to a perturbation of the
+effective noise at the earlier time $s$. At a fixed point the statistics become
+time-translation invariant, and the two order parameters entering the threshold
+equations are the stationary values $q^\ast = \langle x(t)x(t')\rangle$, the
+mean-square abundance, and $\chi^\ast = \int_0^\infty G(s)\,\mathrm{d}s$, the
+static susceptibility, with $G(s)$ the time-translation-invariant limit of
+$G(t,\,t-s)$.
+
+The threshold $\mu_c$ is the value of $\mu$ at
+which $g_c \to 0$, i.e.\ at which even the least-connected nodes are about to be
+driven extinct in the relative variables. Setting $g_c = 0$ in the
+self-consistency relations gives
+\begin{equation}
+\begin{aligned}
+1 &= |\mu| \int_0^{g^*} \mathrm{d}g\, \nu(g)\, g\, \frac{\sqrt{g q^*}\, \sigma}{1 - g\gamma\sigma^2\chi^*} \int_{-\Delta_g}^{\infty} Dz\, (\Delta_g + z), \\
+1 &= \int_0^{g^*} \mathrm{d}g\, \nu(g)\, g\, \frac{g\sigma^2}{(1 - g\gamma\sigma^2\chi^*)^2} \int_{-\Delta_g}^{\infty} Dz\, (\Delta_g + z)^2, \\
+\chi^* &= \int_0^{g^*} \mathrm{d}g\, \nu(g)\, g\, \frac{1}{1 - g\gamma\sigma^2\chi^*} \int_{-\Delta_g}^{\infty} Dz, \\
+\Delta_g &= \operatorname{sgn}(\mu)\, \frac{g - g_c}{\sqrt{g q^*}\, \sigma}, \qquad
+g^* = \frac{1}{|\gamma|\, \sigma^2 \chi^*\, \theta(\gamma)},
+\end{aligned}
+\label{eq:muc-selfconsistency}
+\end{equation}
+with $Dz = e^{-z^2/2}\,dz/\sqrt{2\pi}$ the standard Gaussian measure, and
+$q^\ast$, $\chi^\ast$ the fixed-point order parameters introduced above. The
+remaining symbols are structural: $\gamma = \overline{z_{ij} z_{ji}}$ is the
+reciprocity of the couplings (interpolating from fully antisymmetric,
+$\gamma = -1$, through uncorrelated, $\gamma = 0$, to symmetric, $\gamma = +1$);
+$\nu(g)$ is the rescaled degree distribution, $\nu(g) = \lim_{C\to\infty}
+\sum_k p(k)\, \delta(g - k/C)$, with $g = k/C$ the degree in units of the mean
+connectivity; and $\theta(\cdot)$ is the Heaviside step. In the
+noiseless limit these collapse to the familiar $\mu_c = 1/\langle g^2 \rangle$;
+for $\sigma > 0$ the disorder shifts the threshold, and solving
+\eqref{eq:muc-selfconsistency} numerically traces out $\mu_c(\sigma)$ for the
+exponential degree distribution, shown in Fig.~\ref{fig:mu_scaling_sigma}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{mu_c_scaling_sigma.png}
+    \caption{Numerical solution of \eqref{eq:muc-selfconsistency} for the
+    critical interaction strength $\mu_c$ as a function of the disorder strength
+    $\sigma$, for an exponential degree distribution.}
+    \label{fig:mu_scaling_sigma}
+\end{figure}
+
+\section{Empirical estimators of $\mu_c$ on finite graphs}
+\label{sec:empirical-muc}
+
+The mean-field prediction \eqref{eq:muc-selfconsistency} assumes the
+thermodynamic limit and the associated degree statistics; on a finite graph the
+true threshold is shifted, and since we need to sit \emph{at} $\mu_c$ this shift
+matters. We therefore measure $\mu_c$ directly from the rescaled dynamics. What
+makes this cheap is that a single rescaled integration hands us \emph{two}
+estimators at once, both byproducts of the same run that produces the shape
+$y(\tau)$: the asymptotic shape scalar $c$, and the saturating physical time
+$t_{\mathrm{final}}$. The first reads the sign of the divergence directly off the
+relaxed shape; the second detects the same transition through its integrated
+effect on physical time. We describe each in turn and then compare them.
+
+\subsection{The shape scalar $c$}
+\label{sec:estimator-c}
+
+The cleanest estimator is already contained in the asymptotics of
+Section~\ref{sec:simplex-mapping}. Once the shape relaxes to its fixed point
+$y^\ast$, the scalar
+\begin{equation}
+    c \equiv (y^\ast)^{\!\top} W y^\ast - (y^\ast)^{\!\top} y^\ast
+    \label{eq:c-scalar}
+\end{equation}
+fixes the sign of $dM/d\tau = 1 + cM$ in \eqref{eq:M-asymptotics}: $M$ plateaus
+at $-1/c$ when $c < 0$ ($\mu < \mu_c$) and grows like $e^{c\tau}$ when $c > 0$
+($\mu > \mu_c$). The critical point is therefore exactly the zero crossing of
+$c(\mu)$, which we locate with a one-dimensional root find---a Brent bracket on a
+coarse $\mu$-grid, refined per realization. Because $c$ depends only on the
+\emph{relaxed shape} and not on the late-time growth of $M$, it converges as soon
+as $y(\tau)$ reaches its plateau, long before $M$ does anything extreme; the
+estimator is thus both cheap (a modest $\tau_{\max}$ suffices) and numerically
+benign. To keep the supercritical runs well-defined we halt each integration with
+an event that fires when $M$ reaches a fixed cap $M_{\mathrm{cap}}$, set well
+below the floating-point ceiling. By that point $c$ already carries its sign, so
+the cap costs no accuracy while preventing the overflow---and the spurious
+\texttt{NaN}s---that an uncapped supercritical run would produce.
+
+\subsection{The final-time drop}
+\label{sec:estimator-tfinal}
+
+The second estimator trades cost for robustness. The procedure follows
+immediately from the asymptotics of $M(\tau)$ derived in
+Section~\ref{sec:simplex-mapping}, Eq.~\eqref{eq:M-asymptotics}: we integrate
+the rescaled system up to a fixed, large rescaled horizon $\tau_{\max}$ for a
+range of $\mu$, and record the corresponding physical time
+$t_{\mathrm{final}} = t(\tau_{\max})$. Below the threshold $M$ plateaus, so
+$dt/d\tau = 1/M$ stays finite and $t_{\mathrm{final}}$ grows essentially
+linearly with $\tau_{\max}$; above it $M \sim e^{c\tau}$, so $1/M$ decays
+exponentially and $t(\tau)$ saturates at the finite blow-up time $t^\ast$. The
+empirical $\mu_c$ is read off as the location of the resulting sharp drop in
+$t_{\mathrm{final}}$ (Fig.~\ref{fig:empirical-muc}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{true_mu_c.png}
+    \caption{Final physical time $t_{\mathrm{final}} = t(\tau_{\max})$ versus
+    mean interaction strength $\mu$, with $\tau_{\max} = 10^6$. The sharp drop
+    near $\mu \approx 0.57$ marks the empirical critical point, where $M(\tau)$
+    switches from a finite plateau to exponential divergence. Points are means
+    over successful runs ($\pm$ SEM); parameters $N = 1000$, $C = 50$,
+    $\sigma = 0.2$, exponential degree distribution. The dashed line marks the
+    mean-field prediction $\mu_c = 0.499$.}
+    \label{fig:empirical-muc}
+\end{figure}
+
+The estimator is robust by construction. Because $t_{\mathrm{final}}$ is the
+\emph{integral} of $1/M(\tau)$, it accumulates the entire history of the
+trajectory rather than relying on a single late-time value, so even a slowly
+diverging $M(\tau)$---the hardest case to detect, and precisely the regime of
+interest---is registered cleanly. The observable also comes for free: it is a
+byproduct of the same integration that produces $y(\tau)$, requiring no
+additional computation.
+
+\section{Comparison with the theoretical prediction}
+\label{sec:muc-statistics}
+
+We now confront the empirical estimators with the mean-field prediction of
+Section~\ref{sec:theoretical-muc}. We take the final-time drop as the reference
+estimator for this comparison; the shape scalar $c$ is treated alongside it in
+Section~\ref{sec:estimator-comparison}. The empirical threshold fluctuates from
+one graph realization to the next, and it is biased relative to the mean-field
+value. Figure~\ref{fig:distribution_muc}
+shows the distribution of the gap $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$
+over $100$ independent realizations: the mass concentrates at positive values,
+with a mean of $0.0974$, so on a finite graph the empirical estimator
+\emph{overestimates} $\mu_c$ on average. This is the expected direction of the
+finite-size correction---a finite graph requires a stronger interaction to push
+the macroscopic abundance into genuine divergence.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{theoretical-vs-actual.png}
+    \caption{Distribution of the distance between the measured and predicted
+    critical points, $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$, over $100$
+    realizations with $N = 1000$, $C = 50$, $\sigma = 0.2$ on an exponential
+    graph. The positive mean ($0.0974$) shows a systematic overestimation of
+    $\mu_c$ on finite graphs.}
+    \label{fig:distribution_muc}
+\end{figure}
+
+The size of this bias is controlled by how closely the finite graph approximates
+the mean-field assumptions, which is governed primarily by the connectivity $C$.
+Sweeping $C$ with all other parameters fixed (Fig.~\ref{fig:c_sweep}) isolates
+this structural effect: as $C$ increases the graph approaches the dense
+mean-field regime in which \eqref{eq:muc-selfconsistency} is derived, and the
+gap between the empirical and theoretical thresholds correspondingly shrinks.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{c_sweep.png}
+    \caption{Gap between the empirical and theoretical critical points as a
+    function of the mean connectivity $C$, all other parameters held fixed. The
+    discrepancy decreases as $C$ grows and the finite graph approaches the dense
+    mean-field limit.}
+    \label{fig:c_sweep}
+\end{figure}
+
+\subsection{The two estimators head to head}
+\label{sec:estimator-comparison}
+
+The two estimators trade cost against robustness. The shape scalar $c$ converges
+as soon as the shape relaxes and needs only a modest $\tau_{\max}$, which makes it
+the natural choice for a fast, stable scan of $\mu_c$. The final-time drop is more
+expensive---$t_{\mathrm{final}}$ keeps accumulating until $M$ has genuinely
+diverged, so it demands a larger $\tau_{\max}$---but because it integrates the
+whole history of $1/M(\tau)$ it registers even a very slowly diverging $M$, the
+hardest and most interesting case, without ambiguity. To decide whether the two
+agree we locate $\mu_c$ with both estimators across many realizations and a range
+of horizons $\tau_{\max}$, asking of each the same three questions: is it flat in
+$\tau_{\max}$ (insensitive to the cutoff), is its realization-to-realization
+spread small, and does it sit on the mean-field reference? The capped integration
+of Section~\ref{sec:estimator-c} is what makes this sweep possible at all: by
+keeping the supercritical runs finite it fills in the part of the $\mu$-range
+where a naive solver would return only \texttt{NaN}s.
+
+Figure~\ref{fig:estimator-comparison} and Table~\ref{tab:estimator-comparison}
+report this sweep. The shape scalar $c$ converges almost immediately: it has
+settled by $\tau_{\max} \approx 10^4$ to $\mu_c \approx 0.617$ and is flat for
+every larger horizon, with a stable spread of about $0.023$ and at a cost of only
+a few hundred solver steps. The final-time drop is slower and more erratic. It
+overshoots badly at the shortest horizon ($0.85$ at $\tau_{\max} = 10^3$), then
+settles only around $\tau_{\max} \approx 5\times10^5$ onto its own plateau at
+$\mu_c \approx 0.585$, an order of magnitude more steps later. The two estimators
+therefore converge to close but not identical values---$0.617$ for $c$ against
+$0.585$ for the drop, a residual gap of about $0.03$---reflecting the different
+nature of the two observables: $c$ is the exact sign-change condition for the
+divergence, read straight off the relaxed shape, whereas the drop is the
+steepest-descent point of $t_{\mathrm{final}}(\mu)$ on a finite $\mu$-grid. Both
+lie above the mean-field value $\mu_c = 0.5$, consistent with the positive
+finite-size bias of Fig.~\ref{fig:distribution_muc}. Because the $c$ zero-crossing
+is both the more principled estimator and by far the cheaper and more stable one,
+we adopt it as our working estimator in what follows.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\linewidth]{estimator-convergence-comparison.png}
+    \caption{Located critical point $\mu_c$ from the two estimators---the shape
+    scalar $c$ zero-crossing and the $t_{\mathrm{final}}$ drop---as a function of
+    the rescaled horizon $\tau_{\max}$, averaged over realizations ($\pm$ spread).
+    The $c$ estimator converges by $\tau_{\max} \approx 10^4$ and is flat
+    thereafter; the $t_{\mathrm{final}}$ drop is still drifting upward toward the
+    same value at $\tau_{\max} \approx 10^6$. Both lie above the mean-field
+    reference $\mu_c = 0.5$ (dashed) by the finite-size bias. Parameters
+    $N = 1000$, $C = 50$, $\sigma = 0.2$, exponential degree distribution.}
+    \label{fig:estimator-comparison}
+\end{figure}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{rccr}
+        \hline
+        $\tau_{\max}$ & $c$ zero-crossing & $t_{\mathrm{final}}$ drop & mean steps \\
+        \hline
+        $10^3$         & $0.659 \pm 0.025$ & $0.850 \pm 0.000$ &    384 \\
+        $10^4$         & $0.617 \pm 0.023$ & $0.510 \pm 0.012$ &    741 \\
+        $10^5$         & $0.618 \pm 0.023$ & $0.565 \pm 0.020$ &   7589 \\
+        $5\times10^5$  & $0.618 \pm 0.023$ & $0.585 \pm 0.026$ &  31357 \\
+        $10^6$         & $0.618 \pm 0.023$ & $0.585 \pm 0.026$ &  64267 \\
+        $2\times10^6$  & $0.618 \pm 0.023$ & $0.585 \pm 0.026$ &  94316 \\
+        \hline
+    \end{tabular}
+    \caption{Located $\mu_c$ from the two estimators as a function of the rescaled
+    horizon $\tau_{\max}$ (mean $\pm$ standard deviation over realizations),
+    together with the mean number of solver steps per $\mu$-sweep. The $c$
+    zero-crossing is converged and stable from $\tau_{\max} = 10^4$ at a few
+    hundred steps, while the $t_{\mathrm{final}}$ drop settles only near
+    $\tau_{\max} = 5\times10^5$ and at roughly two orders of magnitude more steps.
+    Parameters as in Fig.~\ref{fig:estimator-comparison}.}
+    \label{tab:estimator-comparison}
+\end{table}

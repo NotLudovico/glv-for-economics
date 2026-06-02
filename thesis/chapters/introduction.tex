@@ -1,0 +1,100 @@
+\chapter{Introduction}
+
+A well-known stylized fact about firms is how the volatility of their growth rate
+depends on their size. If you measure the standard deviation of a firm's growth
+rate, it goes down with size as $\sigma(S) \propto S^{-\beta}$, and the exponent
+comes out around $\beta \approx 0.15$--$0.20$ in the data \citep{stanley1996,
+amaral1997}. The naive expectation is quite different. If a firm were just a bag of
+$N$ independent sub-units, each fluctuating on its own, the central limit theorem
+would give $\beta = 0.5$. The fact that the measured exponent is so much smaller
+tells us the sub-units are not independent: diversification inside a firm works far
+worse than simple averaging would suggest. Explaining this slow decay, and at the
+same time the fat-tailed, non-Gaussian shape of the growth-rate distribution, is the
+problem this thesis starts from.
+
+The idea that ties this together is \emph{granularity}. Normally we expect the
+idiosyncratic shocks hitting $N$ comparable units to average out as $1/\sqrt{N}$, so
+that anything left at the macroscopic scale has to come from genuinely aggregate
+shocks. \citet{gabaix2011} pointed out that this is no longer true when the units
+have a fat-tailed (Zipf-like) size distribution. In that case a few big units make
+up a finite fraction of the total, their own shocks do not get washed out by the
+others, and firm-level randomness shows up directly in the aggregate. He estimated
+that just the largest hundred US firms account for about a third of the variance of
+output growth. So what matters is the \emph{concentration} of the size distribution,
+not how many units there are. The same argument can be pushed down one level, to a
+single firm seen as the sum of its own parts.
+
+This is exactly what the ``sub-business'' models do. A firm is treated as a
+collection of internal units---divisions, products, plants---and its growth rate is
+the size-weighted sum of theirs. \citet{sutton2002} called the slow size--volatility
+decay a ``scaling puzzle'' and tried to explain it from the internal structure of the
+firm, and \citet{wyartbouchaud2003} showed that if you give the sub-units a
+heavy-tailed size distribution you get both anomalies at once: the variance of firm
+growth decays too slowly with size, and the growth-rate distribution stays
+non-Gaussian and fat-tailed instead of becoming Gaussian as the number of sub-units
+grows. The firm-level puzzle therefore has the same granular origin as the aggregate
+one---it is the spread in the sizes of the constituents, not their number, that
+decides how well diversification works.
+
+\citet{moran2024} recently put this picture together more carefully. They write the
+growth variance of a firm as $\sigma^2 = \sigma_0^2\, H$, where $H$ is the Herfindahl
+index measuring how concentrated the firm's sales are across its sub-units. When the
+sub-unit sizes have a heavy tail with exponent $1 < \mu < 2$, $H$ decays very slowly
+with the number of sub-units $K$---much slower than the $H \sim 1/K$ you would get
+with a thin tail---and this slow decay is what produces $\beta < 1/2$ and the
+L\'evy-stable shape of the growth-rate distribution. In other words the anomalous
+exponent comes from \emph{structural} heterogeneity: a few dominant sub-units carry
+the firm, so adding more of them does not really average out the risk. They also show
+that the link between concentration and volatility depends on the correlation between
+a sub-unit's size and its volatility---the anomalous scaling only shows up when this
+correlation is not perfect---and in French firm data, industries where size and
+volatility are more correlated have a steeper size--volatility decay. This framework
+reproduces both the scaling and the shape of the distribution, and it is the current
+reference explanation for these facts.
+
+All of this works, but it puts the source of the correlations \emph{inside} each
+firm, in a fixed, externally chosen list of sub-units. In this thesis we drop the
+sub-unit picture entirely. Instead of breaking a firm into internal pieces and
+blaming its volatility on how concentrated they are, we model the economy directly as
+a network of interacting \emph{firms}: every node of the graph is a company, and the
+edges are the competitive and cooperative couplings between them. The question we ask
+is whether the same empirical facts can come out of this inter-firm picture---which
+seems to us more economically natural---where the correlations are not put in by hand
+but are produced \emph{dynamically} by the interactions between companies. The
+standard model for this kind of interaction is the Generalized Lotka--Volterra (GLV)
+system, borrowed from theoretical ecology: each node grows logistically and is
+coupled to its neighbors through a signed interaction matrix encoding competition and
+cooperation. So instead of assuming a heavy-tailed firm composition, we let a network
+of inter-firm couplings generate the heterogeneity on its own. The catch is that a
+deterministic GLV system does not usually keep fluctuating---away from equilibrium its
+restoring forces just damp everything out. The interesting case is the critical point
+$\mu = \mu_c$, where the interior fixed point loses stability, the restoring forces
+go to zero, and you get long-lived, scale-spanning transient fluctuations. That is the
+regime we want to study: \emph{can a static GLV network tuned to its critical point
+produce the inter-firm correlations needed to recover the empirical scaling, as an
+endogenous alternative to the granular mechanism?}
+
+Sitting right at $\mu_c$ is also exactly where a naive simulation falls apart. As
+$\mu \to \mu_c$ the total abundance grows without bound, and for $\mu > \mu_c$ it
+actually diverges in finite time, which forces any explicit ODE solver into tiny step
+sizes or floating-point overflow. The first part of this thesis is a numerical method
+that gets around this instead of fighting it. We split the dynamics into a bounded
+``shape'' part living on the probability simplex and an unbounded ``scale'' part
+carrying the total abundance, and rescale time so that the finite-time blow-up in
+physical time becomes a smooth growth in a new time variable. The shape dynamics can
+then be integrated stably straight through the critical point, and the physical
+trajectories reconstructed for as long as the scale stays representable. With this
+tool in hand, the second part is a systematic check of whether critical GLV dynamics,
+on a few different network topologies, actually reproduce the empirical
+size--volatility scaling and the heavy tails of the growth-rate distribution. So the
+thesis gives both a numerical framework that makes the critical regime reachable in
+the first place and, using it, a clean answer to what static topological criticality
+can and cannot say about firm-growth fluctuations.
+
+The rest of the thesis is organized as follows. Chapter~\ref{chap:rescaling} works
+through the coordinate change in detail, mapping the diverging GLV equations onto the
+probability simplex, and discusses the limits of the mean-field approximations.
+Chapter~\ref{chap:results} presents the numerical method and the results, showing how
+the divergence is bypassed and analyzing the scaling behavior across topologies.
+Chapter~\ref{chap:conclusion} concludes and sketches the theoretical extensions that
+would be needed to get realistic macroeconomic dynamics.

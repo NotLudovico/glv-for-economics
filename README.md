@@ -146,6 +146,14 @@ Substituting these reduces each equation to a **single numerical integral** over
 
 For $\sigma = 0$ the inner integrals degenerate and the system reduces to the closed-form limit $\mu_c = 1/\langle g^2 \rangle$, which is computed directly.
 
+**`calculate_mu_c_regular(sigma)`**
+
+Computes $\mu_c$ for a **regular graph** (every node at the mean degree, so $g = k/C = 1$ and $\nu(g) = \delta(g-1)$), at $\gamma = 0$. The single degree collapses the outer integral of the HDMFT system to a one-dimensional root find. Shares the mean $\langle g \rangle = 1$ with the exponential ensemble but has zero degree variance, so it serves as the homogeneous reference for isolating the effect of degree heterogeneity. Returns $\mu_c = 1$ at $\sigma = 0$ and `nan` for $\sigma \geq \sqrt{2}$ (where the cooperative critical point ceases to exist).
+
+```python
+mu_c = glv.calculate_mu_c_regular(sigma=0.5)  # -> ~0.990
+```
+
 ---
 
 ### `glv.visualization`

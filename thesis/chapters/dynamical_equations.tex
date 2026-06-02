@@ -280,15 +280,38 @@ connectivity; and $\theta(\cdot)$ is the Heaviside step. In the
 noiseless limit these collapse to the familiar $\mu_c = 1/\langle g^2 \rangle$;
 for $\sigma > 0$ the disorder shifts the threshold, and solving
 \eqref{eq:muc-selfconsistency} numerically traces out $\mu_c(\sigma)$ for the
-exponential degree distribution, shown in Fig.~\ref{fig:mu_scaling_sigma}.
+exponential degree distribution.
+
+It is worth isolating the role of the degree distribution itself here. The
+threshold depends on $\nu(g)$ only through its moments---in the noiseless limit
+through $\langle g^2 \rangle$ alone---so the natural reference is a \emph{regular}
+graph, with every node at the mean degree, $\nu(g) = \delta(g - 1)$, carrying the
+same mean $\langle g \rangle = 1$ as the exponential ensemble but zero degree
+variance; contrasting the two isolates the effect of heterogeneity itself. For a
+single degree the outer integral in \eqref{eq:muc-selfconsistency} collapses to
+its integrand at $g = 1$, and the self-consistency system reduces to a
+one-dimensional root condition. Figure~\ref{fig:mu_comparison} traces
+$\mu_c(\sigma)$ for both. At $\sigma = 0$ the regular
+graph sits at $\mu_c = 1/\langle g^2 \rangle = 1$, exactly twice the exponential
+value of $1/2$, and it stays above the exponential curve at every $\sigma$, the
+gap widening as the disorder grows. The reading is that degree heterogeneity
+\emph{lowers} the cooperative threshold: a broad spread of connectivities lets
+the best-connected nodes drive the macroscopic abundance to divergence at a
+weaker mean interaction than a uniform network would require, making the
+heterogeneous system the more fragile of the two.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.75\linewidth]{mu_c_scaling_sigma.png}
+    \includegraphics[width=0.75\linewidth]{mu_c_scaling_comparison.png}
     \caption{Numerical solution of \eqref{eq:muc-selfconsistency} for the
     critical interaction strength $\mu_c$ as a function of the disorder strength
-    $\sigma$, for an exponential degree distribution.}
-    \label{fig:mu_scaling_sigma}
+    $\sigma$, for an exponential degree distribution $\nu(g) = e^{-g}$ (green
+    circles) and a regular graph $\nu(g) = \delta(g - 1)$ (orange squares), both
+    at $\gamma = 0$ and shared mean degree $\langle g \rangle = 1$. With no
+    degree variance the regular graph lies above the heterogeneous one
+    throughout, starting from the noiseless value $\mu_c = 1$; the separation
+    grows with $\sigma$.}
+    \label{fig:mu_comparison}
 \end{figure}
 
 \section{Empirical estimators of $\mu_c$ on finite graphs}
@@ -392,21 +415,66 @@ the macroscopic abundance into genuine divergence.
     \label{fig:distribution_muc}
 \end{figure}
 
-The size of this bias is controlled by how closely the finite graph approximates
-the mean-field assumptions, which is governed primarily by the connectivity $C$.
-Sweeping $C$ with all other parameters fixed (Fig.~\ref{fig:c_sweep}) isolates
-this structural effect: as $C$ increases the graph approaches the dense
-mean-field regime in which \eqref{eq:muc-selfconsistency} is derived, and the
-gap between the empirical and theoretical thresholds correspondingly shrinks.
+The size of this bias is controlled by how closely the finite graph satisfies
+the assumptions behind \eqref{eq:muc-selfconsistency}, which is derived in the
+double limit $1 \ll C \ll N$: each node must see enough neighbours for its local
+field to be Gaussian, while the graph stays sparse enough to remain locally
+tree-like. At fixed $N$ these two demands compete as $C$ grows. Sweeping $C$ with
+all other parameters fixed (Fig.~\ref{fig:c_sweep}) shows the gap \emph{growing}
+monotonically with $C$---from near zero at small $C$ to $\approx 0.27$ at
+$C = 150$. The reason is that at $N = 1000$ a connectivity of $C = 150$ is no
+longer small compared with the system: the ratio $C/N$ approaches unity, the
+sparse tree-like structure the theory assumes is lost, and the prediction
+degrades. Increasing $C$ at fixed $N$ therefore moves \emph{away} from the regime
+where the mean field is exact, not toward it; the genuine limit is approached by
+growing $N$, as we show next.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{c_sweep.png}
-    \caption{Gap between the empirical and theoretical critical points as a
-    function of the mean connectivity $C$, all other parameters held fixed. The
-    discrepancy decreases as $C$ grows and the finite graph approaches the dense
-    mean-field limit.}
+    \caption{Gap $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$ between the
+    empirical (final-time drop) and theoretical critical points versus mean
+    connectivity $C$, at $N = 1000$, $\sigma = 0.2$ on an exponential graph
+    (mean $\pm$ std over realizations). The gap \emph{grows} with $C$: at fixed
+    $N$, larger $C$ raises $C/N$ and erodes the sparse, locally tree-like
+    structure the mean-field theory assumes.}
     \label{fig:c_sweep}
+\end{figure}
+
+That the relevant limit is in $N$ rather than $C$ is confirmed by resolving the
+gap across system size. Figure~\ref{fig:finite_size} sweeps $C$ at three sizes
+$N \in \{1000, 2000, 5000\}$ and three disorder strengths, for both the
+exponential graph and a regular graph in which every node carries the mean
+degree. To make a sweep this broad affordable we use the shape-scalar estimator
+of Section~\ref{sec:estimator-c}, far cheaper than the drop; at $N = 1000$ it
+reproduces the $C$-dependence of Fig.~\ref{fig:c_sweep}, so the two estimators
+agree on the trend. For the exponential graph the gap grows with $C$ at every
+$N$, but at fixed $C$ it \emph{shrinks} with $N$---roughly halving with each
+doubling of $N$---so the curves march down toward zero: the mean-field value is
+recovered by enlarging the system at fixed connectivity, which restores
+$C \ll N$. The effect is essentially independent of $\sigma$, marking the
+correction as structural. The regular graph behaves oppositely: with no spread in
+degree it carries almost no finite-size bias---identically zero at $\sigma = 0$,
+where neither degree heterogeneity nor disorder is present, and only a small
+residual at $\sigma = 0.4$ confined to low $C$. The finite-size correction to
+$\mu_c$ is thus carried almost entirely by \emph{degree heterogeneity}: large and
+$N$-sensitive for the broad exponential distribution, nearly absent for the
+homogeneous one.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{mu_c_finite_size.png}
+    \caption{Relative gap
+    $(\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}})/\mu_c^{\mathrm{th}}$ versus mean
+    degree $C$ for the exponential (left) and regular (right) graphs, at disorder
+    strengths $\sigma = 0, 0.2, 0.4$ (rows) and sizes $N = 1000, 2000, 5000$
+    (colours); shape-scalar estimator, mean $\pm$ std over realizations. Note the
+    differing vertical scales between the two columns. The exponential gap grows
+    with $C$ and shrinks with $N$, converging to the mean field as $N \to
+    \infty$; the regular gap stays near zero throughout and vanishes identically
+    at $\sigma = 0$. Degree heterogeneity is the dominant source of the
+    finite-size correction.}
+    \label{fig:finite_size}
 \end{figure}
 
 \subsection{The two estimators head to head}

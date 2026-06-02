@@ -10,6 +10,18 @@ def rescaled_glv_sparse(tau, state, N, W_sparse):
     M = state[N]
     t = state[N+1]
 
+    # Re-project y onto the simplex sum(y)=1. Writing S=sum(y), the ODE gives
+    # dS/dtau = (phi-sq)(1-S), so near S=1 a perturbation grows like (sq-phi).
+    # In the subcritical regime sq>phi, hence S=1 is a LINEARLY UNSTABLE
+    # invariant: machine-epsilon roundoff departs exponentially, y overflows
+    # and M collapses (1/M stiffens, the solver fails / returns NaN). Pinning S
+    # to 1 each step removes that unstable mode; supercritical (sq<phi) is
+    # already stable so this is a no-op there.
+    y = np.clip(y, 0.0, None)
+    s = y.sum()
+    if s > 0:
+        y = y / s
+
     F = W_sparse @ y
     phi = np.dot(y, F)
     sq_sum = np.sum(y**2)

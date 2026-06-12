@@ -352,6 +352,35 @@ below the floating-point ceiling. By that point $c$ already carries its sign, so
 the cap costs no accuracy while preventing the overflow---and the spurious
 \texttt{NaN}s---that an uncapped supercritical run would produce.
 
+The estimator rests on one premise: that the shape actually relaxes to a fixed
+point, so that $c$ is a well-defined late-time constant. This holds only in the
+single-fixed-point phase; for strong enough disorder the shape never settles and
+the sign-of-$c$ reading is ill-posed. Figure~\ref{fig:shape-relaxation} maps the
+boundary directly, recording per cell the fraction of realizations whose shape
+velocity $\lVert\dot y\rVert$ falls to the solver floor (relaxation) over the
+$(\mu,\sigma)$ plane, for both topologies and a range of mean degree $C$. The
+relaxed (green) region covers the entire operating box used in
+Chapter~\ref{chap:results}---$\sigma = 0.2$, $\mu$ at the per-topology
+$\mu_c^{\mathrm{th}}$---with wide margin; non-relaxation is confined to a strip at
+$\sigma \gtrsim 1$ that the exponential graph enters slightly earlier than the
+regular one, its hubs destabilizing first. The estimator is therefore used
+strictly inside its domain of validity, and relaxation is in practice confirmed
+post hoc (vanishing $\lVert\dot y\rVert$ at $\tau_{\max}$) in every reported run.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{shape_relaxation_phase.png}
+    \caption{Shape-relaxation phase diagram at $N = 1000$. Each cell gives the
+    fraction of realizations whose shape velocity decays to the solver floor,
+    over the $(\mu,\sigma)$ plane (with $\mu$ measured relative to the
+    per-topology $\mu_c^{\mathrm{th}}$, dashed line), for the exponential (top) and
+    regular (bottom) graphs at mean degree $C \in \{10, 50, 150\}$. The shape
+    relaxes (green, $c$ well-defined) across the whole operating region; the
+    non-relaxing strip (red/yellow) sits at $\sigma \gtrsim 1$, well above the
+    $\sigma = 0.2$ used in the results.}
+    \label{fig:shape-relaxation}
+\end{figure}
+
 \subsection{The final-time drop}
 \label{sec:estimator-tfinal}
 

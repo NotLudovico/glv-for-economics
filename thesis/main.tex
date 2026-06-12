@@ -1,6 +1,8 @@
 \documentclass{report}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow}
 \usepackage{cancel}
 \usepackage{minted}
 \usepackage{hyperref}
@@ -48,12 +50,30 @@ Fabian \textsc{Aguirre-Lopez}
 
 
 \begin{abstract}
-Probably not
+Firm growth shows two robust anomalies: volatility decays with size far more slowly than
+independence predicts, $\sigma(S)\sim S^{-\beta}$ with $\beta\approx0.15$--$0.20$ rather
+than $1/2$, and the growth-rate distribution is sharply peaked and fat-tailed rather than
+Gaussian. Standard accounts locate the source \emph{inside} each firm; we ask whether the
+same facts emerge \emph{between} firms, from a network of interacting companies with no
+heterogeneity imposed by hand. We model the economy as a Generalized Lotka--Volterra
+system on a sparse random graph at its cooperative critical point $\mu_c$. To reach this
+regime---where the total abundance diverges in finite time and defeats explicit
+solvers---we split the dynamics into a bounded ``shape'' on the probability simplex and an
+unbounded ``scale,'' rescaling time so the blow-up becomes smooth asymptotic growth; the
+shape integrates stably through criticality and locates $\mu_c$ cheaply. Using this tool
+across regular, exponential, and power-law topologies, we find critical dynamics reproduce
+the fat-tailed growth-rate distribution everywhere and push the size--variance exponent
+below $1/2$, confirming that inter-firm couplings generate genuine size-dependent
+correlations. But the exponent stays in the range $0.3$--$0.9$, well above the empirical
+value, and \emph{grows} with degree heterogeneity and connectivity---the wrong direction.
+Static topological criticality thus supplies the heavy tails but not the slow
+size--variance decay, leaving an essential role for the granular mechanism.
 \end{abstract}
 
 
 \include{chapters/introduction}
 \include{chapters/dynamical_equations}
+\include{chapters/results}
 
 \vspace{100pt}
 

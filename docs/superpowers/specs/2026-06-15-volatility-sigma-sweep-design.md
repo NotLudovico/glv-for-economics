@@ -4,6 +4,31 @@
 **Status:** Approved (pending spec review)
 **Deliverable:** `notebooks/volatility_sigma_sweep.ipynb`
 
+## Update (2026-06-15, post smoke-test/probe)
+
+A cheap probe (Task 1 of the plan) revealed the key physics and refined the design:
+
+- **At μ=0.2 the supercritical onset is σ≈0.6.** σ∈{0.2, 0.5} stay subcritical (M finite,
+  solver reaches τ_max=1e6, physical time ~700 yr). σ≥0.8 are **supercritical**: the scale M
+  diverges (overflows ~1e308), the solver stops early, and physical time reaches only ~0.5–2 yr.
+- **Consequence:** the physical-time (MSB-faithful) yearly resampling has valid data only in the
+  subcritical band; above σ≈0.6 it degenerates. The **shape y stays valid** regardless (1000+ τ
+  points even at σ=2.0), but per the chosen direction we **keep physical time and show the
+  breakdown** rather than switch clocks.
+- **Design changes adopted:**
+  1. `run_one` builds the full rescaled state `[y, M, t]` internally
+     (`np.concatenate([x0/x0.sum(), [x0.sum()], [0.0]])`) — the original plan passed a length-N
+     vector, which is wrong (state must be length N+2).
+  2. `run_one` returns a `reached` flag (`sol.status == 0` ⇔ subcritical) and `t_final`.
+  3. The sweep classifies each run subcritical/supercritical and reports both counts plus median
+     physical-time-reached per σ.
+  4. Headline figure: **solid** V-curves for subcritical σ; **dashed/faded "invalid"** curves for
+     supercritical σ (shows the V degenerating on the MSB axes).
+  5. Summary figure gains a **breakdown** view: supercritical fraction and median physical-time
+     reached collapsing vs σ.
+
+The μ, σ grid, N, n_runs, n_years choices are unchanged.
+
 ## Goal
 
 Reproduce the Moran–Secchi–Bouchaud size–volatility relation in the rescaled-GLV model,

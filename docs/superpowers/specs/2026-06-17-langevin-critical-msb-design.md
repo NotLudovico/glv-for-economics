@@ -13,6 +13,18 @@ This replaces all prior Langevin GLV work (deleted), which sat deep in the compe
 (μ = −2, σ_mat = 1.0) and found the headline MSB signatures to be largely trivial. The new regime
 is the opposite corner: low disorder, sitting exactly on the divergence edge.
 
+## Graph and operating point (revised after first results)
+
+The critical point μ_c depends strongly on the graph. For a genuine heavy-tailed power-law degree law
+(no upper degree cap), the rescaled second moment ⟨g²⟩ = ⟨k²⟩/⟨k⟩² ≫ 1, so the theoretical
+μ_c = 1/⟨g²⟩ → 0 (confirmed both by HDMFT and by the existing `annealed_power_law_glv.ipynb`, which
+fixes μ = 0). The first build mistakenly reused the prior Langevin builder's capped configuration
+model (KMAX = 120), which tames the tail to ⟨g²⟩ ≈ 1.9 ⟹ μ_c ≈ 0.5 — the wrong regime.
+
+**Final operating point:** dense annealed (Chung–Lu) heavy-tailed power-law graph via
+`build_power_graph` (hidden degrees k = k_min·U^(−1/α), no cap), α = 1.5, k_min = 2; μ = μ_c = 0;
+σ_mat = 0.2. The μ_c locator drops out (μ_c = 0 exactly), so no per-realization location is needed.
+
 ## Key physics decision
 
 At μ = μ_c the total abundance M = Σx diverges by definition (cooperative-runaway onset). Absolute

@@ -138,9 +138,9 @@ if __name__ == "__main__":
         ax[1].set(xlabel="t", ylabel="log10 S_i  (S_i = N w_i)", title="Relative sizes (top 12)")
         lo = t.size // 2
         g = np.diff(np.log(np.maximum(W[:, lo:], 1e-12)), axis=1).ravel()
-        g = g[np.isfinite(g)]; g = (g - g.mean()) / (g.std() + 1e-12)
+        g = g[np.isfinite(g)]; g = (g - g.mean()) / (np.sqrt(np.pi / 2) * np.abs(g - g.mean()).mean() + 1e-12)
         ax[2].hist(g, bins=120, density=True); ax[2].set_yscale("log")
-        ax[2].set(xlabel="standardized Δln S", ylabel="PDF", title="Growth distribution (late window)")
+        ax[2].set(xlabel="rescaled Δln S (√(π/2)·MAD)", ylabel="PDF", title="Growth distribution (late window)")
         plt.tight_layout(); plt.savefig("/Users/ludovicofurlanetto/Code/glv/growing_glv/explore_best.png", dpi=110)
         print(f"\nbest: mu={mu}, sigma={sig}  -> growing_glv/explore_best.png")
     else:

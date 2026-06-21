@@ -85,12 +85,13 @@ if __name__ == "__main__":
     if bb is not None:
         ax[0].loglog(bb[0], bb[1], "o", ms=5, color="#2a9d8f")
     ax[0].set(xlabel=r"$\bar S_i$", ylabel=r"volatility", title=fr"Size-volatility ($\beta={beta:.3f}$)")
-    z = (gl - gl.mean()) / gl.std()
+    # MSB rescaling: subtract mean, divide by sqrt(pi/2)*MAD (NOT std; std is inflated by the fat tails)
+    z = (gl - gl.mean()) / (np.sqrt(np.pi / 2) * np.abs(gl - gl.mean()).mean())
     h_, e_ = np.histogram(z, bins=120, density=True); m_ = h_ > 0
     ax[1].semilogy(0.5 * (e_[:-1] + e_[1:])[m_], h_[m_], color="#457b9d", label="growth")
     zz = np.linspace(-9, 9, 200)
-    ax[1].semilogy(zz, np.exp(-np.abs(zz) * np.sqrt(2)) / np.sqrt(2), "k--", lw=1, label="Laplace")
-    ax[1].set(xlabel=r"standardized $\Delta\ln S$", ylabel="PDF",
+    ax[1].semilogy(zz, 0.5 * np.sqrt(np.pi / 2) * np.exp(-np.abs(zz) * np.sqrt(np.pi / 2)), "k--", lw=1, label="Laplace")
+    ax[1].set(xlabel=r"rescaled $\Delta\ln S$  $(\sqrt{\pi/2}\,\mathrm{MAD})$", ylabel="PDF",
               title=fr"Growth tent ($\Delta t=0.5$, skew={skew(gl):.2f}, exk={kurtosis(gl):.0f})")
     ax[1].legend()
     plt.tight_layout(); plt.savefig(os.path.join(os.path.dirname(__file__), "msb_best.png"), dpi=120)

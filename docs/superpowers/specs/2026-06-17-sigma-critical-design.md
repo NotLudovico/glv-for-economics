@@ -63,27 +63,28 @@ $y^*$ at $\tau_{\max}$ is not a true fixed point there and $c$ is noisy. The fir
 read from the subcritical side where $y^*$ genuinely relaxes, so $\sigma_c$ itself is well
 determined; values of $c$ deep in the supercritical band are indicative only.
 
-## Method — measuring at $\sigma_c$ (rescaled-$\tau$ shape clock)
+## Method — measuring at $\sigma_c$ (true-time MSB)
 
-At the critical point the physical-time MSB clock degenerates ($M$ diverges, the integrator
-reaches $\sim1$ yr), so per the sibling's deferred plan and the project memory we measure on the
-**rescaled-$\tau$ shape clock**. Inline `run_one(W, x0)` (overflow-safe, lifted from
-`volatility_sigma_sweep.ipynb`), one float64 integration to $\tau_{\max}=10^6$:
+Per the user's decision, the volatility is the genuine Moran--Secchi--Bouchaud observable on
+**physical time $t$** (not rescaled $\tau$). Inline `run_one(W, x0)`, one float64 integration to
+$\tau_{\max}=10^6$:
 
 1. Relative size from the **shape directly**: $S_i=N\,y_i/\sum_j y_j$ ($M$ cancels — never forms
-   $x=yM$, immune to overflow).
-2. Resample on a uniform grid in **rescaled time $\tau$** (not physical years) between the first
-   and last $\tau$ reached, $n_{\text{samples}}=100$.
-3. Growth $g_i=\Delta\ln S_i$; whole-window volatility
+   $x=yM$, immune to overflow). The clock choice is orthogonal to this overflow-safe size.
+2. Resample on a uniform **yearly physical-time grid** between $t_{\text{phys}}[0]$ and
+   $t_{\text{final}}$, $n_{\text{years}}=100$.
+3. Growth $g_i=\Delta\ln S_i$ per year; whole-window volatility
    $\sigma_i=\sqrt{\pi/2}\,\overline{|g_i-\bar g_i|}$ (adjusted MAD); time-average size $\bar S_i$.
-4. Return `(avg_size, volatility, g_flat)` — the third entry is the pooled growth array for the
-   distribution plot. Failed integrations (`sol.t.size<3`, non-finite/non-increasing $\tau$
-   window) return `None` and are dropped+counted.
+4. Return `(avg_size, volatility, g_flat, t_final)`. Failed integrations (`sol.t.size<3`,
+   non-finite/non-increasing $t$ window) return `None` and are dropped+counted.
 
-Pool over `n_runs` fresh graphs at $\mu=0.2$, $\sigma=\sigma_c$.
+Pool over `n_runs` fresh graphs at $\mu=0.2$, $\sigma=\sigma_c$. Report median and range of
+$t_{\text{final}}$ so the physical horizon each run reaches is visible.
 
-**Caveat (baked in):** volatility here is per unit rescaled time, not literal MSB calendar years;
-it is the well-defined critical-point analog of the physical-year measure, not identical to it.
+**Caveat (baked in):** $\sigma_c$ is the subcritical→supercritical boundary, so the pooled runs
+split — subcritical runs reach a long physical horizon (hundreds of years) while just-supercritical
+runs have $M$ diverge and reach only a few years. The short-horizon runs are the unreliable part of
+the pool; filtering on $t_{\text{final}}$ isolates the clean subcritical V.
 
 ## Notebook layout
 
@@ -93,7 +94,7 @@ it is the well-defined critical-point analog of the physical-year measure, not i
 | 1 | Setup | `mp.set_start_method("fork")`, imports, `glv.apply_style()`, parameter block |
 | 2 | Degree builder (inline) | `exponential_degrees`, `make_even`, config-model binary adjacency $A$ |
 | 3 | $\sigma_c$ locator + cache | inline `c_of_sigma`; $\sigma$-grid sweep over realizations; zero-crossing → $\sigma_c\pm$ spread; plot $c(\sigma)$ with crossing; cache `.npz` |
-| 4 | Simulate at $\sigma_c$ + cache | inline $\tau$-clock `run_one`; `n_runs` graphs at $\sigma_c$; pool firms; drop+count failures; cache `.npz` |
+| 4 | Simulate at $\sigma_c$ + cache | inline physical-time `run_one`; `n_runs` graphs at $\sigma_c$; pool firms; report $t_{\text{final}}$; drop+count failures; cache `.npz` |
 | 5 | Plot — volatility vs size | log–log $\bar S$ vs $\sigma_i$, binned-median V-curve at $\sigma_c$ (`vbin`, `two_slopes`); save `.png` |
 | 6 | Plot — growth distribution | pooled $g$ PDF on log-$y$, Gaussian + Laplace overlays, report tail shape; save `.png` |
 | 7 | Summary (md) | observations (filled after running) |
@@ -113,8 +114,8 @@ it is the well-defined critical-point analog of the physical-year measure, not i
 | $\tau_{\max}$ (locator) | $10^4$ | shape relaxes well before then |
 | `m_cap` | $10^{250}$ | halt M before overflow |
 | $\tau_{\max}$ (measurement) | $10^6$ | trajectory horizon at $\sigma_c$ |
-| `n_runs` | 10–20 | graphs pooled at $\sigma_c$ |
-| `n_samples` | 100 | $\tau$-grid resample points |
+| `n_runs` | 12 | graphs pooled at $\sigma_c$ |
+| `n_years` | 100 | physical-time yearly resample points |
 | `n_workers` | `min(8, cpu_count)` | parallel pool |
 
 ## Conventions
@@ -129,7 +130,6 @@ it is the well-defined critical-point analog of the physical-year measure, not i
 
 ## Out of scope
 
-- Forcing the physical-year clock at $\sigma_c$ (the sibling already showed it breaks down).
 - A precise $\sigma$-resolved order-parameter phase diagram beyond the single $\sigma_c$ estimate.
 - The transient-vs-steady-state intervention from `volatility_v_cause.ipynb`.
 - Varying $\mu$, or degree-resolved / final-size analyses (covered by sibling notebooks).

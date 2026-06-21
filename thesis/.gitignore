@@ -10,4 +10,5 @@
 *.run.xml
 *.synctex.gz
 *.toc
-main.pdf
+# generated PDFs (main + standalone builds); .tex sources stay tracked
+*.pdf

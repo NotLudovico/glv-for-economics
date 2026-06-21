@@ -110,7 +110,11 @@ def _integrate_trajectory(args):
     y_traj = sol.y[:N, :]
     M_traj = sol.y[N, :]
     t_phys = sol.y[N + 1, :]
-    x_traj = (y_traj * M_traj).astype(np.float32)
+    # Keep float64: super-critical runs (sq < phi) diverge in the scale M to
+    # ~1e100 and beyond, so y * M overflows float32 (max 3.4e38) to inf and the
+    # downstream cross-section S = N x / sum(x) fabricates spurious extinctions.
+    # y stays on the simplex, so x <= M <= float64 max and float64 never overflows.
+    x_traj = (y_traj * M_traj).astype(np.float64)
 
     return i, {
         "tau": sol.t.astype(np.float64),
@@ -157,7 +161,7 @@ def sweep_trajectories(
 
     Returns:
         List of length len(Ws). Each entry is either a dict with keys
-        ``tau`` (M,), ``t_phys`` (M,), ``x`` (N, M) float32 — or None if the
+        ``tau`` (M,), ``t_phys`` (M,), ``x`` (N, M) float64 — or None if the
         integration failed.
     """
     n = len(Ws)

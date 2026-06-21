@@ -1,0 +1,61 @@
+\chapter{Conclusion}
+\label{chap:conclusion}
+
+This thesis asked whether a dynamical model of interacting firms can generate the two
+firm-growth anomalies on its own, without the heavy-tailed internal composition that the
+granular models assume and that \citet{moran2024} show the data reject. The answer it
+reaches is that it can. Working with a Generalized Lotka--Volterra network and nothing
+else, no externally imposed heterogeneity, no injected noise, and no built-in
+correlations, we recover both the fat-tailed growth-rate distribution and a
+size--variance relation that falls with the empirical sign, as stationary properties of
+a persistently fluctuating economy that grows.
+
+The result came in two steps. A static network held at its cooperative critical point
+reproduces the heavy tails on heterogeneous graphs, but its size--variance relation is
+only a relaxation transient: once the shape settles onto the critical attractor the
+growth rates vanish, and the apparent scaling is the trace of an initial condition
+rather than a law. That failure identified what was missing, a state that keeps
+fluctuating instead of relaxing, and the relative model supplies it. Making the
+interactions act on the average firm rather than on absolute abundances renders the
+dynamics scale-invariant, so the total abundance grows exponentially without the
+finite-time blow-up of the standard model, while in the strongly disordered regime the
+composition never settles. In that chaotic state both facts hold together, and they are
+robust: they survive across graph realizations, system sizes, and the interval over
+which growth is measured, and the size--variance exponent $\beta$ shallows toward the
+empirical band as the system grows. Removing the disorder removes them entirely, which
+places their origin in the interactions themselves.
+
+What this contributes is a model, not a mechanism read off from the data. The granular
+and sub-unit pictures posit the source of the fluctuations, a fixed heavy-tailed
+composition of parts; the mean-field multiplicative models that also give a growing
+economy with heavy tails put the noise in by hand and carry no network. Here the same
+phenomenology, the heavy tails, the slow size--variance decay, the growing aggregate,
+and the persistent turnover of firms, follows from a single deterministic ingredient,
+the disordered couplings between companies. The size-dependent correlations that
+\citet{moran2024} call for are not assumed but produced, and the model makes them
+something one can measure rather than a hypothesis one must accept.
+
+Three qualifications bound the claim. The dynamics themselves are not new: the
+fluctuating regime is the chaotic phase of the disordered Lotka--Volterra model,
+equivalently the disordered replicator equation, whose finite-size and mean-field
+properties are already studied in the literature. What is specific here is the
+construction that turns it into a growing economy, the relative interactions, and the
+use of that state as a model of firm growth. The quantitative match is partial: the
+exponent $\beta$ comes out with the right sign and the right order and decreases toward
+the empirical band with system size, but its precise value is steeper than the data at
+the sizes we can reach and is not pinned by the extrapolation. And the growth is
+near-critical: the operating point that best reproduces the facts sits close to the
+boundary between a growing and a shrinking economy, so the economy grows in most
+realizations but not in all of them. None of these undoes the qualitative result, but
+each marks the distance between it and a quantitative theory.
+
+The natural next steps follow from these limits. Pinning the exponent $\beta$ would need
+many more realizations at the largest system sizes, where the present estimate is
+noisiest. More importantly, the match shown here is in the marginal facts, the shape of
+the growth distribution and the size--variance law; showing that the model produces the
+specific size-dependent correlation structure that \citet{moran2024} identify, and not
+merely its consequences, is the test that would tie it directly to their data, and it is
+one this model is built to allow. Beyond that, replacing the schematic disordered graph
+with interactions closer to the real economy, such as input--output linkages, supply
+networks, and shared markets, would be the step from a model that reproduces the
+stylized facts to one that speaks to the macroeconomic dynamics behind them.

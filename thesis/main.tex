@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{multirow}
+\usepackage{placeins}
 \usepackage{cancel}
 \usepackage{minted}
 \usepackage{hyperref}
@@ -50,30 +51,54 @@ Fabian \textsc{Aguirre-Lopez}
 
 
 \begin{abstract}
-Firm growth shows two robust anomalies: volatility decays with size far more slowly than
-independence predicts, $\sigma(S)\sim S^{-\beta}$ with $\beta\approx0.15$--$0.20$ rather
-than $1/2$, and the growth-rate distribution is sharply peaked and fat-tailed rather than
-Gaussian. Standard accounts locate the source \emph{inside} each firm; we ask whether the
-same facts emerge \emph{between} firms, from a network of interacting companies with no
-heterogeneity imposed by hand. We model the economy as a Generalized Lotka--Volterra
-system on a sparse random graph at its cooperative critical point $\mu_c$. To reach this
-regime---where the total abundance diverges in finite time and defeats explicit
-solvers---we split the dynamics into a bounded ``shape'' on the probability simplex and an
-unbounded ``scale,'' rescaling time so the blow-up becomes smooth asymptotic growth; the
-shape integrates stably through criticality and locates $\mu_c$ cheaply. Using this tool
-across regular, exponential, and power-law topologies, we find critical dynamics reproduce
-the fat-tailed growth-rate distribution everywhere and push the size--variance exponent
-below $1/2$, confirming that inter-firm couplings generate genuine size-dependent
-correlations. But the exponent stays in the range $0.3$--$0.9$, well above the empirical
-value, and \emph{grows} with degree heterogeneity and connectivity---the wrong direction.
-Static topological criticality thus supplies the heavy tails but not the slow
-size--variance decay, leaving an essential role for the granular mechanism.
+Firm growth shows two robust anomalies. First, the volatility of a firm's growth rate
+falls with size much more slowly than independence would predict: $\sigma(S)\sim
+S^{-\beta}$ with $\beta\approx0.15$--$0.20$ rather than $1/2$. Second, the growth-rate
+distribution is sharply peaked and fat-tailed rather than Gaussian. The standard
+explanations place the source of these effects inside each firm, in a heavy-tailed
+composition of internal sub-units. \citet{moran2024} test this granular picture against
+firm data and find that it fails, and argue that the missing ingredient is correlations
+that grow with a firm's size. We ask instead whether a dynamical model of interacting
+firms can generate the same facts on its own, with no heterogeneity, noise, or
+correlations imposed from outside, so that any size-dependent structure is produced by
+the dynamics rather than assumed.
+
+We model the economy as a Generalized Lotka--Volterra system on a sparse random graph
+and study it in two stages. In the first the network is held at its cooperative critical
+point $\mu_c$, where the restoring forces vanish and long-lived fluctuations survive.
+This regime is hard to reach numerically, since the total abundance diverges in finite
+time, so we split the dynamics into a bounded shape on the probability simplex and an
+unbounded scale, and rescale time so the blow-up becomes smooth asymptotic growth; the
+same construction locates $\mu_c$ cheaply. The critical dynamics reproduce the
+fat-tailed growth-rate distribution on heterogeneous graphs, but the size--variance
+relation is not a stationary law: it is a relaxation transient whose minimum is set by
+the firms' initial sizes, so the static critical model offers no size--variance exponent
+to compare with the data. Recovering that law calls for a genuinely nonstationary state,
+one that keeps fluctuating rather than relaxing.
+
+In the second stage we propose such a model. Letting the interactions act on the average
+firm rather than on absolute abundances makes the dynamics scale-invariant: the economy
+grows exponentially without ever blowing up, while in the disordered regime its
+composition never settles but keeps churning. In this persistently fluctuating state the
+two facts appear together as stationary properties, a symmetric fat-tailed growth
+distribution and a size--variance relation that now falls with the empirical sign, and
+they are robust across graph realizations, system size, and the sampling interval.
+Switching off the disorder removes both, which locates their origin in the interactions
+themselves rather than in any single-firm mechanism. Deterministic couplings between
+firms can therefore generate the firm-growth anomalies endogenously, together with a
+steadily growing economy; the size--variance exponent comes out with the right sign and
+decreases toward the empirical band as the system grows, though its precise value and
+the near-critical character of the growth remain to be pinned down.
 \end{abstract}
 
+\clearpage
+\tableofcontents
 
 \include{chapters/introduction}
 \include{chapters/dynamical_equations}
 \include{chapters/results}
+\include{chapters/growing_economy}
+\include{chapters/conclusion}
 
 \vspace{100pt}
 

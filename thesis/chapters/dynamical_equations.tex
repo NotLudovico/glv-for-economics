@@ -7,27 +7,40 @@ interacting nodes of our network reads
     \dot{x}_i = x_i \left( 1 - x_i + \sum_j W_{ij} x_j \right),
     \label{eq:glv}
 \end{equation}
-where $W$ encodes the (signed, weighted) interactions and the diagonal $-x_i$
-term provides logistic self-limitation. Our goal is to probe the system
-precisely at and beyond the cooperative critical point $\mu_c$, where the
-macroscopic abundance ceases to equilibrate. This is exactly the regime in
-which a direct numerical integration of \eqref{eq:glv} fails: as $\mu \to
-\mu_c^{-}$ the total abundance grows without bound, and for $\mu > \mu_c$ it
-diverges in finite time, so any explicit solver is driven either to vanishing
-step sizes or to floating-point overflow.
+Here $x_i \ge 0$ is the abundance of node $i$. The term $1 - x_i$ is its own logistic
+growth, an intrinsic rate of one with a self-limitation $-x_i$ that would cap an
+isolated node at $x_i = 1$, and $\sum_j W_{ij} x_j$ is its coupling to the rest of the
+network, cooperative where $W_{ij} > 0$ and competitive where $W_{ij} < 0$. The
+interaction matrix is built as a product of two pieces, $W_{ij} = A_{ij}\,\alpha_{ij}$.
+The adjacency matrix $A$ fixes the topology: $A_{ij} = 1$ when nodes $i$ and $j$ are
+connected and $0$ otherwise, drawn from a configuration model with a prescribed degree
+distribution and mean degree $C$. The weight on each existing edge is
+$\alpha_{ij} = \mu/C + (\sigma/\sqrt{C})\,z_{ij}$, with $z_{ij}$ independent standard
+Gaussians, so $\mu$ sets the mean (cooperative) strength of an interaction and $\sigma$
+its disorder, while the diagonal $W_{ii}$ is zero. The factors $1/C$ and $1/\sqrt{C}$
+keep the interaction field $\sum_j W_{ij} x_j$ of order one as the mean degree $C$
+grows: a node has about $C$ neighbours, so the $C$ contributions of mean $\mu/C$ sum to
+a mean of order $\mu$, and their variances $\sigma^2/C$ to order $\sigma^2$. The two
+directions of an edge are drawn independently, so the couplings have zero reciprocity,
+$\gamma = 0$. Our goal is to probe the system at and
+beyond the cooperative critical point $\mu_c$, where the macroscopic abundance
+stops equilibrating. This is the regime in which a direct numerical integration
+of \eqref{eq:glv} fails: as $\mu \to \mu_c^{-}$ the total abundance grows without
+bound, and for $\mu > \mu_c$ it diverges in finite time, so any explicit solver
+is driven either to vanishing step sizes or to floating-point overflow.
 
 The strategy of this chapter is to reorganize the dynamics so that the
-divergence no longer obstructs the integration, rather than to fight it head-on.
+divergence no longer obstructs the integration, rather than to attack it directly.
 We split the system into a bounded ``shape'' degree of freedom living on the
 probability simplex and an unbounded ``scale'' degree of freedom carrying the
 total abundance, and we then stretch time so that the shape is governed by a
-closed, bounded set of equations. This does not make the scale finite---the
-total abundance still diverges for $\mu > \mu_c$---but it changes the
-\emph{character} of the divergence: the finite-time singularity that cripples
-explicit solvers in physical time becomes a smooth, asymptotic growth in the new
-time variable. The bounded shape can then be integrated stably through $\mu_c$,
-and the physical trajectories $x(t)$ reconstructed from it wherever the scale
-remains numerically representable.
+closed, bounded set of equations. This does not make the scale finite: the
+total abundance still diverges for $\mu > \mu_c$. But it changes the character
+of the divergence. The finite-time singularity that breaks explicit solvers in
+physical time becomes a smooth, asymptotic growth in the new time variable. The
+bounded shape can then be integrated stably through $\mu_c$, and the physical
+trajectories $x(t)$ reconstructed from it wherever the scale remains numerically
+representable.
 
 \section{Mapping to the probability simplex and time rescaling}
 \label{sec:simplex-mapping}
@@ -45,31 +58,30 @@ By construction the fractions are confined to the probability simplex,
 \end{equation}
 so they remain bounded for all $\mu$, including the divergent regime. The
 projection of a GLV flow onto the simplex is, up to the choice of time
-parametrization, a replicator equation in the sense of Hofbauer's classical
+parametrization, a replicator equation, in the sense of Hofbauer's classical
 correspondence between Lotka--Volterra and replicator dynamics
-\cite{hofbauer81}; what is unusual here is that we retain the equation for the
-total abundance, which is ordinarily discarded because it is finite (and hence
-irrelevant) away from criticality.
+\cite{hofbauer81}. What is unusual here is that we keep the equation for the
+total abundance, which is normally discarded because away from criticality it is
+finite, and so irrelevant.
 
 Carrying \eqref{eq:rescaling-def} through \eqref{eq:glv} (the step-by-step
 algebra is given in Appendix~\ref{app:derivation}) leaves the shape dynamics
 still coupled to the macroscopic envelope $M(t)$ through a multiplicative
-factor. Since $M(t)$ is precisely the quantity that diverges, this is not yet
-enough. We therefore additionally stretch time by defining a new variable
+factor. Since $M(t)$ is the quantity that diverges, this is not yet
+enough. We therefore stretch time as well, by defining a new variable
 $\tau$ through
 \begin{equation}
     \frac{d\tau}{dt} = M(t).
     \label{eq:time-rescaling}
 \end{equation}
-Because $M$ grows without bound, $\tau$ accelerates relative to $t$, so the map
-runs the opposite way to what one might first guess: the \emph{finite} physical
-horizon up to the blow-up time $t^\ast$ is stretched onto the \emph{infinite}
-rescaled axis $\tau \in [0,\infty)$. Integrating $dt/d\tau = 1/M$ confirms this,
-since $t(\tau) \to t^\ast$ from below as $\tau \to \infty$. The singularity that
-sat at finite $t^\ast$ is thereby pushed out to $\tau = \infty$, where it is
-approached smoothly rather than hit abruptly---precisely the property that lets
-an adaptive solver march through the critical regime without its step size
-collapsing. With this change of variables the system \eqref{eq:glv} becomes
+Because $M$ grows without bound, a bounded range of physical time corresponds to an
+unbounded range of $\tau$: the finite interval up to the blow-up time $t^\ast$ maps
+onto the whole rescaled axis $\tau \in [0,\infty)$. Integrating $dt/d\tau = 1/M$
+confirms this, since $t(\tau) \to t^\ast$ from below as $\tau \to \infty$. The
+singularity at $t^\ast$ is therefore moved to $\tau = \infty$ and approached
+smoothly, which lets an adaptive solver pass through the critical regime without its
+step size collapsing. With this change of variables the system
+\eqref{eq:glv} becomes
 \begin{align}
     \frac{dy_i}{d\tau} &= y_i \left[ \sum_{j=1}^N W_{ij} y_j - y^{\!\top} W y - y_i + y^{\!\top} y \right],
     \label{eq:dydtau} \\[4pt]
@@ -86,14 +98,18 @@ element-wise multiplication ($\odot$) and the all-ones vector $\mathbf{1}$,
 \end{equation}
 
 The crucial structural feature is that \eqref{eq:dydtau}--\eqref{eq:dydtau-vec}
-are \emph{closed} in $y$: the evolution of the relative fractions no longer
-references the envelope $M$. The shape can therefore be integrated to arbitrary
-$\tau$ with no risk of overflow, whatever the scale does. The scale and
-physical-time equations \eqref{eq:dMdtau}--\eqref{eq:dtdtau} are then slaved to
-$y(\tau)$ and integrated alongside it for reconstruction, through
-$x(t) = M(t)\,y(t)$.
+are closed in $y$: the evolution of the relative fractions no longer references the
+envelope $M$. The coupling runs one way only, from the shape to the scale and the
+physical time but not back, and this is the main practical advantage of the
+rescaling. The shape can be solved first, on its own, integrated to whatever $\tau$
+we need with no risk of overflow and whatever the scale does. The scale and
+physical-time equations \eqref{eq:dMdtau}--\eqref{eq:dtdtau} then follow from the
+known $y(\tau)$, and recombine into the physical trajectory through
+$x(t) = M(t)\,y(t)$. The divergence of $M$ is confined to this second part: it never
+affects the shape, and we stop the reconstruction wherever $M$ is still
+representable.
 
-It must be stressed that this last step does \emph{not} tame $M$ itself. Once
+Note that this last step does not tame $M$ itself. Once
 $y$ has relaxed to its fixed point $y^\ast$, the scalar
 $c \equiv (y^\ast)^{\!\top} W y^\ast - (y^\ast)^{\!\top} y^\ast$ is constant and
 \eqref{eq:dMdtau} reduces to the linear equation $dM/d\tau = 1 + c\,M$, with
@@ -109,15 +125,15 @@ solution
 Below the threshold $(I-W)$ is positive definite, $c<0$, and $M$ approaches a
 finite plateau $M^\ast = -1/c$; above it $M$ grows exponentially in $\tau$ and
 will eventually exhaust floating-point range. The gain over the original
-formulation is not that $M$ stays finite---in the supercritical regime it cannot
----but that this growth is a tame exponential in $\tau$ rather than a finite-time
-blow-up in $t$. The shape $y(\tau)$ is always computed correctly; the
+formulation is not that $M$ stays finite, since in the supercritical regime it
+cannot, but that this growth is a tame exponential in $\tau$ rather than a
+finite-time blow-up in $t$. The shape $y(\tau)$ is always computed correctly; the
 reconstruction $x = My$ is then available for as long as $M$ remains
 representable, which in practice means integrating to a large but finite $\tau$.
-Integrating \eqref{eq:dtdtau} also yields, for free, the physical time
+Integrating \eqref{eq:dtdtau} also yields, at no extra cost, the physical time
 $t(\tau) = \int_0^\tau d\tau'/M(\tau')$. By \eqref{eq:M-asymptotics} this grows
 without bound when $M$ plateaus ($\mu<\mu_c$) but converges to a finite limit
-$t^\ast$ when $M$ diverges ($\mu>\mu_c$); the appearance of a finite $t^\ast$ is
+$t^\ast$ when $M$ diverges ($\mu>\mu_c$). The appearance of a finite $t^\ast$ is
 therefore a clean numerical signature of the critical crossing, which we exploit
 in Section~\ref{sec:locating-muc} to locate $\mu_c$ on finite graphs.
 
@@ -150,38 +166,35 @@ def rescaled_glv_sparse(tau, state, N, W_sparse):
     return np.concatenate((dydtau, [dMdtau], [dtdtau]))
 \end{verbatim}
 
-One numerical subtlety deserves emphasis. The shape variables $y(\tau)$ reach a
+One numerical subtlety affects the reconstruction. The shape variables $y(\tau)$ reach a
 plateau in rescaled time, after which the right-hand side of \eqref{eq:dydtau}
-is essentially zero; an adaptive solver left unconstrained will then take very
+is essentially zero, and an adaptive solver left unconstrained will then take very
 large steps across this flat region. That is harmless for $y$ itself, but it is
-fatal for the \emph{reconstruction} of $x(t)$: a coarse step in $\tau$ where $M$
+fatal for the reconstruction of $x(t)$: a coarse step in $\tau$ where $M$
 is large translates, through $dt/d\tau = 1/M$, into a poorly resolved stretch of
-physical time, and the resulting $x(t) = M(t)\,y(t)$ trajectory acquires
+physical time, and the resulting $x(t) = M(t)\,y(t)$ trajectory picks up
 spurious noise. We therefore cap the maximum step at $\sim 10^3$ in $\tau$:
 small enough to keep the reconstructed $x(t)$ smooth, but large enough that the
-integration of the (already bounded) simplex dynamics remains cheap.
+integration of the (already bounded) simplex dynamics stays cheap.
 
-\section{Results}
-\label{sec:rescaling-plots}
-
-Figures~\ref{fig:stable-unscaled} and~\ref{fig:diverging-unscaled} compare the
-rescaled and unscaled trajectories for a sample of $100$ nodes drawn from a
-network with an exponential degree distribution. The left panels show the
-relative fractions $y(\tau)$, which in both cases settle onto a well-defined
-fixed point on the simplex; the right panels show the corresponding physical
-abundances $x(t)$ reconstructed via $x = My$.
+Figures~\ref{fig:stable-unscaled} and~\ref{fig:diverging-unscaled} show how this
+decoupling works, for a sample of $100$ nodes drawn from a network with an
+exponential degree distribution. The left panels show the relative fractions
+$y(\tau)$, which in both cases settle onto a well-defined fixed point on the
+simplex; the right panels show the corresponding physical abundances $x(t)$
+reconstructed via $x = My$.
 
 Below the critical point (Fig.~\ref{fig:stable-unscaled}, $\mu = -2 \ll \mu_c$)
 the reconstructed abundances relax to a finite stationary state, as expected in
-the regime where $(I - W)$ remains positive definite and an interior
-equilibrium exists. At criticality (Fig.~\ref{fig:diverging-unscaled},
-$\mu = 0.5 \approx \mu_c$) the shape still converges cleanly in $\tau$, but the
-reconstructed $x(t)$ now grows over a sharply truncated physical horizon
-($t^\ast \approx 3$ versus $t^\ast \approx 18$ in the stable case): the same
-amount of rescaled time maps to a much shorter physical time, which is the
-fingerprint of the impending finite-time divergence of $M$. The decoupled
-simplex integration is, by design, blind to this crossing, which is precisely
-what makes it a usable probe of the critical regime.
+the regime where $(I - W)$ remains positive definite and an interior equilibrium
+exists. At criticality (Fig.~\ref{fig:diverging-unscaled},
+$\mu = 0.5 \approx \mu_c$) the shape still converges cleanly in $\tau$, while the
+reconstructed $x(t)$ grows over a sharply truncated physical horizon
+($t^\ast \approx 3$ versus $t^\ast \approx 18$ in the stable case): the same amount
+of rescaled time maps to a much shorter physical time, which signals the coming
+finite-time divergence of $M$. In both cases the shape is integrated by the same
+bounded, well-behaved computation, and the divergence enters only through the
+reconstruction $x = My$, not through the shape integration itself.
 
 \begin{figure}[htbp]
     \centering
@@ -206,22 +219,24 @@ what makes it a usable probe of the critical regime.
 \section{Locating the critical point}
 \label{sec:locating-muc}
 
-The empirical regularities we ultimately wish to reproduce---persistent,
-non-decaying macroscopic fluctuations---require the system to sit in the
-cooperative diverging regime, $\mu > \mu_c$, where the total abundance grows
-without bound. We do not, however, want to sit deep inside it: the further past
-$\mu_c$ we go, the faster $M$ diverges and the shorter-lived the transient
-fluctuations become. The interesting dynamics live at the \emph{slowest possible}
-divergence, i.e.\ as close to the threshold as the system allows. Pinning down
-$\mu_c$ accurately is therefore a prerequisite. We approach it from two sides:
-first the mean-field prediction inherited from the literature, and then a pair of
-empirical estimators read directly off the rescaled dynamics, which we finally
+We want the model to behave like an economy: its total size should grow without
+bound over time, but it should not explode. This requirement fixes where we operate.
+For $\mu < \mu_c$ the total abundance $M$ settles to a finite plateau, so the economy
+saturates at a fixed size and stops growing. For $\mu > \mu_c$ the opposite happens:
+$M$ diverges in finite physical time, reaching arbitrarily large values at a finite
+$t^\ast$, a catastrophic blow-up. The two regimes meet at the critical point $\mu_c$,
+where $M$ still grows without bound but its blow-up time is pushed to infinity, so the
+growth is unbounded yet as slow as the model allows. We therefore operate at $\mu_c$:
+the smallest $\mu$ that gives unbounded growth, and hence the slowest unbounded growth
+available. This makes locating $\mu_c$ accurately a prerequisite. We approach it from
+two sides: first the mean-field prediction inherited from the literature, and then a
+pair of empirical estimators read directly off the rescaled dynamics, which we finally
 compare against that prediction.
 
 \section{The theoretical critical point}
 \label{sec:theoretical-muc}
 
-The heterogeneous dynamical mean-field theory of Aguirre-L\'opez \emph{et al.}
+The heterogeneous dynamical mean-field theory of Aguirre-L\'opez et al.
 \cite{aguirrelopez} yields a closed set of self-consistency equations for the
 fixed-point statistics, in which the critical degree $g_c$ controls the
 fraction of surviving nodes.
@@ -239,9 +254,9 @@ where $M(t)$ is the mean abundance, $\eta(t)$ is a Gaussian noise with zero mean
 and self-consistent autocorrelation $\langle \eta(t)\eta(s)\rangle =
 \langle x(t)x(s)\rangle$, and the retarded friction term encodes the feedback of a
 node on itself through the reciprocity $\gamma$ of the couplings. The disorder in
-the interactions, averaged over, thus resurfaces as a coloured noise whose
-statistics must be determined self-consistently from the very trajectories it
-generates. The kernel of the friction term is the \emph{response function}
+the interactions, once averaged over, thus shows up as a coloured noise whose
+statistics must be determined self-consistently from the trajectories it
+generates. The kernel of the friction term is the response function
 \begin{equation}
     G(t,s) = \left\langle \frac{1}{\sqrt{g}\,\sigma}
              \frac{\delta x(t)}{\delta \eta(s)} \right\rangle,
@@ -282,20 +297,20 @@ for $\sigma > 0$ the disorder shifts the threshold, and solving
 \eqref{eq:muc-selfconsistency} numerically traces out $\mu_c(\sigma)$ for the
 exponential degree distribution.
 
-It is worth isolating the role of the degree distribution itself here. The
-threshold depends on $\nu(g)$ only through its moments---in the noiseless limit
-through $\langle g^2 \rangle$ alone---so the natural reference is a \emph{regular}
+The role of the degree distribution itself can be isolated here. The
+threshold depends on $\nu(g)$ only through its moments, in the noiseless limit
+through $\langle g^2 \rangle$ alone, so the natural reference is a regular
 graph, with every node at the mean degree, $\nu(g) = \delta(g - 1)$, carrying the
 same mean $\langle g \rangle = 1$ as the exponential ensemble but zero degree
-variance; contrasting the two isolates the effect of heterogeneity itself. For a
+variance. Contrasting the two isolates the effect of heterogeneity itself. For a
 single degree the outer integral in \eqref{eq:muc-selfconsistency} collapses to
 its integrand at $g = 1$, and the self-consistency system reduces to a
 one-dimensional root condition. Figure~\ref{fig:mu_comparison} traces
 $\mu_c(\sigma)$ for both. At $\sigma = 0$ the regular
 graph sits at $\mu_c = 1/\langle g^2 \rangle = 1$, exactly twice the exponential
-value of $1/2$, and it stays above the exponential curve at every $\sigma$, the
-gap widening as the disorder grows. The reading is that degree heterogeneity
-\emph{lowers} the cooperative threshold: a broad spread of connectivities lets
+value of $1/2$, and it stays above the exponential curve at every $\sigma$, with
+the gap widening as the disorder grows. The reading is that degree heterogeneity
+lowers the cooperative threshold: a broad spread of connectivities lets
 the best-connected nodes drive the macroscopic abundance to divergence at a
 weaker mean interaction than a uniform network would require, making the
 heterogeneous system the more fragile of the two.
@@ -318,39 +333,35 @@ heterogeneous system the more fragile of the two.
 \label{sec:empirical-muc}
 
 The mean-field prediction \eqref{eq:muc-selfconsistency} assumes the
-thermodynamic limit and the associated degree statistics; on a finite graph the
-true threshold is shifted, and since we need to sit \emph{at} $\mu_c$ this shift
-matters. We therefore measure $\mu_c$ directly from the rescaled dynamics. What
-makes this cheap is that a single rescaled integration hands us \emph{two}
-estimators at once, both byproducts of the same run that produces the shape
-$y(\tau)$: the asymptotic shape scalar $c$, and the saturating physical time
-$t_{\mathrm{final}}$. The first reads the sign of the divergence directly off the
+thermodynamic limit and the associated degree statistics. On a finite graph the
+true threshold is shifted, and since we need to sit at $\mu_c$ this shift
+matters. We therefore measure $\mu_c$ directly from the rescaled dynamics, by sweeping $\mu$
+across the threshold and averaging, at each value, over several realizations of the
+random graph, its couplings, and the initial condition. A single integration yields
+two observables at once, the asymptotic shape scalar $c$ and the saturating physical
+time $t_{\mathrm{final}}$, so the sweep delivers two estimators of $\mu_c$ rather than
+one. The first reads the sign of the divergence directly off the
 relaxed shape; the second detects the same transition through its integrated
 effect on physical time. We describe each in turn and then compare them.
 
 \subsection{The shape scalar $c$}
 \label{sec:estimator-c}
 
-The cleanest estimator is already contained in the asymptotics of
-Section~\ref{sec:simplex-mapping}. Once the shape relaxes to its fixed point
-$y^\ast$, the scalar
+The cleanest estimator needs only the shape dynamics. We integrate the shape
+equation \eqref{eq:dydtau} on its own, which is closed in $y$ and stays bounded,
+until it relaxes to its fixed point $y^\ast$, and read off the scalar
 \begin{equation}
-    c \equiv (y^\ast)^{\!\top} W y^\ast - (y^\ast)^{\!\top} y^\ast
+    c \equiv (y^\ast)^{\!\top} W y^\ast - (y^\ast)^{\!\top} y^\ast .
     \label{eq:c-scalar}
 \end{equation}
-fixes the sign of $dM/d\tau = 1 + cM$ in \eqref{eq:M-asymptotics}: $M$ plateaus
-at $-1/c$ when $c < 0$ ($\mu < \mu_c$) and grows like $e^{c\tau}$ when $c > 0$
-($\mu > \mu_c$). The critical point is therefore exactly the zero crossing of
-$c(\mu)$, which we locate with a one-dimensional root find---a Brent bracket on a
-coarse $\mu$-grid, refined per realization. Because $c$ depends only on the
-\emph{relaxed shape} and not on the late-time growth of $M$, it converges as soon
-as $y(\tau)$ reaches its plateau, long before $M$ does anything extreme; the
-estimator is thus both cheap (a modest $\tau_{\max}$ suffices) and numerically
-benign. To keep the supercritical runs well-defined we halt each integration with
-an event that fires when $M$ reaches a fixed cap $M_{\mathrm{cap}}$, set well
-below the floating-point ceiling. By that point $c$ already carries its sign, so
-the cap costs no accuracy while preventing the overflow---and the spurious
-\texttt{NaN}s---that an uncapped supercritical run would produce.
+The sign of $c$ marks the threshold: as derived in
+Section~\ref{sec:simplex-mapping}, $c < 0$ below the critical point and $c > 0$
+above it, so $\mu_c$ is the zero crossing of $c(\mu)$. We locate it with a
+one-dimensional root find, a Brent bracket on a coarse $\mu$-grid refined per
+realization. Because $c$ is a property of the relaxed shape alone, it is fixed as
+soon as $y(\tau)$ reaches its plateau, which a modest $\tau_{\max}$ reaches; the
+shape integration stays bounded and cannot overflow, so the estimator is cheap and
+numerically benign, and no scale equation needs to be integrated for it.
 
 The estimator rests on one premise: that the shape actually relaxes to a fixed
 point, so that $c$ is a well-defined late-time constant. This holds only in the
@@ -360,8 +371,8 @@ boundary directly, recording per cell the fraction of realizations whose shape
 velocity $\lVert\dot y\rVert$ falls to the solver floor (relaxation) over the
 $(\mu,\sigma)$ plane, for both topologies and a range of mean degree $C$. The
 relaxed (green) region covers the entire operating box used in
-Chapter~\ref{chap:results}---$\sigma = 0.2$, $\mu$ at the per-topology
-$\mu_c^{\mathrm{th}}$---with wide margin; non-relaxation is confined to a strip at
+Chapter~\ref{chap:results} ($\sigma = 0.2$, $\mu$ at the per-topology
+$\mu_c^{\mathrm{th}}$) with wide margin; non-relaxation is confined to a strip at
 $\sigma \gtrsim 1$ that the exponential graph enters slightly earlier than the
 regular one, its hubs destabilizing first. The estimator is therefore used
 strictly inside its domain of validity, and relaxation is in practice confirmed
@@ -393,16 +404,28 @@ $t_{\mathrm{final}} = t(\tau_{\max})$. Below the threshold $M$ plateaus, so
 $dt/d\tau = 1/M$ stays finite and $t_{\mathrm{final}}$ grows essentially
 linearly with $\tau_{\max}$; above it $M \sim e^{c\tau}$, so $1/M$ decays
 exponentially and $t(\tau)$ saturates at the finite blow-up time $t^\ast$. The
-empirical $\mu_c$ is read off as the location of the resulting sharp drop in
-$t_{\mathrm{final}}$ (Fig.~\ref{fig:empirical-muc}).
+two regimes are distinguished by their dependence on the horizon: below
+threshold $t_{\mathrm{final}}$ scales with $\tau_{\max}$, above it sits on a
+$\tau_{\max}$-independent floor. The empirical $\mu_c$ is therefore read off as
+the onset of that flat floor, the point at which $t_{\mathrm{final}}$ stops
+scaling with the horizon, which is exactly the $c = 0$ condition. It is not read
+as the midpoint of the visible drop, which the inflated subcritical branch
+biases low (Fig.~\ref{fig:empirical-muc}).
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{true_mu_c.png}
     \caption{Final physical time $t_{\mathrm{final}} = t(\tau_{\max})$ versus
-    mean interaction strength $\mu$, with $\tau_{\max} = 10^6$. The sharp drop
-    near $\mu \approx 0.57$ marks the empirical critical point, where $M(\tau)$
-    switches from a finite plateau to exponential divergence. Points are means
+    mean interaction strength $\mu$, with $\tau_{\max} = 10^6$. In the
+    subcritical regime $M$ plateaus at $-1/c$, so
+    $t_{\mathrm{final}} \approx (-c)\,\tau_{\max}$ grows with the horizon and
+    its slope flattens as $\mu$ rises and $c \to 0^-$; this descending ramp is
+    a horizon-inflated quantity, not a fixed level. Above the critical point
+    $M$ diverges exponentially and $t_{\mathrm{final}}$ saturates at the finite
+    blow-up time $t^\ast$, independent of $\tau_{\max}$. The empirical $\mu_c$
+    is therefore read as the onset of this flat, horizon-independent floor,
+    near $\mu \approx 0.61$, not the midpoint of the visible drop, which is
+    biased low by the $\tau_{\max}$-inflated subcritical ramp. Points are means
     over successful runs ($\pm$ SEM); parameters $N = 1000$, $C = 50$,
     $\sigma = 0.2$, exponential degree distribution. The dashed line marks the
     mean-field prediction $\mu_c = 0.499$.}
@@ -410,119 +433,30 @@ $t_{\mathrm{final}}$ (Fig.~\ref{fig:empirical-muc}).
 \end{figure}
 
 The estimator is robust by construction. Because $t_{\mathrm{final}}$ is the
-\emph{integral} of $1/M(\tau)$, it accumulates the entire history of the
+integral of $1/M(\tau)$, it accumulates the entire history of the
 trajectory rather than relying on a single late-time value, so even a slowly
-diverging $M(\tau)$---the hardest case to detect, and precisely the regime of
-interest---is registered cleanly. The observable also comes for free: it is a
+diverging $M(\tau)$, the hardest case to detect and the regime of greatest
+interest, is registered cleanly. The observable also comes at no extra cost: it is a
 byproduct of the same integration that produces $y(\tau)$, requiring no
 additional computation.
 
-\section{Comparison with the theoretical prediction}
-\label{sec:muc-statistics}
 
-We now confront the empirical estimators with the mean-field prediction of
-Section~\ref{sec:theoretical-muc}. We take the final-time drop as the reference
-estimator for this comparison; the shape scalar $c$ is treated alongside it in
-Section~\ref{sec:estimator-comparison}. The empirical threshold fluctuates from
-one graph realization to the next, and it is biased relative to the mean-field
-value. Figure~\ref{fig:distribution_muc}
-shows the distribution of the gap $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$
-over $100$ independent realizations: the mass concentrates at positive values,
-with a mean of $0.0974$, so on a finite graph the empirical estimator
-\emph{overestimates} $\mu_c$ on average. This is the expected direction of the
-finite-size correction---a finite graph requires a stronger interaction to push
-the macroscopic abundance into genuine divergence.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.75\linewidth]{theoretical-vs-actual.png}
-    \caption{Distribution of the distance between the measured and predicted
-    critical points, $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$, over $100$
-    realizations with $N = 1000$, $C = 50$, $\sigma = 0.2$ on an exponential
-    graph. The positive mean ($0.0974$) shows a systematic overestimation of
-    $\mu_c$ on finite graphs.}
-    \label{fig:distribution_muc}
-\end{figure}
-
-The size of this bias is controlled by how closely the finite graph satisfies
-the assumptions behind \eqref{eq:muc-selfconsistency}, which is derived in the
-double limit $1 \ll C \ll N$: each node must see enough neighbours for its local
-field to be Gaussian, while the graph stays sparse enough to remain locally
-tree-like. At fixed $N$ these two demands compete as $C$ grows. Sweeping $C$ with
-all other parameters fixed (Fig.~\ref{fig:c_sweep}) shows the gap \emph{growing}
-monotonically with $C$---from near zero at small $C$ to $\approx 0.27$ at
-$C = 150$. The reason is that at $N = 1000$ a connectivity of $C = 150$ is no
-longer small compared with the system: the ratio $C/N$ approaches unity, the
-sparse tree-like structure the theory assumes is lost, and the prediction
-degrades. Increasing $C$ at fixed $N$ therefore moves \emph{away} from the regime
-where the mean field is exact, not toward it; the genuine limit is approached by
-growing $N$, as we show next.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{c_sweep.png}
-    \caption{Gap $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$ between the
-    empirical (final-time drop) and theoretical critical points versus mean
-    connectivity $C$, at $N = 1000$, $\sigma = 0.2$ on an exponential graph
-    (mean $\pm$ std over realizations). The gap \emph{grows} with $C$: at fixed
-    $N$, larger $C$ raises $C/N$ and erodes the sparse, locally tree-like
-    structure the mean-field theory assumes.}
-    \label{fig:c_sweep}
-\end{figure}
-
-That the relevant limit is in $N$ rather than $C$ is confirmed by resolving the
-gap across system size. Figure~\ref{fig:finite_size} sweeps $C$ at three sizes
-$N \in \{1000, 2000, 5000\}$ and three disorder strengths, for both the
-exponential graph and a regular graph in which every node carries the mean
-degree. To make a sweep this broad affordable we use the shape-scalar estimator
-of Section~\ref{sec:estimator-c}, far cheaper than the drop; at $N = 1000$ it
-reproduces the $C$-dependence of Fig.~\ref{fig:c_sweep}, so the two estimators
-agree on the trend. For the exponential graph the gap grows with $C$ at every
-$N$, but at fixed $C$ it \emph{shrinks} with $N$---roughly halving with each
-doubling of $N$---so the curves march down toward zero: the mean-field value is
-recovered by enlarging the system at fixed connectivity, which restores
-$C \ll N$. The effect is essentially independent of $\sigma$, marking the
-correction as structural. The regular graph behaves oppositely: with no spread in
-degree it carries almost no finite-size bias---identically zero at $\sigma = 0$,
-where neither degree heterogeneity nor disorder is present, and only a small
-residual at $\sigma = 0.4$ confined to low $C$. The finite-size correction to
-$\mu_c$ is thus carried almost entirely by \emph{degree heterogeneity}: large and
-$N$-sensitive for the broad exponential distribution, nearly absent for the
-homogeneous one.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\linewidth]{mu_c_finite_size.png}
-    \caption{Relative gap
-    $(\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}})/\mu_c^{\mathrm{th}}$ versus mean
-    degree $C$ for the exponential (left) and regular (right) graphs, at disorder
-    strengths $\sigma = 0, 0.2, 0.4$ (rows) and sizes $N = 1000, 2000, 5000$
-    (colours); shape-scalar estimator, mean $\pm$ std over realizations. Note the
-    differing vertical scales between the two columns. The exponential gap grows
-    with $C$ and shrinks with $N$, converging to the mean field as $N \to
-    \infty$; the regular gap stays near zero throughout and vanishes identically
-    at $\sigma = 0$. Degree heterogeneity is the dominant source of the
-    finite-size correction.}
-    \label{fig:finite_size}
-\end{figure}
-
-\subsection{The two estimators head to head}
+\subsection{Comparing the two estimators}
 \label{sec:estimator-comparison}
 
-The two estimators trade cost against robustness. The shape scalar $c$ converges
-as soon as the shape relaxes and needs only a modest $\tau_{\max}$, which makes it
-the natural choice for a fast, stable scan of $\mu_c$. The final-time drop is more
-expensive---$t_{\mathrm{final}}$ keeps accumulating until $M$ has genuinely
-diverged, so it demands a larger $\tau_{\max}$---but because it integrates the
-whole history of $1/M(\tau)$ it registers even a very slowly diverging $M$, the
-hardest and most interesting case, without ambiguity. To decide whether the two
-agree we locate $\mu_c$ with both estimators across many realizations and a range
-of horizons $\tau_{\max}$, asking of each the same three questions: is it flat in
-$\tau_{\max}$ (insensitive to the cutoff), is its realization-to-realization
-spread small, and does it sit on the mean-field reference? The capped integration
-of Section~\ref{sec:estimator-c} is what makes this sweep possible at all: by
-keeping the supercritical runs finite it fills in the part of the $\mu$-range
-where a naive solver would return only \texttt{NaN}s.
+Comparing the two estimators is not a trade-off: the shape scalar $c$ is the sounder
+and faster of the two. It reads the critical condition directly off the relaxed
+shape, needs only a modest $\tau_{\max}$, and costs a few hundred solver steps. The
+final-time drop reaches the same condition indirectly, by integrating $1/M(\tau)$
+until $M$ has genuinely diverged, so it needs a much larger $\tau_{\max}$ and is
+located less cleanly. We run it only as an independent check on $c$: we locate
+$\mu_c$ with both across many realizations and a range of horizons $\tau_{\max}$,
+asking of each the same three questions: is it flat in $\tau_{\max}$ (insensitive to
+the cutoff), is its realization-to-realization spread small, and does it sit on the
+mean-field reference? Once they converge to the same value, we use $c$. Capping the abundance $M$ at a fixed value, well below the floating-point ceiling,
+is what makes this sweep possible at all: it keeps the supercritical runs finite and
+fills in the part of the $\mu$-range where an uncapped solver would return only
+\texttt{NaN}s.
 
 Figure~\ref{fig:estimator-comparison} and Table~\ref{tab:estimator-comparison}
 report this sweep. The shape scalar $c$ converges almost immediately: it has
@@ -531,26 +465,41 @@ every larger horizon, with a stable spread of about $0.023$ and at a cost of onl
 a few hundred solver steps. The final-time drop is slower and more erratic. It
 overshoots badly at the shortest horizon ($0.85$ at $\tau_{\max} = 10^3$), then
 settles only around $\tau_{\max} \approx 5\times10^5$ onto its own plateau at
-$\mu_c \approx 0.585$, an order of magnitude more steps later. The two estimators
-therefore converge to close but not identical values---$0.617$ for $c$ against
-$0.585$ for the drop, a residual gap of about $0.03$---reflecting the different
-nature of the two observables: $c$ is the exact sign-change condition for the
-divergence, read straight off the relaxed shape, whereas the drop is the
-steepest-descent point of $t_{\mathrm{final}}(\mu)$ on a finite $\mu$-grid. Both
-lie above the mean-field value $\mu_c = 0.5$, consistent with the positive
-finite-size bias of Fig.~\ref{fig:distribution_muc}. Because the $c$ zero-crossing
+$\mu_c \approx 0.585$, an order of magnitude more steps later. The two
+estimators are in fact reading the same condition (the sign change of $c$) in two
+different ways, and the residual gap between them ($0.617$ for $c$
+against $0.585$ for the drop) is not intrinsic but an artifact of how the drop
+is located. The steepest-descent point interpolates between the supercritical
+floor and a subcritical level that, because $t_{\mathrm{final}} \approx
+(-c)\,\tau_{\max}$ in that regime, is inflated by the horizon, so the midpoint
+is pulled below the true $c = 0$ crossing. This is also why the drop drifts
+upward with $\tau_{\max}$ (from $0.510$ at $\tau_{\max} = 10^4$ to $0.585$): as
+the horizon grows the inflated branch steepens and the steepest-descent point
+shifts toward the crossing. It stalls at $0.585$, short of the $c$ value,
+because the tanh midpoint remains a biased functional of the inflated curve no
+matter how far $\tau_{\max}$ is pushed. Locating $t_{\mathrm{final}}$ instead by
+the onset of its flat, $\tau_{\max}$-independent floor closes that residual gap by
+construction. That onset is the operational form of ``$t_{\mathrm{final}}$ has
+stopped scaling with the horizon,'' which is exactly $c = 0$, so the floor onset
+is the $c = 0$ crossing itself. The shape scalar $c$ simply reaches the same
+conclusion directly, off the relaxed shape, without the detour through
+$t_{\mathrm{final}}$. Both estimators lie above the mean-field
+value $\mu_c = 0.5$, a positive finite-size bias examined in the next section.
+Because the $c$ zero-crossing
 is both the more principled estimator and by far the cheaper and more stable one,
 we adopt it as our working estimator in what follows.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.85\linewidth]{estimator-convergence-comparison.png}
-    \caption{Located critical point $\mu_c$ from the two estimators---the shape
-    scalar $c$ zero-crossing and the $t_{\mathrm{final}}$ drop---as a function of
+    \caption{Located critical point $\mu_c$ from the two estimators (the shape
+    scalar $c$ zero-crossing and the $t_{\mathrm{final}}$ drop) as a function of
     the rescaled horizon $\tau_{\max}$, averaged over realizations ($\pm$ spread).
     The $c$ estimator converges by $\tau_{\max} \approx 10^4$ and is flat
-    thereafter; the $t_{\mathrm{final}}$ drop is still drifting upward toward the
-    same value at $\tau_{\max} \approx 10^6$. Both lie above the mean-field
+    thereafter; the $t_{\mathrm{final}}$ drop drifts upward with the horizon and
+    plateaus at $\mu_c \approx 0.585$, short of the $c$ value because the
+    drop-midpoint locator stays biased by the horizon-inflated subcritical
+    branch. Both lie above the mean-field
     reference $\mu_c = 0.5$ (dashed) by the finite-size bias. Parameters
     $N = 1000$, $C = 50$, $\sigma = 0.2$, exponential degree distribution.}
     \label{fig:estimator-comparison}
@@ -579,3 +528,81 @@ we adopt it as our working estimator in what follows.
     Parameters as in Fig.~\ref{fig:estimator-comparison}.}
     \label{tab:estimator-comparison}
 \end{table}
+
+\FloatBarrier
+
+\section{Comparison with the theoretical prediction}
+\label{sec:muc-statistics}
+
+Having adopted the shape scalar $c$ (Section~\ref{sec:estimator-comparison}), we now
+compare the empirical threshold it gives against the mean-field prediction of
+Section~\ref{sec:theoretical-muc}. The empirical threshold fluctuates from one graph
+realization to the next, and it is biased relative to the mean-field value.
+Figure~\ref{fig:distribution_muc} shows the distribution of the gap
+$\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$ over $100$ independent realizations,
+located with $c$: at this operating point ($N = 1000$, $C = 50$, $\sigma = 0.2$) the
+mass concentrates at positive values, with a mean of $0.0974$, so the empirical
+estimator overestimates $\mu_c$ on average. The sign of this gap is not universal,
+however: as Figure~\ref{fig:finite_size} shows, it depends on the mean degree $C$,
+the system size $N$, and the disorder $\sigma$, and the empirical threshold can lie
+either above or below the mean-field value.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{theoretical-vs-actual.png}
+    \caption{Distribution of the distance between the measured and predicted
+    critical points, $\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}}$, over $100$
+    realizations with $N = 1000$, $C = 50$, $\sigma = 0.2$ on an exponential
+    graph. The positive mean ($0.0974$) shows a systematic overestimation of
+    $\mu_c$ at this operating point.}
+    \label{fig:distribution_muc}
+\end{figure}
+
+The size of this bias is controlled by how closely the finite graph satisfies
+the assumptions behind \eqref{eq:muc-selfconsistency}, which is derived in the
+double limit $1 \ll C \ll N$: each node must see enough neighbours for its local
+field to be Gaussian, while the graph stays sparse enough to remain locally
+tree-like. At fixed $N$ these two demands compete as $C$ grows. Sweeping $C$ with
+all other parameters fixed shows the gap for the exponential graph rising with
+$C$: it is slightly negative at small $C$, crosses zero, and is clearly positive by
+$C = 150$ ($N = 1000$, $\sigma = 0.2$), as the exponential panels of
+Fig.~\ref{fig:finite_size} make plain. The reason is that at $N = 1000$ a connectivity of $C = 150$ is no
+longer small compared with the system: the ratio $C/N$ approaches unity, the
+sparse tree-like structure the theory assumes is lost, and the prediction
+degrades. Increasing $C$ at fixed $N$ therefore moves away from the regime
+where the mean field is exact, not toward it; the genuine limit is approached by
+growing $N$, as we show next.
+
+That the relevant limit is in $N$ rather than $C$ is confirmed by resolving the
+gap across system size. Figure~\ref{fig:finite_size} sweeps $C$ at three sizes
+$N \in \{1000, 2000, 5000\}$ and three disorder strengths, for both the
+exponential graph and a regular graph in which every node carries the mean
+degree. To keep this broad sweep affordable we use the shape-scalar estimator
+throughout, which is far cheaper than the drop. For the exponential graph the gap grows with $C$ at every
+$N$, but at fixed $C$ it shrinks with $N$, roughly halving with each
+doubling of $N$, so the curves decrease toward zero: the mean-field value is
+recovered by enlarging the system at fixed connectivity, which restores
+$C \ll N$. The effect is essentially independent of $\sigma$, marking the
+correction as structural. The regular graph behaves the other way, and with the
+opposite sign: the gap is identically zero at $\sigma = 0$, and at $\sigma = 0.2$ and
+$\sigma = 0.4$ it is negative, largest at small $C$ and high disorder and closing
+toward zero as $C$ grows. On a homogeneous graph the empirical threshold therefore
+sits slightly below the mean-field value, not above it. The large, $N$-sensitive
+correction that grows with $C$ is thus specific to degree heterogeneity, while the
+homogeneous graph carries only a small negative residual.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{mu_c_finite_size.png}
+    \caption{Relative gap
+    $(\mu_c^{\mathrm{emp}} - \mu_c^{\mathrm{th}})/\mu_c^{\mathrm{th}}$ versus mean
+    degree $C$ for the exponential (left) and regular (right) graphs, at disorder
+    strengths $\sigma = 0, 0.2, 0.4$ (rows) and sizes $N = 1000, 2000, 5000$
+    (colours); shape-scalar estimator, mean $\pm$ std over realizations. Note the
+    differing vertical scales between the two columns. The exponential gap grows
+    with $C$ and shrinks with $N$, converging to the mean field as $N \to
+    \infty$; the regular gap stays near zero throughout and vanishes identically
+    at $\sigma = 0$. Degree heterogeneity is the dominant source of the
+    finite-size correction.}
+    \label{fig:finite_size}
+\end{figure}

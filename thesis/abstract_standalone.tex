@@ -1,0 +1,39 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[margin=1in]{geometry}
+
+\title{Can a simple model explain economics?}
+\author{Ludovico Furlanetto}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Firm growth shows two robust anomalies. First, volatility falls with size much more
+slowly than independence would predict: $\sigma(S)\sim S^{-\beta}$ with
+$\beta\approx0.15$--$0.20$ rather than $1/2$. Second, the
+growth-rate distribution is sharply peaked and fat-tailed rather than Gaussian.
+Standard explanations put the source of these effects inside each firm. We ask
+instead whether the same facts can emerge between firms, from a network of
+interacting companies in which no heterogeneity is imposed externally. We model the
+economy as a Generalized Lotka--Volterra system on a sparse random graph, held at its
+cooperative critical point $\mu_c$. This regime is hard to reach numerically: there
+the total abundance diverges in finite time and breaks explicit solvers. To get
+around this we split the dynamics into a bounded ``shape'' on the probability simplex
+and an unbounded ``scale,'' and rescale time so the blow-up turns into smooth
+asymptotic growth. The shape can then be integrated stably through the critical
+point, and it locates $\mu_c$ cheaply. Using this tool across regular, exponential,
+and power-law topologies, we find that the critical dynamics qualitatively reproduce the fat-tailed
+growth-rate distribution on the heterogeneous (exponential and power-law) graphs,
+though not on the homogeneous one. The size--variance relation, however, is not
+reproduced: in this deterministic critical model it is not a stationary law but a
+relaxation transient, a V whose minimum is set by the firms' initial sizes rather than
+by any intrinsic scale, so the model offers no size--variance exponent to compare with
+the data. Static topological criticality thus supplies the heavy tails but not the
+slow size--variance decay, which appears to need a genuinely nonstationary mechanism
+rather than a static critical one.
+\end{abstract}
+
+\end{document}

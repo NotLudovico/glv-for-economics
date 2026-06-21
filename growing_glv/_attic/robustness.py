@@ -8,7 +8,7 @@ and report mean +/- std of:
 The claim is genericity: the phenomenology holds across the whole chaotic regime, not at one magic point.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import kurtosis
 from explore import integrate

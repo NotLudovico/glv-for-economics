@@ -6,7 +6,7 @@
 Rank the valid candidates so we can pick the cleanest single regime to validate next.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import kurtosis
 from explore import integrate

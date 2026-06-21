@@ -3,7 +3,7 @@ for BOTH floor mechanisms (persistent share floor vs decaying Bouchaud-Mezard ad
 growing+chaotic regime (mu=1, sigma=2), measuring beta, tent skew/kurtosis, and coexistence together.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import skew, kurtosis
 import matplotlib

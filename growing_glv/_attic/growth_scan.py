@@ -9,7 +9,7 @@ Same measurement formulas as robustness_intermediate.py (decline-branch beta, MA
     uv run --directory /path/to/glv python growing_glv/growth_scan.py [--smoke]
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.stats import kurtosis

@@ -4,7 +4,7 @@ they drift with Dt they'd be a sampling artifact. We want them STABLE (the defen
 bit us earlier this session: finite-size blow-up + adaptive-Dt fat tails).
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import kurtosis
 from explore import integrate

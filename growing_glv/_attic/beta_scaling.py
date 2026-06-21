@@ -4,7 +4,7 @@ small-firm floor plateau) + R^2, in the stationary window, on persistent seeds. 
 so the N->inf extrapolation can be fit afterward.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.stats import kurtosis

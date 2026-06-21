@@ -5,7 +5,7 @@ growth std in an EARLY window [40,80] vs a LATE window [200,280]. ratio = late/e
   ->0  -> relaxation transient (shares freeze)   <- the trap (tent/beta are transient artifacts)
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from explore import integrate
 

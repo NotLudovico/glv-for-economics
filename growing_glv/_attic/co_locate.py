@@ -4,7 +4,7 @@ Scan the floor lam at two competitive corners, measuring BOTH beta and skew on t
 (skew -> 0) before the floor pins beta negative.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import skew, kurtosis
 import matplotlib

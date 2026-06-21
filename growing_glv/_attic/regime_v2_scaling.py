@@ -3,7 +3,7 @@ positive and persistence robustifies as N grows, and measure beta(N) -> beta_inf
 (the mu=3,sigma=2 beta scaling was at a SHRINKING regime). Save per-seed betas for extrapolation.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from explore import build_alpha

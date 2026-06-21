@@ -19,7 +19,7 @@ robustness_intermediate.npz (+ .png). Runs at N_JOBS=3 to leave the phase sweep 
     uv run --directory /path/to/glv python growing_glv/robustness_intermediate.py [--smoke]
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.stats import kurtosis

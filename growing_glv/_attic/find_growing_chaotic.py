@@ -4,7 +4,7 @@ measuring the aggregate growth rate g_eff over a long post-transient window, the
 growth std), the size-volatility beta, and coexistence -- and flag cells with g_eff>0 AND persistent.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from explore import build_alpha

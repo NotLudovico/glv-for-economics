@@ -3,7 +3,7 @@ Does persistence robustify and beta shallow toward empirical as N -> 10000?
 Per N (6 seeds): persistent fraction + persistent-state decline-beta/R^2, Bowley, exkurt.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.stats import kurtosis

@@ -5,7 +5,7 @@ slow relaxation look stationary). Integrate to t=300 and track, across 20-unit w
   - ln M(t) linearity                                 (is g_eff a true constant -> steady exponential growth)
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")

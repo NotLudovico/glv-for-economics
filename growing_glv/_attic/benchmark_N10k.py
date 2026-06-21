@@ -2,7 +2,7 @@
 multi-seed long run at 10k is feasible (and whether LSODA stays fast or blows up on a dense Jacobian).
 """
 import sys, os, time
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from explore import integrate
 

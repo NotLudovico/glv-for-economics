@@ -4,7 +4,7 @@ shape-spurious. Fit (a) full range and (b) the declining branch above the binned
 reporting R^2 for each, and show where a power law actually holds.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")

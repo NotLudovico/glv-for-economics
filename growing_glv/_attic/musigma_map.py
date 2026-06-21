@@ -3,7 +3,7 @@ measuring beta on survivors (natural survivorship conditioning) plus tent skew +
 Looking for a corner with beta>0 AND symmetric tent AND enough coexistence + growth.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import skew, kurtosis
 import matplotlib

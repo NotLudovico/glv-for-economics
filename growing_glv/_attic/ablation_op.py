@@ -2,7 +2,7 @@
 chaotic threshold sigma_c=sqrt(2), measure the late-window growth fluctuation + excess kurtosis. Regenerates
 Table 'tab:growing-ablation' at the correct regime."""
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.stats import kurtosis

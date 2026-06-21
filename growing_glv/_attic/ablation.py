@@ -6,7 +6,7 @@ INTERACTION-GENERATED (the thesis claim) -- not noise-driven (cf. the Langevin-G
 survived W=0) and not Bouchaud-Mezard-in-disguise.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.stats import kurtosis

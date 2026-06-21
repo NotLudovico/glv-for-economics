@@ -4,7 +4,7 @@ compare growth std in a mid-late window [170,240] vs a very-late window [470,540
 ratio -> 0 = it was still relaxing (the trap, scaled by N).
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from explore import integrate
 

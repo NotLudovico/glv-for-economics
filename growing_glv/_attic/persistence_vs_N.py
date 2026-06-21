@@ -4,7 +4,7 @@ the persistent-state MSB observables (decline beta + R^2, Bowley, exkurt). If th
 as N grows, the chaotic phase is robust and the MSB-like tent is a genuine property.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import kurtosis
 from explore import integrate

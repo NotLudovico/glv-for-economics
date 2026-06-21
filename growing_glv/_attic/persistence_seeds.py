@@ -4,7 +4,7 @@ t=300 and measure in [200,280]: late growth std (persistence), decline-branch be
 exkurt (fat tails), survivors.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import kurtosis
 from explore import integrate

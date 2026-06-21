@@ -4,7 +4,7 @@ FOLDED-tail plot (right side vs |left side|) so the body/tail asymmetry is visib
 Measured at the best beta>0 regimes.
 """
 import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import numpy as np
 from scipy.stats import skew, kurtosis
 import matplotlib

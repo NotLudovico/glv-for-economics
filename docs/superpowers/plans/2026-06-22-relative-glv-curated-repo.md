@@ -537,15 +537,16 @@ def test_tent_stats_laplace_is_symmetric_and_fat():
 
 
 def test_size_volatility_recovers_a_planted_exponent():
-    # plant sigma(S) = S^-beta with beta=0.3 over a log-size grid and check recovery
+    # plant sigma(S) ~ S^-beta with beta=0.3 and check the estimator recovers it.
+    # Each firm fluctuates (stationary) around a fixed base size with log-noise
+    # amplitude base^-beta; converting to shares preserves relative sizes, so
+    # S_i = N w_i restores the planted sizes and the decline slope is beta.
     rng = np.random.default_rng(2)
-    N, T = 4000, 60
-    Sbar = np.logspace(0, 3, N)                  # firm mean sizes spanning 3 decades
-    beta_true = 0.3
-    lnS = (np.log(Sbar)[:, None]
-           + (Sbar ** -beta_true)[:, None] * rng.standard_normal((N, T)).cumsum(1) * 0.0
-           + (Sbar ** -beta_true)[:, None] * rng.standard_normal((N, T)))
-    W = np.exp(lnS) / np.exp(lnS).sum(0, keepdims=True)   # -> shares; S_i = N w_i restores size
+    N, T, beta_true = 4000, 80, 0.3
+    base = np.logspace(0.5, 3, N)                         # firm sizes over ~2.5 decades
+    amp = 0.5 * base ** (-beta_true)                      # planted per-firm log-volatility
+    lnS = np.log(base)[:, None] + amp[:, None] * rng.standard_normal((N, T))
+    W = np.exp(lnS); W /= W.sum(0, keepdims=True)         # -> shares; S_i = N w_i restores size
     t = np.linspace(0, T - 1, T)
     out = size_volatility(W, t, window=(0, T - 1), dt=1.0)
     assert abs(out["beta"] - beta_true) < 0.08

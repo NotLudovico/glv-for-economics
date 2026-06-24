@@ -33,18 +33,44 @@
 
 \begin{titlepage}
 \centering
-{\scshape\LARGE Politecnico di Torino \par}
-\vspace{1cm}
-{\scshape\Large Master's Thesis\par}
-\vspace{1.5cm}
+
+% Logo: drop the official mark at thesis/polito_logo.pdf (preferred) or .png and it
+% appears automatically; the page builds fine without it.
+\IfFileExists{polito_logo.pdf}{%
+  \includegraphics[height=2.4cm]{polito_logo.pdf}\par\vspace{0.9cm}}{%
+  \IfFileExists{polito_logo.png}{%
+    \includegraphics[height=2.4cm]{polito_logo.png}\par\vspace{0.9cm}}{\vspace{0.4cm}}}
+
+{\scshape\LARGE Politecnico di Torino\par}
+\vspace{0.45cm}
+{\scshape\large Master's Degree in Physics of Complex Systems\par}
+\vspace{0.2cm}
+{\large\itshape Master's Thesis\par}
+
+\vspace{1.6cm}
+{\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+\vspace{0.7cm}
 {\huge\bfseries Can a simple model explain economics?\par}
+\vspace{0.7cm}
+{\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+
 \vspace{2cm}
-{\Large\itshape Ludovico Furlanetto\par}
-\vfill
-supervised by\par
-Fabian \textsc{Aguirre-Lopez}
+\begin{minipage}[t]{0.46\textwidth}
+  \raggedright\large
+  {\scshape\normalsize Candidate}\par\vspace{0.25cm}
+  Ludovico Furlanetto
+\end{minipage}\hfill
+\begin{minipage}[t]{0.46\textwidth}
+  \raggedleft\large
+  {\scshape\normalsize Supervisors}\par\vspace{0.25cm}
+  Fabian Aguirre-Lopez\\
+  Luca Dall'Asta
+\end{minipage}
+
 \vfill
 {\large June 2026\par}
+\vspace{0.25cm}
+{\normalsize Academic Year 2025/2026\par}
 \end{titlepage}
 
 

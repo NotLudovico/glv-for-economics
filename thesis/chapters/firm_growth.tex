@@ -36,7 +36,8 @@ than transients of a relaxation.
     \centering
     \includegraphics[width=\linewidth]{growing_stationary_msb.png}
     \caption{Firm-growth statistics at $\mu = -1.76$, $\sigma = 1.75$. Left: the
-    size--volatility relation in a single economy ($N = 6400$); volatility falls as a
+    size--volatility relation in a single economy ($N = 6400$) under the global mean-degree
+    normalization; volatility falls as a
     power law over the fitted decline above the small-firm immigration-floor plateau
     (shaded), here with exponent $\beta \approx 0.5$ and $R^2 = 0.98$. Right: the
     growth-rate distribution pooled over economies, sharply peaked and fat-tailed,
@@ -84,8 +85,7 @@ outcome of the operating regime, consistent with the dynamical mean-field pictur
 
 The size--variance exponent is a subtler matter, and turns on how the competition is
 shared across the heterogeneous graph; its magnitude is the shallower of the two
-comparisons we can make with the data. With the couplings normalized by the global mean
-degree of the graph, as so far, the exponent is not fixed by the mean-field limit:
+comparisons we can make with the data. Under the global mean-degree normalization the exponent is not fixed by the mean-field limit:
 measured on the persistent realizations it falls steadily and monotonically with system
 size, from about $0.68$ at $N = 800$ toward $0.25$ at $N = 1.3\times10^4$
 (Fig.~\ref{fig:growing-meanfield}, right), and it does not approach a nonzero constant.
@@ -148,12 +148,11 @@ range.
     \label{fig:growing-finite-economy}
 \end{figure}
 
-A principled alternative normalizes each firm's couplings by its own degree, so that
-every firm carries a disorder field of the same variance whatever its connectivity, the
-natural per-fan-in scaling on a heterogeneous graph. Under this own-degree normalization
-the exponent is instead a clean power law that is robust across system size, a genuine
-thermodynamic quantity, but its value is steeper, $\beta \approx 0.7$, about three times
-the empirical one. The two normalizations therefore trade against each other on
+Under the own-degree normalization each firm's couplings are scaled by its own degree, so
+that every firm carries a disorder field of the same variance whatever its connectivity,
+the natural per-fan-in scaling on a heterogeneous graph. The exponent is then a clean
+power law that is robust across system size, a genuine thermodynamic quantity, but its
+value is steeper, $\beta \approx 0.7$, about three times the empirical one. The two normalizations therefore trade against each other on
 magnitude: the mean-degree one reaches the empirical value at the empirical economy size,
 the own-degree one fixes a size-independent exponent that is too steep. The difference is
 the hubs, which the mean-degree normalization over-couples, a node accumulating a disorder

@@ -67,17 +67,18 @@ with the measurements below.
 The disorder normalization deserves a word, because it is what controls the firm-growth
 statistics below. As written, the couplings scale the disorder by the global mean degree,
 $\sigma/\sqrt{C}$, so that on a heterogeneous graph a firm's idiosyncratic field grows
-louder the more competitors it has, its variance rising with its degree. The principled
-alternative scales each firm's couplings by its own degree, $\sigma/\sqrt{k_i}$, so that
-every firm carries a field of the same variance whatever its connectivity. The two
-coincide on a regular graph, where every firm has the mean degree, which is the case the
-mean-field theory of Appendix~\ref{app:dmft} solves; they differ on the heterogeneous
-graphs we use for the measurements. The choice is consequential: the own-degree
-normalization reproduces the higher-moment structure of the data, while the global one
-matches the size--variance magnitude at a finite economy size, and no single choice gives
-both. We take the own-degree normalization as the principled default for the firm-growth
-statistics, and return to the choice, its trade-off, and the family that interpolates
-between the two in Sections~\ref{sec:growing-finite-size} and~\ref{sec:growing-multiscaling}.
+louder the more competitors it has, its variance rising with its degree. A second, per-firm normalization scales each firm's couplings by its own degree,
+$\sigma/\sqrt{k_i}$, the natural per-fan-in choice, so that every firm carries a field of
+the same variance whatever its connectivity. The two coincide on a regular graph, where
+every firm has the mean degree, which is the case the mean-field theory of
+Appendix~\ref{app:dmft} solves; they differ, consequentially, on the heterogeneous graphs
+we use for the measurements. The own-degree normalization reproduces the higher-moment
+structure of the data but gives a size--variance exponent about three times too steep,
+while the global one matches the size--variance magnitude at a finite economy size but
+loses that higher-moment structure, and no single choice gives both. We therefore
+privilege neither: we report the firm-growth statistics under both normalizations and
+treat the trade-off between them as a result in its own right, returning to it in
+Sections~\ref{sec:growing-finite-size} and~\ref{sec:growing-multiscaling}.
 
 The same point appears formally in the equation for the total. Writing $x_i = M y_i$
 with $y$ on the simplex, and using the shorthands of Appendix~\ref{chap:rescaling}, the

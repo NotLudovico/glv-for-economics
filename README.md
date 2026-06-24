@@ -2,6 +2,26 @@
 
 Simulation and analysis library for the **Generalised Lotka–Volterra (GLV)** model on sparse random networks, with Jupyter notebooks for exploring the model numerically and comparing with mean-field theory.
 
+## Project layout
+
+This repo holds the original GLV library, the relative-GLV explorations, and the thesis.
+**The curated, authoritative relative-GLV model is the sibling repo `../relative-glv`** —
+keep that in mind when navigating.
+
+| path | what |
+|---|---|
+| `glv/` (package) | original **absolute / critical** GLV library (documented below) |
+| `criticality_msb/` | critical-point MSB study (Stage-1; thesis Appendix B) |
+| `growing_glv/` | **relative**-GLV explorations: mean-degree sims, DMFT, and the thesis figure generators (`ch4_plots.py`, `dmft_*.py`). Superseded for the **own-degree** model by `../relative-glv`; one-offs in `growing_glv/_attic/` |
+| `notebooks/` | exploratory notebooks (critical model, sigma sweeps, ...) |
+| `thesis/` | the thesis. **`thesis/FIGURES.md` maps every figure to the script that makes it** |
+| `../relative-glv` *(sibling repo)* | **the curated relative-GLV model**: `relative_glv/model.py` (`kind="powerlaw"` mean-degree, `kind="powerlaw_owndeg"` own-degree), `scripts/` (own-degree multiscaling + phase figures), tests. The own-degree model and the multiscaling results live here, not in this repo |
+
+The README below documents the original `glv` package (the absolute model). The **relative**
+model the thesis is built on lives in `../relative-glv` (authoritative) and `growing_glv/`.
+
+---
+
 ## Model
 
 The GLV dynamics are:

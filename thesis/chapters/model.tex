@@ -64,12 +64,24 @@ operate at a competitive mean $\mu$ and at a disorder $\sigma$ above the chaotic
 threshold $\sigma_c = \sqrt{2}$ \citep{diederich1989}; the operating point is specified
 with the measurements below.
 
-The disorder normalization deserves a word, because it is what controls the firm-growth
-statistics below. As written, the couplings scale the disorder by the global mean degree,
-$\sigma/\sqrt{C}$, so that on a heterogeneous graph a firm's idiosyncratic field grows
-louder the more competitors it has, its variance rising with its degree. A second, per-firm normalization scales each firm's couplings by its own degree,
-$\sigma/\sqrt{k_i}$, the natural per-fan-in choice, so that every firm carries a field of
-the same variance whatever its connectivity. The two coincide on a regular graph, where
+The disorder normalization deserves writing out, because it is what controls the
+firm-growth statistics below. As introduced above the couplings are normalized by the
+global mean degree $C$; on a heterogeneous graph a second, per-firm choice is available,
+normalizing each firm's couplings by its own degree $k_i$,
+\begin{equation}
+    \alpha_{ij} = \frac{\mu}{C} + \frac{\sigma}{\sqrt{C}}\,z_{ij}
+    \quad\text{(mean degree)},
+    \qquad
+    \alpha_{ij} = \frac{\mu}{k_i} + \frac{\sigma}{\sqrt{k_i}}\,z_{ij}
+    \quad\text{(own degree)},
+    \label{eq:normalizations}
+\end{equation}
+with $z_{ij}$ standard Gaussian and $k_i$ the degree of firm $i$. Under the mean-degree
+normalization a firm's idiosyncratic field grows louder the more competitors it has, its
+variance rising with its degree; the own-degree normalization is the natural per-fan-in
+scaling, in which both the mean pressure and the disorder are shared over a firm's own
+neighbours, so that every firm carries a field of the same variance whatever its
+connectivity. The two coincide on a regular graph, where
 every firm has the mean degree, which is the case the mean-field theory of
 Appendix~\ref{app:dmft} solves; they differ, consequentially, on the heterogeneous graphs
 we use for the measurements. The own-degree normalization reproduces the higher-moment

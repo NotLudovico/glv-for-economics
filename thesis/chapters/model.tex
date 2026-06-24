@@ -1,66 +1,56 @@
 \chapter{The model}
 \label{chap:growing}
 
-The previous chapter left one of the two empirical facts unexplained. A static
-Generalized Lotka--Volterra network held at its critical point reproduces the
-fat-tailed growth-rate distribution, but it has no stationary size--variance law: the
-measured $\sigma(\bar S)$ is a V traced out by the relaxation of an arbitrary initial
-condition onto the critical attractor, and once the shape reaches that attractor every
-growth rate is exactly zero. The closing remark there was that recovering the slow
-size--variance decay seems to need a genuinely nonstationary state, one that keeps
-fluctuating rather than relaxing, so that the size-dependent correlations
-\citet{moran2024} call for can build up. The natural candidate is the strongly
-disordered regime $\sigma > \sigma_c$, where the dynamics on the simplex never settle
-but remain chaotic. This is the multiple-attractor or chaotic phase of the disordered
-Lotka--Volterra model, studied in the ecological literature
-\citep{bunin2017,galla2018,roy2020} and, for the replicator equation to which it maps,
-already solved in mean field by \citet{diederich1989}.
+We model the economy as a network of interacting firms evolving by Generalized
+Lotka--Volterra dynamics. Each firm $i$ carries a size $x_i \ge 0$ that grows
+logistically and is coupled to the others through a signed interaction matrix,
+\begin{equation}
+    \dot{x}_i = x_i \left( 1 - x_i + (Wx)_i \right),
+    \label{eq:abs-glv}
+\end{equation}
+with $W_{ij} = A_{ij}\,\alpha_{ij}$ on a sparse configuration-model graph and
+$\alpha_{ij} = \mu/C + (\sigma/\sqrt{C})\,z_{ij}$, so that $\mu$ sets the mean
+interaction, cooperative for $\mu > 0$ and competitive for $\mu < 0$, and $\sigma$ its
+disorder.
 
-Reaching that regime as a model of an economy runs into a different obstacle from the
-one of Chapter~\ref{chap:rescaling}. There the total abundance diverged in finite time
-and we rescaled time to integrate through the blow-up. Here we want a total that grows
-without ever blowing up, an economy whose size increases steadily while its internal
-composition keeps churning. The standard model does not provide this: in absolute
-variables the chaotic phase still drives a finite-time divergence of $M$. This chapter
-makes one change to the model that removes the divergence while keeping the chaos, and
-then measures the two firm-growth facts in the resulting state. The size--variance law
-is now stationary, and its exponent matches the data at the size of a real listed
-economy. The fat-tailed growth distribution survives. And both facts disappear
-when the disorder is switched off, which locates their origin in the interactions
-themselves rather than in any single-firm mechanism.
+Equation~\eqref{eq:abs-glv} cannot serve as it stands as a model of a growing economy,
+for two reasons. First, it carries an absolute scale of size that an economy does not
+have: the self-limitation $-x_i$ caps an isolated firm at $x_i = 1$, and the quadratic
+interaction fixes once and for all the size at which growth, competition and
+self-limitation balance. A real economy has no such reference size, its output having
+grown by orders of magnitude over two centuries while the distribution of firm sizes and
+the statistics of their growth stayed essentially stationary, so the dynamics should be
+invariant under a rescaling $x \to c\,x$ of the whole economy, which \eqref{eq:abs-glv}
+is not. Held at its cooperative critical point the absolute model grows without bound,
+but through a finite-time blow-up of the total abundance rather than steady growth
+(Appendix~\ref{chap:rescaling}). Second, even there it delivers only one of the two
+firm-growth facts: it reproduces the fat-tailed growth-rate distribution on
+heterogeneous graphs, but its size--variance relation is not a stationary law, only a
+transient traced out as an arbitrary initial condition relaxes onto the critical
+attractor, after which every growth rate vanishes (Appendix~\ref{chap:results}).
+Recovering a stationary size--variance law needs a state that keeps fluctuating rather
+than relaxing.
+
+This chapter makes one change to \eqref{eq:abs-glv} that cures both problems at once: we
+let the self-limitation and the interactions act on the size of a firm relative to the
+average firm. The economy then grows exponentially without ever blowing up, and in the
+strongly disordered regime its composition never settles but keeps churning, the
+persistently fluctuating state we need. We measure the two firm-growth facts in that
+state, find both present and stationary, and show that switching off the disorder
+removes them, which places their origin in the interactions themselves.
 
 \section{Relative interactions and steady growth}
 \label{sec:relative-model}
 
-The model of Chapter~\ref{chap:rescaling} carries a hidden assumption that an economy
-does not share, an absolute scale of size. In \eqref{eq:glv} the self-limitation $-x_i$
-would cap an isolated firm at $x_i = 1$, and the interaction term $(Wx)_i$ is quadratic
-in the abundances, so the size at which growth, self-limitation and competition balance
-is fixed once and for all. A real economy has no such reference size. Its aggregate
-output has grown by orders of magnitude over two centuries, while the distribution of
-firm sizes and the statistics of their growth have stayed essentially stationary. What
-matters to a firm is not its size in absolute terms but its size relative to its
-competitors: a company is large or small only by comparison with the rest of the market,
-and the same company placed in an economy ten times richer would be in the same
-competitive position. The dynamics should therefore be invariant under a rescaling of
-the whole economy, $x \to c\,x$, an invariance that \eqref{eq:glv} does not possess,
-since its quadratic terms scale differently from its linear one. The finite-time blow-up
-of Chapter~\ref{chap:rescaling} is the symptom of this missing invariance: because the
-cooperative term grows as $M^2$ while the intrinsic growth is only of order $M$, a
-cooperative fluctuation feeds back on itself faster than linearly and reaches infinity
-in finite time, which a model with a built-in absolute size cannot avoid.
-
 We restore the invariance by letting the self-limitation and the interactions act on the
 abundance of a firm relative to the average firm $m = M/N = \langle x\rangle$ rather than
-on its absolute abundance. Keeping the interaction matrix of Chapter~\ref{chap:rescaling},
-$W_{ij} = A_{ij}\,\alpha_{ij}$ with $\alpha_{ij} = \mu/C + (\sigma/\sqrt{C})\,z_{ij}$ on
-a configuration-model graph, the model becomes
+on its absolute abundance. Keeping the same interaction matrix $W$, the model becomes
 \begin{equation}
     \dot{x}_i = x_i \left( 1 - \frac{x_i}{m} + \frac{(Wx)_i}{m} \right),
     \qquad m = \frac{1}{N}\sum_j x_j .
     \label{eq:relative-glv}
 \end{equation}
-The only change from \eqref{eq:glv} is the two factors of $1/m$, but it makes the
+The only change from \eqref{eq:abs-glv} is the two factors of $1/m$, but it makes the
 right-hand side homogeneous of degree one in $x$: under $x \to c\,x$ the mean $m$ scales
 in the same way, the ratios $x_i/m$ and $(Wx)_i/m$ are unchanged, and the whole equation
 simply rescales, so that if $x(t)$ is a solution then so is $c\,x(t)$. The economy no
@@ -74,8 +64,23 @@ operate at a competitive mean $\mu$ and at a disorder $\sigma$ above the chaotic
 threshold $\sigma_c = \sqrt{2}$ \citep{diederich1989}; the operating point is specified
 with the measurements below.
 
+The disorder normalization deserves a word, because it is what controls the firm-growth
+statistics below. As written, the couplings scale the disorder by the global mean degree,
+$\sigma/\sqrt{C}$, so that on a heterogeneous graph a firm's idiosyncratic field grows
+louder the more competitors it has, its variance rising with its degree. The principled
+alternative scales each firm's couplings by its own degree, $\sigma/\sqrt{k_i}$, so that
+every firm carries a field of the same variance whatever its connectivity. The two
+coincide on a regular graph, where every firm has the mean degree, which is the case the
+mean-field theory of Appendix~\ref{app:dmft} solves; they differ on the heterogeneous
+graphs we use for the measurements. The choice is consequential: the own-degree
+normalization reproduces the higher-moment structure of the data, while the global one
+matches the size--variance magnitude at a finite economy size, and no single choice gives
+both. We take the own-degree normalization as the principled default for the firm-growth
+statistics, and return to the choice, its trade-off, and the family that interpolates
+between the two in Sections~\ref{sec:growing-finite-size} and~\ref{sec:growing-multiscaling}.
+
 The same point appears formally in the equation for the total. Writing $x_i = M y_i$
-with $y$ on the simplex, and using the shorthands of Chapter~\ref{chap:rescaling}, the
+with $y$ on the simplex, and using the shorthands of Appendix~\ref{chap:rescaling}, the
 sum of \eqref{eq:relative-glv} over $i$ gives
 \begin{equation}
     \dot{M} = M \left[\, 1 + N\big( y^{\!\top} W y - y^{\!\top} y \big)\,\right]
@@ -100,16 +105,16 @@ The shape obeys, again from \eqref{eq:relative-glv} and the quotient rule,
 which is a replicator equation with the linear fitness $f$, the canonical description of
 frequency-dependent selection, in which a firm gains share precisely when its fitness
 exceeds the market average $\langle f \rangle$, and is exactly the correspondence between
-Lotka--Volterra and replicator dynamics used in Chapter~\ref{chap:rescaling}
+Lotka--Volterra and replicator dynamics used in Appendix~\ref{chap:rescaling}
 \citep{hofbauer81}. Two features distinguish
-\eqref{eq:replicator} from the rescaled dynamics of that chapter. First, it is written
+\eqref{eq:replicator} from the rescaled dynamics of that appendix. First, it is written
 in physical time $t$, not in a stretched time $\tau$: because the relative model does
 not blow up, no time rescaling is needed, and $M(t)$ grows exponentially in the same
 $t$ in which the firms are observed. Second, in the disordered regime $\sigma > \sigma_c$
 the replicator flow \eqref{eq:replicator} does not relax to a fixed point but remains
 chaotic, so the growth rates $\dot y_i / y_i = f_i - \langle f\rangle$ never vanish.
-This is the persistently fluctuating state the previous chapter identified as the
-missing ingredient. As in the literature \citep{bunin2017,roy2020} we add a small
+This is the persistently fluctuating state identified above as the missing ingredient.
+As in the literature \citep{bunin2017,roy2020} we add a small
 immigration term that pulls each share gently toward $1/N$, which sets a floor of rarity
 and prevents firms from reaching exact extinction; we use a rate $\lambda = 10^{-3}$.
 
@@ -170,4 +175,3 @@ $\sigma > \sigma_c$ phase. The economy grows while its composition keeps turning
     fixed point.}
     \label{fig:growing-churn}
 \end{figure}
-

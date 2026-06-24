@@ -1,0 +1,173 @@
+\chapter{The model}
+\label{chap:growing}
+
+The previous chapter left one of the two empirical facts unexplained. A static
+Generalized Lotka--Volterra network held at its critical point reproduces the
+fat-tailed growth-rate distribution, but it has no stationary size--variance law: the
+measured $\sigma(\bar S)$ is a V traced out by the relaxation of an arbitrary initial
+condition onto the critical attractor, and once the shape reaches that attractor every
+growth rate is exactly zero. The closing remark there was that recovering the slow
+size--variance decay seems to need a genuinely nonstationary state, one that keeps
+fluctuating rather than relaxing, so that the size-dependent correlations
+\citet{moran2024} call for can build up. The natural candidate is the strongly
+disordered regime $\sigma > \sigma_c$, where the dynamics on the simplex never settle
+but remain chaotic. This is the multiple-attractor or chaotic phase of the disordered
+Lotka--Volterra model, studied in the ecological literature
+\citep{bunin2017,galla2018,roy2020} and, for the replicator equation to which it maps,
+already solved in mean field by \citet{diederich1989}.
+
+Reaching that regime as a model of an economy runs into a different obstacle from the
+one of Chapter~\ref{chap:rescaling}. There the total abundance diverged in finite time
+and we rescaled time to integrate through the blow-up. Here we want a total that grows
+without ever blowing up, an economy whose size increases steadily while its internal
+composition keeps churning. The standard model does not provide this: in absolute
+variables the chaotic phase still drives a finite-time divergence of $M$. This chapter
+makes one change to the model that removes the divergence while keeping the chaos, and
+then measures the two firm-growth facts in the resulting state. The size--variance law
+is now stationary, and its exponent matches the data at the size of a real listed
+economy. The fat-tailed growth distribution survives. And both facts disappear
+when the disorder is switched off, which locates their origin in the interactions
+themselves rather than in any single-firm mechanism.
+
+\section{Relative interactions and steady growth}
+\label{sec:relative-model}
+
+The model of Chapter~\ref{chap:rescaling} carries a hidden assumption that an economy
+does not share, an absolute scale of size. In \eqref{eq:glv} the self-limitation $-x_i$
+would cap an isolated firm at $x_i = 1$, and the interaction term $(Wx)_i$ is quadratic
+in the abundances, so the size at which growth, self-limitation and competition balance
+is fixed once and for all. A real economy has no such reference size. Its aggregate
+output has grown by orders of magnitude over two centuries, while the distribution of
+firm sizes and the statistics of their growth have stayed essentially stationary. What
+matters to a firm is not its size in absolute terms but its size relative to its
+competitors: a company is large or small only by comparison with the rest of the market,
+and the same company placed in an economy ten times richer would be in the same
+competitive position. The dynamics should therefore be invariant under a rescaling of
+the whole economy, $x \to c\,x$, an invariance that \eqref{eq:glv} does not possess,
+since its quadratic terms scale differently from its linear one. The finite-time blow-up
+of Chapter~\ref{chap:rescaling} is the symptom of this missing invariance: because the
+cooperative term grows as $M^2$ while the intrinsic growth is only of order $M$, a
+cooperative fluctuation feeds back on itself faster than linearly and reaches infinity
+in finite time, which a model with a built-in absolute size cannot avoid.
+
+We restore the invariance by letting the self-limitation and the interactions act on the
+abundance of a firm relative to the average firm $m = M/N = \langle x\rangle$ rather than
+on its absolute abundance. Keeping the interaction matrix of Chapter~\ref{chap:rescaling},
+$W_{ij} = A_{ij}\,\alpha_{ij}$ with $\alpha_{ij} = \mu/C + (\sigma/\sqrt{C})\,z_{ij}$ on
+a configuration-model graph, the model becomes
+\begin{equation}
+    \dot{x}_i = x_i \left( 1 - \frac{x_i}{m} + \frac{(Wx)_i}{m} \right),
+    \qquad m = \frac{1}{N}\sum_j x_j .
+    \label{eq:relative-glv}
+\end{equation}
+The only change from \eqref{eq:glv} is the two factors of $1/m$, but it makes the
+right-hand side homogeneous of degree one in $x$: under $x \to c\,x$ the mean $m$ scales
+in the same way, the ratios $x_i/m$ and $(Wx)_i/m$ are unchanged, and the whole equation
+simply rescales, so that if $x(t)$ is a solution then so is $c\,x(t)$. The economy no
+longer has a preferred size. The change is also the economically natural one: a
+competitor's pressure on firm $i$ is now set by its market share $x_j/m$ rather than by
+its absolute size, and a firm's own crowding is measured against the typical firm rather
+than against a fixed ceiling, so what drives the dynamics is relative standing in the
+market, as it should be. The intrinsic Malthusian rate $1$ is left untouched and remains
+the engine of growth, while the interactions, now made relative, only regulate it. We
+operate at a competitive mean $\mu$ and at a disorder $\sigma$ above the chaotic
+threshold $\sigma_c = \sqrt{2}$ \citep{diederich1989}; the operating point is specified
+with the measurements below.
+
+The same point appears formally in the equation for the total. Writing $x_i = M y_i$
+with $y$ on the simplex, and using the shorthands of Chapter~\ref{chap:rescaling}, the
+sum of \eqref{eq:relative-glv} over $i$ gives
+\begin{equation}
+    \dot{M} = M \left[\, 1 + N\big( y^{\!\top} W y - y^{\!\top} y \big)\,\right]
+            \equiv M\, g_{\mathrm{eff}}(y),
+    \label{eq:Mdot-relative}
+\end{equation}
+where the right-hand side of the absolute model \eqref{eq:app-Mdot} instead carried a
+term in $M^2$, the quadratic feedback responsible for the finite-time singularity.
+Dividing the interactions by $m$ removes one power of $M$: the quadratic term becomes
+linear, and \eqref{eq:Mdot-relative} is the equation of plain exponential growth,
+$M(t) \sim e^{g_{\mathrm{eff}} t}$, with no singularity. In the operating regime
+$g_{\mathrm{eff}}$ settles to a small positive constant, so the economy grows at a steady
+rate over unbounded physical time.
+
+The shape obeys, again from \eqref{eq:relative-glv} and the quotient rule,
+\begin{equation}
+    \dot{y}_i = y_i \left( f_i - \langle f \rangle \right),
+    \qquad f_i = 1 - N y_i + N (Wy)_i,
+    \qquad \langle f \rangle = \sum_j y_j f_j = g_{\mathrm{eff}},
+    \label{eq:replicator}
+\end{equation}
+which is a replicator equation with the linear fitness $f$, the canonical description of
+frequency-dependent selection, in which a firm gains share precisely when its fitness
+exceeds the market average $\langle f \rangle$, and is exactly the correspondence between
+Lotka--Volterra and replicator dynamics used in Chapter~\ref{chap:rescaling}
+\citep{hofbauer81}. Two features distinguish
+\eqref{eq:replicator} from the rescaled dynamics of that chapter. First, it is written
+in physical time $t$, not in a stretched time $\tau$: because the relative model does
+not blow up, no time rescaling is needed, and $M(t)$ grows exponentially in the same
+$t$ in which the firms are observed. Second, in the disordered regime $\sigma > \sigma_c$
+the replicator flow \eqref{eq:replicator} does not relax to a fixed point but remains
+chaotic, so the growth rates $\dot y_i / y_i = f_i - \langle f\rangle$ never vanish.
+This is the persistently fluctuating state the previous chapter identified as the
+missing ingredient. As in the literature \citep{bunin2017,roy2020} we add a small
+immigration term that pulls each share gently toward $1/N$, which sets a floor of rarity
+and prevents firms from reaching exact extinction; we use a rate $\lambda = 10^{-3}$.
+
+We integrate \eqref{eq:replicator} together with $\mathrm{d}\ln M/\mathrm{d}t =
+g_{\mathrm{eff}}$ directly in physical time. The shape stays on the bounded simplex and
+the scale is tracked in logarithm, so nothing overflows however large $M$ becomes. We
+use an explicit Runge--Kutta solver throughout: at the system sizes reached below
+($N$ up to $1.3\times10^4$) the implicit solvers tried first switched to a dense
+Jacobian and became prohibitively slow, whereas the explicit method integrates one run
+to $t = 250$ in about ten seconds at $N = 10^4$.
+
+Before turning to the firm-growth statistics it helps to see where in parameter space
+this fluctuating, growing state lives. Figure~\ref{fig:phase-diagram} maps the behaviour
+of \eqref{eq:relative-glv} over the plane of the mean interaction $\mu$ and the disorder
+$\sigma$, classified from the late-time dynamics of many graph realizations. Two genuine
+transitions organize it. The dynamical threshold $\sigma_c = \sqrt{2}$ separates a frozen
+regime below, where the shape relaxes to a fixed point and the growth rates vanish, from
+the chaotic regime above, where it never settles. Cutting across it, the line
+$g_{\mathrm{eff}} = 0$ separates a growing economy from a shrinking one. Where the
+competition is strong and the disorder high, coexistence collapses and the dynamics
+either condense onto a few firms or grow explosively. The firm-growth statistics of this
+chapter belong to the chaotic, growing band, the wedge bounded below by $\sigma_c$, on
+one side by the $g_{\mathrm{eff}} = 0$ line, and on the other by the condensed corner.
+The key point is that this is an extended region rather than an isolated point: the model
+reproduces the empirical facts across a band of parameters, so what follows describes the
+behaviour of the model and not a single tuned operating point.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{phase_diagram.png}
+    \caption{Phase diagram of the relative model \eqref{eq:relative-glv} over the mean
+    interaction $\mu$ (competitive for $\mu < 0$) and the disorder $\sigma$, classified
+    from the late-time dynamics ($N = 4000$, fifteen realizations per cell). Below
+    $\sigma_c = \sqrt{2}$ (red dashed) the shape relaxes and nothing fluctuates; above it
+    the dynamics are chaotic. The solid line is the growth boundary
+    $g_{\mathrm{eff}} = 0$, with $g_{\mathrm{eff}}$ magnitude contours dotted. The
+    firm-growth statistics are measured in the chaotic, growing band (teal), bounded by
+    $\sigma_c$, the $g_{\mathrm{eff}} = 0$ line, and the condensed or explosive corner.
+    The band is an extended region, not a single point.}
+    \label{fig:phase-diagram}
+\end{figure}
+
+Figure~\ref{fig:growing-churn} shows a single run in this regime. The total abundance
+(left) climbs as a straight line in $\log M$ over the whole integration, the steady
+exponential growth of \eqref{eq:Mdot-relative}, with no sign of a blow-up. The relative
+firm sizes $S_i = N y_i$ (right) do not settle: after an initial transient they keep
+exchanging rank and spanning orders of magnitude, the persistent chaos of the
+$\sigma > \sigma_c$ phase. The economy grows while its composition keeps turning over.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{growing_growth_churn.png}
+    \caption{A single run of the relative model \eqref{eq:relative-glv} at $\mu = -1.76$,
+    $\sigma = 1.75$, $\lambda = 10^{-3}$ on a power-law graph with $N = 6400$. Left: the
+    total abundance grows exponentially in physical time, $\log_{10} M(t)$ rising
+    linearly, with no finite-time divergence. Right: a sample of relative firm sizes
+    $S_i = N y_i$, which keep fluctuating and exchanging rank rather than relaxing to a
+    fixed point.}
+    \label{fig:growing-churn}
+\end{figure}
+

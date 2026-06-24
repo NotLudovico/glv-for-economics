@@ -119,12 +119,9 @@ immigration term that pulls each share gently toward $1/N$, which sets a floor o
 and prevents firms from reaching exact extinction; we use a rate $\lambda = 10^{-3}$.
 
 We integrate \eqref{eq:replicator} together with $\mathrm{d}\ln M/\mathrm{d}t =
-g_{\mathrm{eff}}$ directly in physical time. The shape stays on the bounded simplex and
-the scale is tracked in logarithm, so nothing overflows however large $M$ becomes. We
-use an explicit Runge--Kutta solver throughout: at the system sizes reached below
-($N$ up to $1.3\times10^4$) the implicit solvers tried first switched to a dense
-Jacobian and became prohibitively slow, whereas the explicit method integrates one run
-to $t = 250$ in about ten seconds at $N = 10^4$.
+g_{\mathrm{eff}}$ directly in physical time, keeping the shape on the bounded simplex and
+the scale in logarithm so nothing overflows however large $M$ becomes; the explicit
+solver and its cost are specified in Appendix~\ref{app:numerics}.
 
 Before turning to the firm-growth statistics it helps to see where in parameter space
 this fluctuating, growing state lives. Figure~\ref{fig:phase-diagram} maps the behaviour
@@ -156,6 +153,21 @@ behaviour of the model and not a single tuned operating point.
     The band is an extended region, not a single point.}
     \label{fig:phase-diagram}
 \end{figure}
+
+This phase structure is not merely observed but can be derived. The relative model
+\eqref{eq:relative-glv} is a disordered replicator equation, and its dynamical mean-field
+theory, worked out in Appendix~\ref{app:dmft}, reduces the $N$-firm dynamics to a single
+representative firm in a self-consistent Gaussian field. On a regular graph it gives the
+chaos onset in closed form, $\sigma_c = \sqrt{2}$, independent of $\mu$: the mean
+interaction enters every firm's fitness as the same uniform shift, so it cancels from the
+replicator and only sets the level of the growth rate $g_{\mathrm{eff}}$, moving the
+$g_{\mathrm{eff}} = 0$ line but not the chaos threshold. Below $\sigma_c$ the relaxed
+fixed point is the survivor law of the disordered Lotka--Volterra model with the carrying
+capacity renormalized by the growth rate, and a direct simulation on the matching
+ensemble confirms the predicted growth rate and surviving fraction to about one percent,
+the fluctuations switching on exactly at $\sigma_c$. The fluctuating phase itself, where
+the firm-growth statistics live, lies beyond this static fixed-point theory and would need
+its two-time extension; we measure it directly instead.
 
 Figure~\ref{fig:growing-churn} shows a single run in this regime. The total abundance
 (left) climbs as a straight line in $\log M$ over the whole integration, the steady

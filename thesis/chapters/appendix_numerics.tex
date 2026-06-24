@@ -1,0 +1,31 @@
+\chapter{Numerical methods and measurement protocol}
+\label{app:numerics}
+
+\section{Integration}
+
+The relative model is integrated in physical time, the shape kept on the bounded
+probability simplex and the scale carried in its logarithm, so that nothing overflows
+however large the total abundance $M$ becomes. We integrate \eqref{eq:replicator}
+together with $\mathrm{d}\ln M/\mathrm{d}t = g_{\mathrm{eff}}$ with an explicit
+Runge--Kutta solver throughout: at the system sizes reached in the text ($N$ up to
+$1.3\times10^4$) the implicit solvers tried first switched to a dense Jacobian and became
+prohibitively slow, whereas the explicit method integrates one run to $t = 250$ in about
+ten seconds at $N = 10^4$.
+
+\section{Volatility estimator}
+
+The per-firm growth-rate volatility is measured with the mean-absolute-deviation
+estimator
+\begin{equation}
+    \sigma_i = \sqrt{\tfrac{\pi}{2}}\,\big\langle\, \big|\,g_i - \langle g_i\rangle\,\big| \,\big\rangle ,
+\end{equation}
+rescaled by the Gaussian-consistent factor $\sqrt{\pi/2}$ and used in place of the
+standard deviation for robustness against the fat tails of the growth rates.
+
+\section{Size--volatility fit}
+
+The immigration floor makes the smallest firms quiet, producing a plateau at the bottom
+of the size range. The size--volatility relation $\sigma(\bar S)$ is therefore fitted
+only over its power-law range, the monotone decline above that plateau, and we report the
+coefficient of determination $R^2$ of the fit rather than forcing a single slope across a
+shape that is not a power law.

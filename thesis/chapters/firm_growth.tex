@@ -14,14 +14,10 @@ rates over a fixed yearly horizon $\Delta t$ rather than the solver's adaptive o
 statistics are taken in a late window, after the initial relaxation has passed, and
 restricted to firms that persist across it.
 
-Two cautions shape the measurement. The
-volatility per firm is $\sigma_i = \sqrt{\pi/2}\,\langle |g_i - \langle g_i\rangle|
-\rangle$, a mean-absolute-deviation estimator robust to the fat tails. And the
-size--volatility relation is fitted only where it is a power law: a small immigration
-floor makes the smallest firms quiet, producing a plateau at the bottom of the size
-range, so we fit the decline above the plateau and report the coefficient of
-determination $R^2$ of that fit, rather than forcing a single slope across a shape that
-is not a power law.
+Two cautions, detailed in Appendix~\ref{app:numerics}, shape the measurement: the
+per-firm volatility is a mean-absolute-deviation estimator robust to the fat tails, and
+the size--volatility relation is fitted only over its power-law range, the decline above
+the small-firm plateau set by the immigration floor.
 
 Figure~\ref{fig:growing-msb} shows both observables at the operating point
 $\mu = -1.76$, $\sigma = 1.75$ marked in Figure~\ref{fig:phase-diagram}, in the

@@ -15,16 +15,18 @@ See `eq:normalizations` in `chapters/model.tex`.
 
 | thesis figure | normalization | generator |
 |---|---|---|
-| `phase_diagram.png` | mean-degree | `glv/growing_glv/phase_diagram.py` |
+| `phase_diagram.png` | **own-degree** | `../relative-glv/scripts/phase_owndeg_fine.py --grid 20 --seeds 10` (20×20 grid, N=4000, 10 seeds, `kind="powerlaw_owndeg"`; copied from `data/phase_owndeg_fine_20x20_10s.png`) |
 | `growing_growth_churn.png` | mean-degree | `glv/growing_glv/ch4_plots.py` |
-| `growing_stationary_msb.png` | mean-degree | `glv/growing_glv/ch4_plots.py` |
-| `growing_meanfield.png` | mean-degree | `glv/growing_glv/ch4_plots.py` |
-| `growing_trajectories.png` | mean-degree | `glv/growing_glv/ch4_plots.py` |
-| `growing_beta_extrapolation.png` | mean-degree | `glv/growing_glv/ch4_plots.py` |
-| `growing_finite_economy.png` | mean-degree | **VERIFY** — likely `../relative-glv/scripts/beta_limit.py` (`kind="powerlaw"`) |
-| `growing_multiscaling.png` | **own-degree** | `../relative-glv/scripts/msb_conditional.py` (test D2, the ζ_q multiscaling) |
-| `growing_conditional.png` | **own-degree** | `../relative-glv/scripts/msb_conditional.py` (tests D1/D3) |
-| `growing_normalization.png` | own↔mean sweep | **VERIFY** — the σ/k_i^p sweep; no committed generator located |
+| `growing_stationary_msb.png` | **own-degree** | `../relative-glv/scripts/plot_growing_stationary_msb.py` (size-volatility + tent, single economy N=3000, `kind="powerlaw_owndeg"`, seed=1; verbatim port of the story.ipynb MSB-facts cell) |
+| `growing_trajectories.png` | mean-degree | `glv/growing_glv/ch4_plots.py` (metastability; qualitative, normalization-independent) |
+| `growing_multiscaling.png` | **own-degree** | `../relative-glv/scripts/plot_growing_multiscaling.py` (D2 ζ_q multiscaling, reads `data/msb_conditional.npz` from `msb_conditional.py`; 40 economies) |
+| `growing_conditional.png` | **own-degree** | `../relative-glv/scripts/plot_growing_conditional.py` (D1/D3, reads `data/msb_conditional.npz` from `msb_conditional.py`; 40 economies) |
+| `growing_clock.png` | **own-degree** | **ORPHAN** — copied from `glv/growing_glv/explain_htau.png`; no committed generator. β(h/τ) clock-matching: firm reverts to the pack over memory time τ + β collapse vs h/τ with the 1-yr calibration marker. Regenerate from the own-degree model before final. |
+
+**Dropped from the thesis** (mean-degree model + finite-size β reframe removed):
+`growing_finite_economy.png`, `growing_normalization.png`, `growing_beta_extrapolation.png`
+are no longer referenced. The mean-degree normalization (`kind="powerlaw"`) is gone from the
+text; own-degree is the only normalization.
 
 ## DMFT (Appendix D)
 
@@ -32,6 +34,8 @@ See `eq:normalizations` in `chapters/model.tex`.
 |---|---|
 | `dmft_phase.png` | `glv/growing_glv/dmft_phase.py` |
 | `dmft_validation.png` | `glv/growing_glv/dmft_validate.py` |
+| `dmft_twotime.png` | `glv/growing_glv/dmft_twotime_fig.py` |
+| `dmft_beta_crossover.png` | `glv/growing_glv/dmft_beta_crossover.py` |
 
 ## Stage-1 / critical model (Appendices A, B)
 

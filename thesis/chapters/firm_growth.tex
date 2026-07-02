@@ -56,22 +56,10 @@ realizations the shape, after fluctuating for a while, eventually collapses onto
 point and freezes, recovering the relaxation transient of the absolute critical model.
 This is the known finite-size metastability of the fluctuating phase
 \citep{roy2020}: rare large excursions drive firms below the floor, and the state can
-fall into a frozen attractor. Figure~\ref{fig:growing-trajectories} contrasts the two
-outcomes directly, a realization that freezes onto a fixed point against one that keeps
+fall into a frozen attractor: a realization can freeze onto a fixed point, or keep
 churning to the end of the run. Measuring in a short early window, as one is
 tempted to do, reports the firms while they still fluctuate and so mistakes the frozen
 transient for a stationary state; only integrating to long times separates the two.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{growing_trajectories.png}
-    \caption{Two finite-size realizations at $N = 600$, $\mu = -1.76$, $\sigma = 1.75$.
-    \panel{Left}: the shares churn for a while and then freeze onto a fixed point, the
-    finite-size relaxation transient. \panel{Right}: a realization in which the chaos persists
-    for the whole run. Whether a given realization freezes or keeps fluctuating is a
-    finite-size accident that becomes rarer as $N$ grows.}
-    \label{fig:growing-trajectories}
-\end{figure}
 
 Whether a realization freezes or keeps fluctuating is a finite-size accident that
 becomes rarer as $N$ grows. The fraction of realizations that remain persistently

@@ -16,7 +16,7 @@ See `eq:normalizations` in `chapters/model.tex`.
 | thesis figure | normalization | generator |
 |---|---|---|
 | `phase_diagram.png` | **own-degree** | `../relative-glv/scripts/phase_owndeg_fine.py --grid 20 --seeds 10` (20×20 grid, N=4000, 10 seeds, `kind="powerlaw_owndeg"`; copied from `data/phase_owndeg_fine_20x20_10s.png`) |
-| `growing_growth_churn.png` | mean-degree | `glv/growing_glv/ch4_plots.py` |
+| `growing_growth_churn.png` | **own-degree** | `../relative-glv/scripts/plot_growing_growth_churn.py` (single own-degree run N=3000, seed=1; verbatim port of the story.ipynb live-simulation cell) |
 | `growing_stationary_msb.png` | **own-degree** | `../relative-glv/scripts/plot_growing_stationary_msb.py` (size-volatility + tent, single economy N=3000, `kind="powerlaw_owndeg"`, seed=1; verbatim port of the story.ipynb MSB-facts cell) |
 | `growing_trajectories.png` | mean-degree | `glv/growing_glv/ch4_plots.py` (metastability; qualitative, normalization-independent) |
 | `growing_multiscaling.png` | **own-degree** | `../relative-glv/scripts/plot_growing_multiscaling.py` (D2 ζ_q multiscaling, reads `data/msb_conditional.npz` from `msb_conditional.py`; 40 economies) |

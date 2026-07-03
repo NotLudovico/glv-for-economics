@@ -23,21 +23,25 @@ sc = sigma_c(0.0)
 fig, ax = plt.subplots(1, 2, figsize=(12, 4.8))
 
 # ---- Panel A: (mu, sigma) phase diagram ----
-mu_max, sig_max = 1.6, 2.5
+mu_lo, mu_hi, sig_max = -2.0, 0.5, 2.5
 sig_relaxed = np.linspace(0.02, sc, 200)
-g0_curve = np.array([solve_fixed_point(0.0, float(s))["g0"] for s in sig_relaxed])  # mu* = g0(sigma)
+# doc convention (mu<0 competitive): g*=g0+mu, so the growth boundary g*=0 is at mu=-g0(sigma).
+g0_curve = np.array([solve_fixed_point(0.0, float(s))["g0"] for s in sig_relaxed])
 
-ax[0].fill_between([0, mu_max], sc, sig_max, color="0.88", zorder=0)              # fluctuating band
-ax[0].plot(g0_curve, sig_relaxed, color="#1f6f8b", lw=2, zorder=3,
-           label=r"$g^*=0$  ($\mu=g_0(\sigma)$)")
+ax[0].fill_between([mu_lo, mu_hi], sc, sig_max, color="0.88", zorder=0)           # fluctuating band
+ax[0].plot(-g0_curve, sig_relaxed, color="#1f6f8b", lw=2, zorder=3,
+           label=r"$g^*=0$  ($\mu=-g_0(\sigma)$)")
 ax[0].axhline(sc, color="#c1121f", ls="--", lw=1.8, zorder=2,
               label=r"$\sigma_c=\sqrt{2}$ (chaos onset)")
-ax[0].text(0.06, 0.45, "relaxed,\ngrowing\n$g^*>0$", fontsize=9, color="#2a9d8f")
-ax[0].text(1.18, 0.45, "relaxed,\nshrinking\n$g^*<0$", fontsize=9, color="#3b5b8c")
-ax[0].text(0.55, 2.0, "fluctuating phase\n(MSB tent; rate via\ntwo-time DMFT)",
+ax[0].plot(-1.76, 1.75, "k*", ms=13, zorder=4)                                    # operating point
+ax[0].annotate(r"operating point $\mu=-1.76$", (-1.76, 1.75), (-1.95, 2.10),
+               fontsize=8, color="k")
+ax[0].text(-1.4, 0.5, "relaxed,\nshrinking\n$g^*<0$", fontsize=9, color="#3b5b8c", ha="center")
+ax[0].text(0.22, 0.95, "relaxed,\ngrowing\n$g^*>0$", fontsize=9, color="#2a9d8f", ha="center")
+ax[0].text(-0.8, 1.85, "fluctuating phase\n(MSB tent; rate via\ntwo-time DMFT)",
            fontsize=9, color="0.3", ha="center")
-ax[0].set(xlabel=r"mean competition $\mu$", ylabel=r"disorder $\sigma$",
-          xlim=(0, mu_max), ylim=(0, sig_max), title="Predicted phase structure")
+ax[0].set(xlabel=r"mean interaction $\mu$ (competitive $\mu<0$)", ylabel=r"disorder $\sigma$",
+          xlim=(mu_lo, mu_hi), ylim=(0, sig_max), title="Predicted phase structure")
 ax[0].legend(loc="lower right", fontsize=8, framealpha=0.95)
 
 # ---- Panel B: mu-independent order parameters vs sigma ----

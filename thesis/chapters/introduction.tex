@@ -1,160 +1,148 @@
 \chapter{Introduction}
 \label{chap:intro}
 
-A well-known stylized fact about firms concerns how the volatility of their growth
-depends on their size. If one measures, year over year, how much a firm's growth rate
-fluctuates, this volatility falls with firm size as $\sigma(S) \propto S^{-\beta}$, and
-across datasets the exponent is small, $\beta \approx 0.15$--$0.20$
-\citep{stanley1996, amaral1997}. The value is anomalous because of what it is not. If a
-firm of size $S$ were a collection of many independent activities of comparable size,
-the central limit theorem would average their idiosyncratic shocks down as one over the
-square root of their number, giving $\beta = 1/2$. The measured exponent is less than
-half of that, so the fluctuations of large firms die away far more slowly than
-independence would allow: diversification, which ought to make large firms quiet, barely
-works. Because firm growth is the very process by which the size distribution of firms
-and the aggregate output of an economy evolve, this slow decay is not a curiosity of
-microdata. It says that firm-level shocks do not wash out at the macroscopic scale, so
-that the idiosyncratic fortunes of individual companies leave a fingerprint on the
-fluctuations of the whole economy.
+Firm growth has a natural baseline, and the facts we are after are best read as departures from
+it. Gibrat's law of proportionate effect takes the growth of a firm over a period to be a random
+shock independent of its current size \citep{gibrat1931}, so that log-size performs a random walk
+and firms of every size grow, on average and in variability, alike. Much of the empirical
+firm-growth literature is the study of where this baseline breaks \citep{sutton1997}, and it
+breaks in two definite ways that we take as our starting point.
 
-A second regularity accompanies the first. The distribution of growth rates is not
-Gaussian but sharply peaked at zero, with broad, roughly exponential flanks that span
-several decades, a tent shape on a logarithmic scale \citep{stanley1996, amaral1997}.
-Unlike a Gaussian it does not smooth into a bell as activities are aggregated; the heavy
-tails persist at every size, and a firm's growth remains liable to large jumps however
-large the firm. The two facts, the slow size--variance decay and the fat-tailed,
-non-Gaussian growth distribution, are robust across countries, industries and decades,
-and any model that claims to explain firm growth must produce both at once rather than
-either alone.
+The first is in the volatility of the growth rate. Measured year over year,
+a firm's growth volatility falls with its size as a power law,
+\begin{equation}
+  \sigma(S) \propto S^{-\beta},
+  \label{eq:intro-sizevar}
+\end{equation}
+with a small exponent $\beta \approx 0.15$--$0.20$ that is stable across datasets
+\citep{stanley1996, amaral1997}. Gibrat's law makes the volatility independent of size,
+$\beta = 0$; a firm assembled from many independent parts would instead average them down to
+$\beta = 1/2$; the measured exponent lies between the two and matches neither.
 
-The standard explanation of both is granular, and it is most easily seen one level up,
-at the scale of the whole economy. The idiosyncratic shocks hitting $N$ comparable units
-are expected to average out as $1/\sqrt{N}$, so that anything surviving at the
-macroscopic scale must come from genuinely aggregate shocks. \citet{gabaix2011} pointed
-out that this expectation fails when the units have a fat-tailed, Zipf-like size
-distribution. In that case a handful of the largest units account for a finite fraction
-of the total, their own shocks are no longer cancelled by the rest, and firm-level
-randomness appears directly in the aggregate. Gabaix estimated that the hundred largest
-US firms alone account for about a third of the variance of output growth. What matters
-is the concentration of the size distribution, not the sheer number of units, and the
-same argument can be pushed down one level, from an economy made of firms to a firm made
-of its own parts.
+The second is in the shape of the growth distribution. Independent multiplicative shocks would
+make it Gaussian, but the demeaned growth rate is instead sharply peaked and fat-tailed, close to
+the Laplace form \citep{stanley1996, bottazzi2006}, and it keeps that same shape inside size-based
+subsets of firms, large firms and small ones alike. We will refer to these two throughout as the
+size--variance law and the growth tent. A model of firm growth has to produce both, and the
+difficulty is to produce them together.
 
-This is what the sub-business models do. A firm is treated as a collection of internal
-units, divisions, products or plants, and its growth rate is the size-weighted sum of
-theirs. \citet{sutton2002} called the slow size--volatility decay a scaling puzzle and
-sought its origin in this internal structure. \citet{wyartbouchaud2003} then showed that
-endowing the sub-units with a heavy-tailed size distribution delivers both anomalies
-together: the variance of firm growth decays too slowly with size, and the growth-rate
-distribution stays non-Gaussian and fat-tailed rather than Gaussianizing as the number
-of sub-units grows. On this view the firm-level puzzle has the same granular origin as
-the aggregate one. The spread in the sizes of a firm's constituents, not their number,
-decides how well diversification works, and a firm whose sales are concentrated in a few
-large activities behaves like a small one however large it is in total.
+\section{The granular explanation and where it fails}
+\label{sec:intro-granular}
 
-Recently \citet{moran2024} revisited this granular picture and, crucially, tested it
-rather than only fitting it. They first unify the aggregate argument of \citet{gabaix2011}
-and the firm-level one of \citet{wyartbouchaud2003} into a single framework, writing the
-growth variance of a firm as $\sigma^2 = \sigma_0^2\, H$, where $H$ is the Herfindahl
-index measuring how concentrated the firm's sales are across its sub-units. A
-heavy-tailed sub-unit size distribution, with exponent $1 < \mu < 2$, makes $H$ decay
-slowly with the number of sub-units and reproduces both marginal facts at once, a
-size--variance exponent below one half and a fat-tailed growth distribution. Judged on
-the two stylized facts alone, the granular picture works.
+The standard explanation treats a firm as an aggregate of many smaller units, each carrying
+its own idiosyncratic shock. Write the firm's size as the
+total over its $K$ sub-units, $S = \sum_{i=1}^{K} s_i$. Over a year each sub-unit grows by an
+independent random shock, $s_i \to s_i(1 + \eta_i)$, with the $\eta_i$ of mean zero and common
+variance $\sigma_0^2$. The firm's growth rate is then the share-weighted average of these
+shocks,
+\begin{equation}
+  g = \frac{\Delta S}{S} = \sum_{i=1}^{K} w_i\, \eta_i,
+  \qquad w_i = \frac{s_i}{S},
+\end{equation}
+and, the shocks being independent, its variance is
+\begin{equation}
+  \sigma^2(S) = \sigma_0^2 \sum_{i=1}^{K} w_i^2 = \sigma_0^2\, H,
+\end{equation}
+set entirely by the Herfindahl index $H = \sum_i w_i^2$ of the sub-unit shares.
 
-Its value as an explanation, however, rests on sharper predictions that reach past those
-marginal facts to the mechanism beneath them. The same framework predicts that the
-volatility, once rescaled by its size-dependent average, should have a distribution
-across firms that is universal, the same shape at every size; and that the growth rates,
-rescaled by each firm's own volatility, should converge to a Gaussian, since a firm built
-from many sub-units is a sum of many contributions and the central limit theorem ought to
-apply to it as to any other sum. These are the decisive tests, because they ask not
-whether the granular model can be tuned to the two laws but whether the object it posits,
-a firm that is a sum of independent heavy-tailed parts, actually describes the data.
+This already tells us what the size--variance law requires. Suppose first that the units are
+of comparable size. Then $w_i \approx 1/K$ and $H \approx 1/K$, and with $K$ proportional to
+$S$ we obtain $\sigma(S) \propto S^{-1/2}$, that is $\beta = 1/2$. The measured exponent sits
+far below this. The shares therefore cannot be even: $H$ has to decay more slowly than $1/S$,
+and this happens only when a few large units carry a finite share of the firm and their shocks
+dominate the sum.
 
-It does not. \citet{moran2024} find that the rescaled volatility distribution is indeed
-universal, as predicted, but that its tail is far too thin to match the granular
-prediction: real firms' volatilities are far more alike than a heavy-tailed composition
-of sub-units would make them. And the rescaled growth rates do not Gaussianize. They stay
-fat-tailed at every size, the largest firms no closer to a Gaussian than the smallest,
-the exact opposite of what a growing sum of independent parts must do. A third and
-sharper diagnostic concerns the higher moments. The $q$-th moment of the size-conditioned
-volatility decays as a power of size with an exponent $\zeta_q$, and a granular
-composition of independent parts predicts a single exponent independent of $q$. The data
-instead show $\zeta_q$ rising with the order $q$, an anomalous multiscaling that no sum of
-independent contributions can produce. On every test that looks past the two marginal
-laws to the structure beneath them, the granular picture is rejected.
+The same mechanism was established first at the level of the whole economy by
+\citet{gabaix2011}, with the units being firms and the aggregate GDP. Firm sizes follow a
+Zipf-like law \citep{axtell2001}, a heavy tail $P(s > x) \sim x^{-\nu}$ with $\nu$ close to one, and for such a
+tail the Herfindahl index does not vanish as $1/N$ but much more slowly,
+\begin{equation}
+  H \sim N^{-2\left(1 - 1/\nu\right)}, \qquad 1 < \nu < 2,
+\end{equation}
+because the sum of squared sizes is carried by the largest few. Their shocks do not cancel,
+and aggregate fluctuations decay as $N^{-(1 - 1/\nu)}$ rather than $N^{-1/2}$.
+\citet{sutton2002} and \citet{wyartbouchaud2003} carried the argument back inside a single
+firm. With $K \propto S$ sub-units whose sizes carry the same heavy tail,
+$\sigma(S) \propto S^{-(1 - 1/\nu)}$, so
+\begin{equation}
+  \beta = 1 - \frac{1}{\nu},
+  \label{eq:intro-beta-nu}
+\end{equation}
+which lands anywhere between $0$ and $1/2$ as the tail runs from Zipf ($\nu \to 1$) to thin
+($\nu \to 2$). A heavy-tailed distribution of sub-unit sizes thus delivers both facts at once. It
+gives a variance that falls too slowly with size, and a growth distribution that stays
+fat-tailed because the sum in $g$ is carried by a handful of dominant units. This is the granular model,
+and on the two facts it works.
 
-The conclusion \citet{moran2024} draw is that granularity alone cannot account for firm
-growth, and that the missing ingredient is correlations between a firm's parts that grow
-with the firm's size, whether from customers and suppliers shared across activities or
-from shocks that strike the whole firm at once. The anomalies are, on this reading, the
-fingerprint of size-growing correlations, exactly what a model of independent parts
-lacks. The natural question is where such correlations come from, and it is here that the
-present work parts company with the sub-unit tradition.
+\citet{moran2024} extract further predictions from the model, and when these predictions are
+tested on the data the model fails. The first new prediction comes from dividing each firm's
+growth rate by its own volatility. This cancels the firm-to-firm difference, and what remains
+is an average of the firm's own independent shocks. By the central limit theorem this average
+is closer to Gaussian the more sub-units the firm has, so the largest firms should be the
+closest to a Gaussian. The data show the opposite, the rescaled growth staying fat-tailed at
+every size, with the largest firms no nearer a Gaussian than the smallest. The second new
+prediction comes from dividing each firm's volatility by the typical volatility of firms its
+size. This strips out the size--variance trend and leaves only the spread from one firm to the
+next, which in the model carries no size dependence of its own, so the distribution of these
+ratios should look the same at every size. This part is borne out in the data. What fails is
+the tail of that distribution, which in the data is far thinner than the granular model
+predicts.
 
-The correlations the granular picture needs are placed inside the individual firm, among
-a fixed and externally chosen list of sub-units, even though the sources invoked for
-them, shared customers and suppliers, are in truth links between firms. In this thesis we
-drop the sub-unit picture altogether. Rather than break a firm into internal pieces and
-attribute its volatility to their concentration, we model the economy directly as a
-network of interacting firms: every node of a graph is a company, and every edge a
-competitive or cooperative coupling between two of them. We then ask whether the same
-empirical facts can emerge from this inter-firm picture, in which the correlations are not
-imposed by hand but produced by the dynamics of the interactions themselves. The standard
-model of such interactions is the Generalized Lotka--Volterra (GLV) system borrowed from
-theoretical ecology, in which each node grows logistically and is coupled to its
-neighbours through a signed interaction matrix encoding competition and cooperation.
-Instead of assuming a heavy-tailed composition within each firm, we let a disordered
-network of inter-firm couplings generate the heterogeneity on its own.
+The last new predition is on the higher moments of the size--variance distribution. Each moment
+of that spread falls with size as its own power law, $E[\sigma^q \mid S] \sim S^{-\zeta_q}$, and
+the first exponent is the size--variance law again, $\zeta_1 = \beta$. What the test turns on is
+how the higher exponents depend on the order $q$. If a firm's volatility is built from a sum of
+independent parts, the firm has a single volatility scale, and every moment is a fixed power of
+that one scale. The exponents are then locked to the first, $\zeta_q = q\,\zeta_1$, a straight
+line in $q$. The data do not follow it. Their $\zeta_q$ still rises with $q$, but more slowly
+than $q\,\zeta_1$, so it bends away from the straight line, and a single scale cannot bend it.
+This bending is what multiscaling means. The volatility is governed not by one scale but by a
+range of them, and the range widens as the firm grows. Granularity by itself is therefore not
+enough. \citet{moran2024} read this multiscaling as the fingerprint of correlations between a
+firm's parts that grow stronger as the firm grows.
 
-A deterministic GLV does not by itself keep fluctuating: away from equilibrium its
-restoring forces damp every perturbation, and the firm-growth fluctuations we are after
-require a state in which they do not. Tuning the standard GLV to its cooperative critical
-point, where those restoring forces vanish, is a natural first attempt, and it does
-reproduce the fat-tailed growth distribution on heterogeneous graphs. But it fails on the
-other fact: at the critical point the size--variance relation is not a stationary law but
-a relaxation transient, a curve traced as an arbitrary initial condition settles onto the
-critical attractor, after which the growth rates vanish and no exponent is left to compare
-with the data. That analysis, together with the coordinate change and time rescaling
-needed to integrate the model through its critical blow-up, is collected in
-Appendices~\ref{chap:rescaling} and~\ref{chap:results}; its lesson is that a stationary
-size--variance law calls for a state that keeps fluctuating rather than relaxing. The
-model of this thesis is built to provide one, through a single change to the GLV: the
-self-limitation and the interactions act on a firm's size relative to the average firm
-rather than on its absolute size. This makes the dynamics scale-invariant. The total
-output of the economy then grows exponentially without ever diverging, and in the
-strongly disordered regime the composition of the economy never settles but keeps churning
-chaotically. In this persistently fluctuating state the two empirical facts appear
-together as genuine stationary properties, a fat-tailed growth distribution and a
-size--variance relation that falls with the empirical sign, and they survive across graph
-realizations, system sizes and the interval over which growth is measured. Switching off
-the disorder removes both at once, which locates their origin in the interactions and not
-in any property of a single firm.
+\section{A model of interacting firms}
+\label{sec:intro-move}
 
-The contribution of the thesis is therefore not to confirm that size-dependent
-correlations are the missing ingredient, which \citet{moran2024} already argue from the
-data, but to give a first-principles dynamical model of interacting firms from which the
-firm-growth anomalies, and with them a steadily growing economy of perpetually
-turning-over firms, emerge on their own. The model reaches past the two marginal facts:
-it reproduces the anomalous multiscaling of the higher moments, the very signature the
-granular models cannot, generating the size-growing correlations rather than assuming
-them. The size--variance exponent itself comes out with the right sign, though its
-magnitude is matched only up to the normalization of the couplings, a gap we trace to a
-genuine trade-off rather than to a free parameter left loose.
+The sources usually called on for these correlations, shared customers and suppliers, are in
+truth links between firms rather than inside one. That firm-to-firm links carry aggregate
+structure is the premise of the production-network account of the macroeconomy, where
+idiosyncratic shocks propagate along input--output linkages instead of averaging away, and so
+shape fluctuations at the level of the whole economy \citep{acemoglu2012, carvalho2019}. We take
+the same starting point one level down, at the firm-growth statistics: we treat the firms
+themselves as the interacting parts and the economy as the aggregate, and look for the
+size-dependent correlations between companies rather than within a single one.
 
-The rest of the thesis is organized as follows. Chapter~\ref{chap:growing} sets out the
-model. It introduces the relative GLV and its scale-invariant growth, locates the chaotic,
-growing regime in which the firm-growth statistics are measured, and supports that picture
-with a dynamical mean-field theory, derived and validated against simulation, that predicts
-the phase structure in closed form. Chapter~\ref{chap:firmgrowth} measures the two
-firm-growth facts in the fluctuating state, examines their robustness across system size
-and the approach to the mean-field limit, and turns to the higher moments, where the
-multiscaling that separates the data from the granular models is recovered. Chapter
-~\ref{chap:conclusion} draws the results together and points to what would tie the model
-more tightly to the data, in particular a direct measurement of the size-dependent
-correlations it generates. Five appendices hold the supporting material: the absolute
-model and the integration of its critical point (Appendices~\ref{chap:rescaling}
-and~\ref{chap:results}), the derivation of the rescaled equations
-(Appendix~\ref{app:derivation}), the dynamical mean-field theory (Appendix~\ref{app:dmft}),
-and the numerical methods and measurement protocol (Appendix~\ref{app:numerics}).
+Concretely, we model the economy as a network of interacting firms, each node a company and
+each edge a signed competitive or cooperative coupling, drawn at random into a disordered
+interaction matrix. The dynamics are those of the Generalized Lotka--Volterra system from
+theoretical ecology, each firm growing logistically and coupled to its neighbours through that
+matrix. On its own this system is bounded. Even in the disordered regime where its dynamics stay
+chaotic, firm sizes remain bounded rather than growing, so it cannot represent a steadily
+expanding economy. The model of this thesis provides one. Its defining change is that the self-limitation and the
+interactions act on each firm's size relative to the average firm rather than on its absolute
+size, which makes the dynamics scale-invariant. The model also adds a small immigration term, a
+firm-entry rate that keeps firms from reaching exact extinction.
+Total output then grows exponentially without diverging, and in the strongly disordered regime
+the composition of the economy never settles but keeps changing chaotically. It is in this
+state that the two facts appear together, and switching off the disorder removes both, so their
+origin lies in the interactions and not in any single firm. The model recovers the
+anomalous multiscaling of the higher moments, the test the granular picture fails, and the
+size--variance exponent comes out with the right sign as a clean power law. The exponent is not
+a single number but a function of the ratio $h/\tau$ of the measurement horizon $h$ to the
+memory time $\tau$ of the fluctuating state. At the model's own time unit it is about four times
+too steep. Read at the annual horizon of the data against a memory time of a few years, the
+scale over which firm sizes are seen to revert, most of that gap closes.
+
+The rest of the thesis is organized as follows. Chapter~\ref{chap:growing} sets out the model.
+It introduces the relative GLV and its scale-invariant growth, says why the obvious GLV will
+not do and what the relative interaction fixes, and locates the chaotic, growing regime in
+which the firm-growth statistics are measured. Chapter~\ref{chap:firmgrowth} measures the two
+facts in the fluctuating state, examines their robustness across system size and the approach
+to the mean-field limit, and then turns to the higher moments, where the multiscaling that
+separates the data from the granular models is recovered. Chapter~\ref{chap:conclusion} draws
+the results together and points to what would tie the model more tightly to the data, in
+particular a direct measurement of the size-dependent correlations it generates. Two
+appendices hold the supporting material: a dynamical mean-field theory of the relative model,
+derived in Appendix~\ref{app:dmft}, and the numerical methods
+and measurement protocol (Appendix~\ref{app:numerics}).

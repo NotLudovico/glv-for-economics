@@ -55,7 +55,7 @@ fragile: for many graph
 realizations the shape, after fluctuating for a while, eventually collapses onto a fixed
 point and freezes, recovering the relaxation transient of the absolute critical model.
 This is the known finite-size metastability of the fluctuating phase
-\citep{roy2020}: rare large excursions drive firms below the floor, and the state can
+\citep{roy2020,altieri2021}: rare large excursions drive firms below the floor, and the state can
 fall into a frozen attractor: a realization can freeze onto a fixed point, or keep
 churning to the end of the run. Measuring in a short early window, as one is
 tempted to do, reports the firms while they still fluctuate and so mistakes the frozen
@@ -125,18 +125,24 @@ exponent it pays for that is taken up below.
 
 The multiscaling is one of three size-conditioned tests by which \citet{moran2024}
 separate the data from the granular models, and the own-degree relative GLV passes the
-other two as well (Fig.~\ref{fig:growing-conditional}). The first is a collapse: rescaled
-by its size-conditional mean, the per-firm volatility distribution $\sigma_i/\bar\sigma(S)$
-is the same at every size, with a bounded tail, as in the data. The second is the sharper.
-Were a firm an aggregate of many independent parts, the central limit theorem would drive
-its growth distribution toward a Gaussian as it grew, the excess kurtosis falling to zero
-with size; the data do the opposite, large firms remaining at least as fat-tailed as small
-ones. The model reproduces this anti-Gaussian trend, the excess kurtosis of the
-size-unmixed growth rising from about three for the smallest firms to about six for the
-larger ones, the signature that a firm's growth is not a sum of independent contributions
-but carries the correlations the interactions impose. The model thus clears not only the
-size--variance exponent that the granular models also fit, but every conditional test by
-which the data reject them.
+other two as well (Fig.~\ref{fig:growing-conditional}).
+
+The first (D1) asks how the spread of firm volatilities depends on size. Divide each firm's
+volatility by the mean volatility at its size, $\sigma_i/\bar\sigma(S)$, and the resulting
+distribution is the same at every size, with a bounded tail. The model reproduces this
+collapse onto a single size-independent shape, as in the data.
+
+The second (D3) is the sharper one, and it turns on the central limit theorem. If a firm
+were an aggregate of many independent parts, its growth would look more Gaussian the larger
+it grew, so the excess kurtosis of its growth would fall toward zero with size. The data do
+the reverse: large firms stay at least as fat-tailed as small ones. The model reproduces
+this anti-Gaussian trend. The excess kurtosis of the size-unmixed growth rises from about
+three for the smallest firms to about six for the largest. A firm's growth here is not a
+sum of independent contributions; it carries the correlations the interactions impose, and
+that is what keeps the tails heavy as the firm grows.
+
+The model thus clears not only the size--variance exponent that the granular models also
+fit, but every conditional test by which the data reject them.
 
 \begin{figure}[htbp]
     \centering
@@ -194,7 +200,7 @@ fluctuation is the disordered interaction matrix. To confirm that the firm-growt
 statistics are produced by the interactions, and are not an artifact of the
 multiplicative structure or the immigration floor, we switch the disorder off and dial
 it back up. Table~\ref{tab:growing-ablation} sweeps $\sigma$ at fixed $\mu$, $\lambda$
-and $N$. Below the threshold $\sigma_c = \sqrt{2}$ the dynamics freeze: the late-time
+and $N$. Below the threshold $\sigma_c$ the dynamics freeze: the late-time
 growth fluctuations are zero to the precision quoted, the shape has relaxed to a fixed
 point, and there is no fluctuating state to measure. The persistent fluctuations and
 the fat-tailed tent appear only once $\sigma$ crosses $\sigma_c$, growing with the
@@ -217,7 +223,7 @@ and removing it removes them entirely.
     \end{tabular}
     \caption{Disorder ablation at $\mu = -1.76$, $\lambda = 10^{-3}$, $N = 3200$ on a
     power-law graph. ``Growth fluctuation'' is the standard deviation of the pooled
-    late-window growth rates. Below the chaotic threshold $\sigma_c = \sqrt{2}$ the state
+    late-window growth rates. Below the chaotic threshold $\sigma_c$ the state
     freezes (growth fluctuation zero to the precision quoted) and there is no genuine
     fluctuating distribution to characterize, so the kurtosis is left blank; the
     persistent fluctuations and the fat-tailed tent switch on only once $\sigma$ crosses
@@ -250,8 +256,8 @@ ever settling. In this genuinely nonstationary state the size--variance relation
 stationary law that falls with the empirical sign; it clears the conditional tests by
 which the data reject the granular models, the anomalous multiscaling of its higher
 moments and the persistence of fat tails in the largest firms; the growth-rate
-distribution is symmetric and fat-tailed; and switching off the disorder removes them all,
-placing their origin in the interactions.
+distribution is symmetric and fat-tailed; and switching off the disorder removes them all, so
+their origin lies in the interactions.
 
 Three honest qualifications bound the claim. The model itself is not new: it is the
 disordered replicator equation \citep{diederich1989,hofbauer81}, equivalently the

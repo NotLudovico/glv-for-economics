@@ -150,7 +150,8 @@ if __name__ == "__main__":
     ax[0].plot(sg[rel], gstar[rel], "s--", label="g* DMFT (relaxed)", color="#c1121f")
     ax[0].plot(sg[~rel], gstar[~rel], "x:", label="g* DMFT (unstable FP)", color="#c1121f", alpha=0.5)
     ax[0].axvline(sc, color="k", ls=":", lw=1); ax[0].axhline(0, color="grey", lw=0.5)
-    ax[0].set(xlabel=r"$\sigma$", ylabel=r"growth rate $g^*$", title=f"Growth rate ($\\mu={MU}$)")
+    # MU is raw/solver convention (g*=g0-MU); the thesis figure shows the doc convention mu=-MU.
+    ax[0].set(xlabel=r"$\sigma$", ylabel=r"growth rate $g^*$", title=f"Growth rate ($\\mu={-MU}$)")
     ax[0].legend(fontsize=8)
 
     ax[1].plot(sg, [sim[s][1] for s in sg], "o-", label="survival (sim)", color="#2a9d8f")

@@ -58,8 +58,18 @@ the finite-economy-size β reframe are dropped and must not resurface. See memor
   `growing_multiscaling.png`, `growing_conditional.png`.
 - The clock: β as a function of h/τ. Fig: `growing_clock.png`.
 - Role of the interactions (ablation).
-- Discussion: β≈0.8, 4× too steep → a missing ingredient (size-dependent
-  correlations of a firm built from many parts).
+- Discussion: β≈0.8 is about 4× too steep *read at the model's own time unit*, but
+  β is not a single number — it is a function of h/τ (h = measurement horizon,
+  τ = memory time of the fluctuating state). Using the few-year (3–5 yr) reversion
+  timescale as a proxy for τ, reading the model at the annual horizon of the data
+  closes **most** of the gap (face-value 4× → ~2× residual). Do NOT claim β=0.2 is
+  recovered — the residual is real and τ is not pinned by firm-size data (the 3–5 yr
+  proxy is from stock-return mean reversion, Poterba–Summers/Fama–French; firm-size
+  autocorrelation literature is inconclusive — Geroski 2003). The clock, not "missing
+  internal firm structure", is the explanation for the gap. The old "missing ingredient
+  / size-dependent correlations of a firm built from many parts" framing is **dropped** —
+  remove it from firm_growth.tex and the conclusion when rewriting them. τ as an
+  independently-measurable quantity is a future-work item for the conclusion.
 
 **Ch4 — Conclusion** — what is established, the open magnitude problem, outlook.
 

@@ -8,13 +8,13 @@ We measure the two firm-growth facts on the relative sizes $S_i = N y_i$, whose
 cross-sectional mean is one by construction. The common growth of the economy is divided
 out in the same step, since $\ln S_i = \ln x_i - \ln M + \ln N$, so the size and its
 growth $g_i = \Delta \ln S_i$ are the idiosyncratic part of a firm's trajectory, exactly
-what the data measure. We follow the empirical protocol: each firm contributes while it
+what the data measure. We follow the empirical protocol. Each firm contributes while it
 is listed, that is while $S_i$ stays above the immigration floor, and we read growth
 rates over a fixed yearly horizon $\Delta t$ rather than the solver's adaptive one. All
 statistics are taken in a late window, after the initial relaxation has passed, and
 restricted to firms that persist across it.
 
-Two cautions, detailed in Appendix~\ref{app:numerics}, shape the measurement: the
+Two cautions, detailed in Appendix~\ref{app:numerics}, shape the measurement. The
 per-firm volatility is a mean-absolute-deviation estimator robust to the fat tails, and
 the size--volatility relation is fitted only over its power-law range, the decline above
 the small-firm plateau set by the immigration floor.
@@ -24,7 +24,7 @@ $\mu = -1.76$, $\sigma = 1.75$ marked in Figure~\ref{fig:phase-diagram}, in the
 stationary fluctuating state. The size--volatility relation (left) now falls
 monotonically over the fitted range, $\sigma(\bar S) \sim \bar S^{-\beta}$ with a clean
 power law ($R^2 \approx 0.97$ in the economy shown), in contrast to the rising, transient
-V of the absolute critical model: large firms are now less volatile than small ones, as in the
+V of the absolute critical model. Large firms are now less volatile than small ones, as in the
 data. The growth-rate distribution (right) is
 sharply peaked and fat-tailed, with both flanks heavier than the Laplace reference and
 no systematic asymmetry between them. The two facts that the static critical model could
@@ -51,12 +51,12 @@ than transients of a relaxation.
 
 The chaotic state above is not equally robust at all system sizes, and the way it
 strengthens with $N$ validates the measurement. At small $N$ the persistent chaos is
-fragile: for many graph
+fragile. For many graph
 realizations the shape, after fluctuating for a while, eventually collapses onto a fixed
 point and freezes, recovering the relaxation transient of the absolute critical model.
 This is the known finite-size metastability of the fluctuating phase
-\citep{roy2020,altieri2021}: rare large excursions drive firms below the floor, and the state can
-fall into a frozen attractor: a realization can freeze onto a fixed point, or keep
+\citep{roy2020,altieri2021}. Rare large excursions drive firms below the floor, and the state can
+fall into a frozen attractor. A realization can freeze onto a fixed point, or keep
 churning to the end of the run. Measuring in a short early window, as one is
 tempted to do, reports the firms while they still fluctuate and so mistakes the frozen
 transient for a stationary state; only integrating to long times separates the two.
@@ -77,7 +77,8 @@ than small, but its magnitude is about four times the empirical $0.15$--$0.20$. 
 steepness is a property of the per-firm normalization, which shares each firm's disorder
 over its own neighbours and so quiets every firm's field to a common variance,
 over-stabilizing the most connected firms; we take up the magnitude gap in the discussion.
-Magnitude, however, is not where the granular models fail.
+The magnitude, however, is not where the granular models fail; the higher moments are, and the
+next section turns to them.
 
 \section{Higher moments and the multiscaling}
 \label{sec:growing-multiscaling}
@@ -86,7 +87,7 @@ The size--variance exponent is only the first moment of a richer object, the dis
 of growth volatility conditional on size, and it is on the higher moments that the
 granular models break. \citet{moran2024} show that the $q$-th moment of the
 size-conditioned volatility decays as a power law, $E[\sigma^q \mid S] \sim S^{-\zeta_q}$,
-but with an exponent that depends on the order $q$: in the data
+but with an exponent that depends on the order $q$. In the data
 $\zeta_1,\dots,\zeta_4 \approx 0.20,\,0.39,\,0.51,\,0.58$, rising with $q$. A granular
 composition of independent sub-units predicts the opposite, an exponent independent of
 $q$, so this multiscaling is the observable the granular picture cannot reproduce, and the
@@ -100,7 +101,7 @@ steep one of the own-degree normalization, but once divided by $\zeta_1$ the
 $q$-dependence, $1,\,1.9,\,2.5,\,3.0$, lies almost on top of the empirical
 $1,\,2.0,\,2.6,\,2.9$ and far from the flat granular prediction (right panel). The model
 produces the same anomalous scaling of the higher moments as the data, with no internal
-firm structure and nothing put in by hand: the size-growing correlations the granular
+firm structure and nothing put in by hand. The size-growing correlations the granular
 picture must assume are generated here by the interactions.
 
 The own-degree normalization is what reproduces this, the per-firm scaling that quiets the
@@ -135,7 +136,7 @@ collapse onto a single size-independent shape, as in the data.
 The second (D3) is the sharper one, and it turns on the central limit theorem. If a firm
 were an aggregate of many independent parts, its growth would look more Gaussian the larger
 it grew, so the excess kurtosis of its growth would fall toward zero with size. The data do
-the reverse: large firms stay at least as fat-tailed as small ones. The model reproduces
+the reverse. Large firms stay at least as fat-tailed as small ones. The model reproduces
 this anti-Gaussian trend. The excess kurtosis of the size-unmixed growth rises from about
 three for the smallest firms to about six for the largest. A firm's growth here is not a
 sum of independent contributions; it carries the correlations the interactions impose, and
@@ -167,40 +168,41 @@ factor in $\beta$ points not to a free parameter but to a missing ingredient, th
 size-dependent correlations of a firm built from many parts, which the single-level model
 cannot supply.
 
-There is also a second, simpler reason the exponent is hard to pin down, and it sets the
-clock by which the model is read against the data. A firm's relative size mean-reverts on a
-memory time $\tau$, the autocorrelation time of the chaotic state, so the size--volatility
-slope measured over a horizon $h$ is not a single number but a function of $h/\tau$: steep
-when $h$ is short compared with the memory and the firm has barely wandered from its
-starting size, flattening towards zero once $h$ outgrows $\tau$ and that size is forgotten.
-Matching the model to reality therefore means matching the clocks, reading the model at the
-$h/\tau$ that corresponds to the one-year horizon of the empirical fits.
-Figure~\ref{fig:growing-clock} shows this directly, with the empirical $\beta \approx 0.2$
-recovered once the horizons are aligned.
+There is also a reason the exponent is hard to pin to a single value. A firm's relative size
+mean-reverts on a memory time $\tau$, the autocorrelation time of the chaotic state, so the
+size--volatility slope measured over a horizon $h$ is not a single number but a function of
+$h/\tau$, steep when $h$ is short compared with the memory and the firm has barely wandered
+from its starting size, flattening towards zero once $h$ outgrows $\tau$ and that size is
+forgotten. Figure~\ref{fig:growing-clock} traces this curve. The exponent declines with the
+horizon and reaches the empirical band only at long horizons, but placing the data on this
+axis would require the mean-reversion time of real firm sizes, which we do not have. We
+therefore report $\beta$ at the fixed yearly protocol, where it is about four times too steep,
+and leave its magnitude as an open gap rather than tuning the horizon to close it.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{growing_clock.png}
-    \caption{Matching the clocks of the model and the data. \panel{Left}: individual firm
-    sizes wander away from the mean firm (the pack) and revert to it over the memory
-    time $\tau$, the autocorrelation time of the chaotic state. \panel{Right}: the fitted
+    \caption{The size--volatility exponent depends on the measurement clock. \panel{Left}: how
+    individual firm sizes wander away from the mean firm (the pack) and revert to it over the
+    memory time $\tau$, the autocorrelation time of the chaotic state. \panel{Right}: the fitted
     size--volatility exponent $\beta$ as a function of the measurement horizon over the
     memory time $h/\tau$, steep at short horizons where firms have barely moved, falling
     towards zero once the horizon outgrows the memory and the starting size is forgotten.
-    Read at the $h/\tau$ set by the one-year horizon of the empirical fits (dashed), the
-    model meets the empirical band $\beta \approx 0.2$ (shaded).}
+    The exponent reaches the empirical band (shaded) only at long horizons; we lack the
+    firm-level reversion time needed to fix where the data sits on this axis, so we report
+    $\beta$ at the fixed yearly protocol.}
     \label{fig:growing-clock}
 \end{figure}
 
 \section{The role of the interactions}
 \label{sec:growing-ablation}
 
-The model carries no external heterogeneity and no explicit noise: the only source of
+The model carries no external heterogeneity and no explicit noise. The only source of
 fluctuation is the disordered interaction matrix. To confirm that the firm-growth
 statistics are produced by the interactions, and are not an artifact of the
 multiplicative structure or the immigration floor, we switch the disorder off and dial
 it back up. Table~\ref{tab:growing-ablation} sweeps $\sigma$ at fixed $\mu$, $\lambda$
-and $N$. Below the threshold $\sigma_c$ the dynamics freeze: the late-time
+and $N$. Below the threshold $\sigma_c$ the dynamics freeze. The late-time
 growth fluctuations are zero to the precision quoted, the shape has relaxed to a fixed
 point, and there is no fluctuating state to measure. The persistent fluctuations and
 the fat-tailed tent appear only once $\sigma$ crosses $\sigma_c$, growing with the
@@ -227,16 +229,16 @@ and removing it removes them entirely.
     freezes (growth fluctuation zero to the precision quoted) and there is no genuine
     fluctuating distribution to characterize, so the kurtosis is left blank; the
     persistent fluctuations and the fat-tailed tent switch on only once $\sigma$ crosses
-    $\sigma_c$. (A nonzero $\beta$ can still be fitted below threshold, but on a frozen
-    state during its relaxation, the V transient of the absolute critical model, not on a
-    stationary fluctuating law.)}
+    $\sigma_c$. (A nonzero $\beta$ can still be fitted below threshold. It reflects a frozen
+    state during its relaxation, the V transient of the absolute critical model, and says
+    nothing about a stationary fluctuating law.)}
     \label{tab:growing-ablation}
 \end{table}
 
 This is the between-firm origin the introduction pointed to. The firm-growth statistics here are
-a between-firm effect, generated by the network of interactions, and not a within-firm
-one: with the interactions removed there is nothing left, no noise carrying the
-fluctuations and no single-firm mechanism producing a tail. It is also the size of the
+a between-firm effect, generated by the network of interactions rather than by anything
+inside a single firm. With the interactions removed there is nothing left, no noise
+carrying the fluctuations and no single-firm mechanism producing a tail. It is also the size of the
 result that separates this model from the simplest alternatives. A growing economy with
 a stationary heavy-tailed size distribution can be had from a mean-field multiplicative
 model with injected noise \citep{bouchaudmezard2000}, but there the fluctuations are put
@@ -259,14 +261,14 @@ moments and the persistence of fat tails in the largest firms; the growth-rate
 distribution is symmetric and fat-tailed; and switching off the disorder removes them all, so
 their origin lies in the interactions.
 
-Three honest qualifications bound the claim. The model itself is not new: it is the
+Three honest qualifications bound the claim. The model itself is not new. It is the
 disordered replicator equation \citep{diederich1989,hofbauer81}, equivalently the
 chaotic phase of the disordered Lotka--Volterra model \citep{bunin2017,galla2018,roy2020},
 and its finite-size fragility and approach to a robust mean-field fluctuating phase are
 known features of that system. What is specific here is the use of this state, on a
 heterogeneous graph and with the interactions made relative so that the aggregate grows,
 as a model of firm growth, and the finding that its firm-growth statistics match the
-empirical ones. The exponent's magnitude, second, is matched only in sign: it is a clean,
+empirical ones. The exponent's magnitude, second, is matched only in sign. It is a clean,
 size-independent power law, but about four times too steep, $\beta \approx 0.8$ against the
 empirical $0.15$--$0.20$. It is the order-dependence of the higher moments, not
 the magnitude of the first, that the model reproduces and the granular picture does not.

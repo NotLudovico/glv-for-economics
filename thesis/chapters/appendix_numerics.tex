@@ -7,7 +7,7 @@ The relative model is integrated in physical time, the shape kept on the bounded
 probability simplex and the scale carried in its logarithm, so that nothing overflows
 however large the total abundance $M$ becomes. We integrate \eqref{eq:replicator}
 together with $\mathrm{d}\ln M/\mathrm{d}t = g_{\mathrm{eff}}$ with an explicit
-Runge--Kutta solver throughout: at the system sizes reached in the text ($N$ up to
+Runge--Kutta solver throughout. At the system sizes reached in the text ($N$ up to
 $1.3\times10^4$) the implicit solvers tried first switched to a dense Jacobian and became
 prohibitively slow, whereas the explicit method integrates one run to $t = 250$ in about
 ten seconds at $N = 10^4$.

@@ -1,79 +1,74 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-This thesis asked whether a dynamical model of interacting firms can generate the two
-firm-growth anomalies on its own, without the heavy-tailed internal composition that the
-granular models assume and that \citet{moran2024} show the data reject. The answer it
-reaches is that it can. Working with a Generalized Lotka--Volterra network and nothing
-else, no externally imposed heterogeneity, no injected noise, and no built-in
-correlations, we recover both the fat-tailed growth-rate distribution and a
-size--variance relation that falls with the empirical sign, as stationary properties of
-a persistently fluctuating economy that grows.
+This thesis asked whether a dynamical model of interacting firms can produce the two
+firm-growth anomalies by itself, without the heavy-tailed internal composition that the
+granular models assume and that \citet{moran2024} show the data reject. This thesis shows
+that it can. A Generalized Lotka--Volterra network, with no external heterogeneity, no injected
+noise, and no built-in correlations, recovers both the fat-tailed growth-rate distribution and a
+size--variance relation that falls with the empirical sign. Both come out as stationary
+properties of an economy that grows while its composition keeps fluctuating.
 
-The model is a single change to the standard Generalized Lotka--Volterra system: the
-self-limitation and the interactions act on a firm's size relative to the average firm
-rather than on its absolute size. This makes the dynamics scale-invariant, so the total
-output grows exponentially without the finite-time blow-up of the absolute model, while
-in the strongly disordered regime the composition of the economy never settles but keeps
-churning chaotically. In that state the two facts hold together and prove robust,
-surviving as the graph, the system size, and the sampling interval are varied, and
-switching off the disorder removes them entirely, which places their origin
-in the interactions themselves rather than in any property of a single firm. The change
-was forced by what the absolute model cannot do: tuned to its cooperative critical point
-it reproduces the heavy tails but its size--variance relation is only a relaxation
-transient, the trace of an arbitrary initial condition settling onto the critical
-attractor rather than a stationary law, so that recovering a genuine law calls for a
-state that keeps fluctuating instead of relaxing. That analysis, and the coordinate
-change and time rescaling that make the critical point reachable at all, are collected in
-the appendices.
+The model is one change to the standard Generalized Lotka--Volterra system.
+Self-limitation and interactions act on a firm's size relative to the average firm rather
+than on its absolute size. This makes the dynamics scale-invariant. Total output then grows
+exponentially, without the finite-time blow-up of the absolute model, and in the strongly
+disordered regime the composition of the economy never settles but keeps churning
+chaotically. In that state the two facts hold together, and they prove robust. They
+survive as the graph, the system size, and the sampling interval are varied, and
+switching off the disorder removes them entirely. Their origin is therefore in the
+interactions between firms, and no property of a single firm accounts for them. The change was forced by what the
+absolute model cannot do. Tuned to its cooperative critical point, that model reproduces
+the heavy tails, but its size--variance relation is only a relaxation transient, the trace
+of an arbitrary initial condition settling onto the critical attractor. Recovering a genuine law needs a state that keeps fluctuating instead of relaxing.
+That analysis, together with the coordinate change and time rescaling that make the
+critical point reachable at all, is collected in the appendices.
 
-What the thesis contributes is a model, not a mechanism read off from the data. The
+The thesis contributes a model. It does not claim to read a mechanism off the data. The
 granular and sub-unit pictures posit the source of the fluctuations, a fixed heavy-tailed
 composition of parts within each firm; the mean-field multiplicative models that also
-produce a growing economy with heavy tails put the noise in by hand and carry no network
+give a growing economy with heavy tails put the noise in by hand and carry no network
 \citep{bouchaudmezard2000}. Here the same phenomenology, the heavy tails, the slow
-size--variance decay, the growing aggregate, and the perpetual turnover of firms, follows
-from a single deterministic ingredient, the disordered couplings between companies. The
-size-dependent correlations that \citet{moran2024} identify as the missing element are
-then not assumed but produced, and the model turns them from a hypothesis one must accept
-into something one can measure. The shift is from a within-firm account, in which a
-company's volatility is fixed by how its own activities are composed, to a between-firm
-one, in which it emerges from the company's place in a fluctuating web of competitors,
-which is the more natural home for the shared customers and suppliers the correlations
-were attributed to in the first place.
+size--variance decay, the growing aggregate, and the constant turnover of firms, follows
+from one deterministic ingredient, the disordered couplings between companies. The
+size-dependent correlations that \citet{moran2024} name as the missing element are then
+generated by the model itself, which turns them from a hypothesis one has to accept into
+something one can measure. The account moves from within the firm, where a company's
+volatility is fixed by how its own activities are composed, to between firms, where it
+comes from the company's place in a fluctuating web of competitors. That is the more
+natural home for the shared customers and suppliers to which the correlations were
+attributed in the first place.
 
-Three qualifications bound the claim. The dynamics themselves are not new: the
-fluctuating regime is the chaotic phase of the disordered Lotka--Volterra model,
-equivalently the disordered replicator equation
-\citep{diederich1989,bunin2017,galla2018,roy2020}, whose finite-size fragility and
-approach to a robust mean-field fluctuating phase are already studied. What is specific
-here is the construction that turns that state into a growing economy, the relative
-interactions, and its use as a model of firm growth. The quantitative match, second, is
-partial, and partial in an informative way: the model reproduces the order-dependent
-multiscaling of the higher moments, the signature of size-growing correlations that the
-granular models cannot produce, but the magnitude of the size--variance exponent is
-matched only in sign. The exponent is a clean, size-independent power law, about four times
-too steep, $\beta \approx 0.8$ against the empirical $0.15$--$0.20$. The same per-firm
-scaling that quiets the disorder field into the correctly multiscaling volatility
-distribution is what over-stabilizes the most connected firms and steepens the exponent, so the
-steep magnitude and the correct multiscaling come out of the same per-firm scaling and cannot be
-tuned apart, which points past the single-level model. Third, the growth is
-near-critical: the operating
-point that best reproduces the facts sits close to the boundary between a growing and a
-shrinking economy, so the economy grows in most graph realizations but not in all of them.
-None of these undoes the qualitative result, but each marks the distance between it and a
-quantitative theory.
+Three qualifications bound the claim. The dynamics themselves are not new. The fluctuating
+regime is the chaotic phase of the disordered Lotka--Volterra model, equivalently the disordered
+replicator equation \citep{diederich1989,bunin2017,galla2018,roy2020}, and its
+finite-size fragility and approach to a robust mean-field fluctuating phase are already
+studied. What is specific here is the construction that turns that state into a growing
+economy, the relative interactions, and its use as a model of firm growth. The
+quantitative match, second, is partial, and partial in an informative way. The model
+reproduces the order-dependent multiscaling of the higher moments, the signature of
+size-growing correlations that the granular models cannot produce; the size--variance
+exponent it matches only in sign. That exponent is a clean, size-independent power law,
+about four times too steep, $\beta \approx 0.8$ against the empirical $0.15$--$0.20$. The
+per-firm scaling that quiets the disorder field into the correctly multiscaling
+volatility distribution is also what over-stabilizes the most connected firms and steepens
+the exponent, so the steep magnitude and the correct multiscaling come out of the same
+scaling and cannot be tuned apart, which points past the single-level model. Third, the
+growth is near-critical. The operating point that best reproduces the facts sits close to
+the boundary between a growing and a shrinking economy, so the economy grows in most graph
+realizations but not in all. None of this undoes the qualitative result, but each
+qualification marks the distance between it and a quantitative theory.
 
-The natural next steps follow from these limits. Pinning the exponent and the
-near-critical character of the growth would need many more realizations at the largest
-system sizes, where the present estimates are noisiest. More fundamental is the
-correlation structure itself: the match shown here is in the marginal facts and their
-moments, the shape of the growth distribution and the scaling of its volatility, whereas
-the size-dependent correlations \citet{moran2024} call for are something the model
-generates directly and could be measured directly, firm by firm, rather than only through
-their consequences. Doing so, and closing the gap in the magnitude of the exponent, both
-point to the ingredient the single-level model still lacks, a firm built from many
-correlated parts. Beyond that, replacing the schematic disordered graph with couplings closer to the
-real economy, input--output linkages, supply networks, and shared markets, would be the
-step from a model that reproduces the stylized facts to one that speaks to the
-macroeconomic dynamics behind them.
+The next steps follow from these limits. Fixing the exponent and the near-critical
+character of the growth would take many more realizations at the largest system sizes,
+where the present estimates are noisiest. The correlation structure matters more than
+either. The match shown here is in the marginal facts and their moments, the shape of the growth
+distribution and the scaling of its volatility; the size-dependent correlations that
+\citet{moran2024} call for are something the model generates directly and could measure
+directly, firm by firm, rather than only through their consequences. That measurement,
+together with closing the gap in the exponent's magnitude, points to the ingredient the
+single-level model still lacks, a firm built from many correlated parts. Further out,
+replacing the schematic disordered graph with couplings closer to the real economy, its
+input--output linkages, supply networks, and shared markets, would be the step from a
+model that reproduces the stylized facts to one that speaks to the macroeconomic dynamics
+behind them.

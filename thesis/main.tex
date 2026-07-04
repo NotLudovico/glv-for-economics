@@ -80,41 +80,26 @@
 
 
 \begin{abstract}
-Firm growth shows two robust anomalies. First, the volatility of a firm's growth rate
-falls with size much more slowly than independence would predict: $\sigma(S)\sim
-S^{-\beta}$ with $\beta\approx0.15$--$0.20$ rather than $1/2$. Second, the growth-rate
-distribution is sharply peaked and fat-tailed rather than Gaussian. The standard
-explanations place the source of these effects inside each firm, in a heavy-tailed
-composition of internal sub-units. \citet{moran2024} test this granular picture against
-firm data and find that it fails, and argue that the missing ingredient is correlations
-that grow with a firm's size. We ask instead whether a dynamical model of interacting
-firms can generate the same facts on its own, with no heterogeneity, noise, or
-correlations imposed from outside, so that any size-dependent structure is produced by
-the dynamics rather than assumed.
+Firm growth shows two robust anomalies: the volatility of a firm's growth rate falls
+with size far more slowly than independence would predict, $\sigma(S)\sim S^{-\beta}$
+with $\beta\approx0.15$--$0.20$ rather than $1/2$, and the growth-rate distribution is
+sharply peaked and fat-tailed rather than Gaussian. The standard explanations place the
+source inside each firm, in a heavy-tailed composition of internal sub-units, a granular
+picture that \citet{moran2024} test against firm data and find fails; the missing
+ingredient, they argue, is correlations that grow with a firm's size. We ask instead
+whether a dynamical model of interacting firms can generate both facts on its own, without
+external noise.
 
-We model the economy as a Generalized Lotka--Volterra system of firms on a sparse random
-graph. Held at its cooperative critical point the standard model reproduces the
-fat-tailed growth-rate distribution on heterogeneous graphs, but its size--variance
-relation is only a relaxation transient, not a stationary law, and so offers no exponent
-to compare with the data; recovering one calls for a state that keeps fluctuating rather
-than relaxing. We obtain it with a single change to the model, letting the
-self-limitation and the interactions act on the average firm rather than on absolute
-abundances. This makes the dynamics scale-invariant: the economy grows exponentially
-without ever blowing up, while in the strongly disordered regime its composition never
-settles but keeps churning. In this persistently fluctuating state the two facts appear
-together as stationary properties, a symmetric fat-tailed growth distribution and a
-size--variance relation that falls with the empirical sign, and they are robust across
-graph realizations, system size, and the sampling interval. Switching off the disorder
-removes both, which locates their origin in the interactions themselves rather than in
-any single-firm mechanism.
-
-Deterministic couplings between firms can therefore generate the firm-growth anomalies
-endogenously, together with a steadily growing economy. The size--variance exponent comes
-out with the right sign, and its higher moments reproduce the anomalous multiscaling that
-the granular models cannot, the signature of size-growing correlations; its magnitude,
-however, is matched only up to the normalization of the couplings, with no single choice
-reproducing both the magnitude and the multiscaling, a trade-off that itself points to
-the missing ingredient.
+We model the economy as a Generalized Lotka--Volterra system on a sparse random graph, in
+which the interactions act on a firm's size relative to the average firm rather than on
+its absolute size. This makes the dynamics
+scale-invariant, so the economy grows, while in the strongly disordered regime its
+composition never settles but keeps churning. In this persistently fluctuating state the
+two anomalies emerge together as stationary properties of the interactions. The
+size--variance exponent comes out about four times too steep, $\beta\approx0.8$. Its
+higher moments reproduce the anomalous multiscaling the granular
+picture cannot, the growth-rate distribution is symmetric and fat-tailed, and the heavy
+tails persist among the largest firms.
 \end{abstract}
 
 \clearpage

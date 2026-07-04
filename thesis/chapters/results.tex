@@ -4,7 +4,7 @@
 With the rescaled integrator of Chapter~\ref{chap:rescaling} we can hold the GLV
 system exactly at its cooperative critical point and read off long, scale-spanning
 transients that an explicit solver could never resolve. This chapter uses that tool
-to ask the question posed in the introduction: does a static GLV network tuned to
+to ask the question posed in the introduction. Does a static GLV network tuned to
 $\mu_c$ reproduce the two empirical firm-growth regularities (the slow
 size--volatility decay $\sigma(S)\sim S^{-\beta}$ with $\beta\approx0.15$--$0.20$, and
 the fat-tailed, non-Gaussian growth-rate distribution), and how do the answers depend
@@ -22,7 +22,7 @@ average each observable over $40$ independent graph realizations.
 \label{sec:observables}
 
 We treat each node as a firm and its abundance as the firm's size. To mirror how the
-empirical exponents are measured we normalize sizes within each cross-section: writing
+empirical exponents are measured we normalize sizes within each cross-section. Writing
 $\tilde{S}_{iy}$ for the raw abundance of firm $i$ in year $y$, the normalized size is
 \begin{equation}
     S_{iy} = N\,\frac{\tilde{S}_{iy}}{\sum_j \tilde{S}_{jy}},
@@ -55,11 +55,12 @@ forced by the dynamics and not tuned to fit anything here. We pool the per-firm 
 $(\bar{S}_i,\sigma_i)$ over all realizations and bin them by size. The result
 (Figure~\ref{fig:res-sizevar-baseline}, exponential graph, $C=5$) is not a power law.
 The volatility falls with size down to a minimum near the mean size $\bar{S}\approx1$
-and then rises again: a V, not a straight line. A single power-law fit forced through
+and then rises again in a V shape. A single power-law fit forced through
 it returns $\beta\approx0.5$, but that number averages the two opposite slopes and
 does not describe the data; the relation has no single exponent. The same V shape
 appears across the topologies and connectivities we examined. The next section shows
-what the V really is: a relaxation transient, not a stationary size--variance law.
+where the V comes from. It is a relaxation transient, left behind as the system settles
+from its initial condition, and no stationary size--variance law underlies it.
 
 \begin{figure}[htbp]
     \centering
@@ -67,33 +68,32 @@ what the V really is: a relaxation transient, not a stationary size--variance la
     \caption{Size--variance relation for the exponential graph at $C=5$, $\mu=\mu_c$.
     Faint points are individual firms pooled over $40$ realizations; orange markers are
     equal-count bin averages. The volatility falls to a minimum near the mean size and
-    rises again: the relation is a V, not a power law. The straight line is a single
+    rises again, so the relation traces a V. The straight line is a single
     power-law fit ($\beta=0.51\pm0.10$), shown only to make the point that it
     misrepresents the data.}
     \label{fig:res-sizevar-baseline}
 \end{figure}
 
-\section{What the volatility measures: a relaxation transient}
+\section{The volatility as a relaxation transient}
 \label{sec:relaxation-transient}
 
 We have called $\sigma_i$ a volatility. What it actually measures becomes concrete
 in the rescaled dynamics. The shape
-equation~\eqref{eq:dydtau} is autonomous and deterministic: it carries no
+equation~\eqref{eq:dydtau} is autonomous and deterministic. It carries no
 stochastic forcing, and the scale $M$ is slaved to it through
 \eqref{eq:dMdtau}--\eqref{eq:dtdtau}. On the simplex the flow relaxes to a fixed point
 $y^\star$ (Chapter~\ref{chap:rescaling}); once it has, the normalized sizes
 $S_{iy}$~\eqref{eq:size-norm} are constant and every log-growth $g_{iy}$ in
 \eqref{eq:vol-mad} vanishes identically. A nonzero $\sigma_i$ can therefore arise
 only while the system relaxes from its initial condition toward the critical
-attractor: the size--variance relation is a property of that transient, not of a
-stationary state.
+attractor. The size--variance relation is therefore a property of that transient, and
+it disappears once the system reaches a stationary state.
 
 Three controlled interventions, run on the same graphs, make this concrete.
 
 \paragraph{The volatility appears early.} Partitioning the rescaled-time window into
-quarters, the median $\sigma_i$ across the four quarters is $[\,0.007,\,0,\,0,\,0\,]$:
-essentially all of the measured fluctuation is produced in the first quarter, after
-which the firms stay at $y^\star$.
+quarters, the median $\sigma_i$ across the four quarters is $[\,0.007,\,0,\,0,\,0\,]$. Essentially all of the measured fluctuation is
+produced in the first quarter, after which the firms stay at $y^\star$.
 
 \paragraph{Starting at equilibrium gives no volatility.} Initialising every firm at its own fixed
 point, $S_i(0)=S_i^\star$, yields $\sigma_i=0$ identically. The measured volatility is
@@ -114,7 +114,7 @@ firms equilibrating far above or below travel further and fluctuate more. The re
 a minimum of $\sigma(\bar S)$ at the mean size, with a diversification-like decay
 below it and a self-limitation-like rise above; both branches are the same relaxation
 seen from either side. That this minimum is fixed by the initial condition, and not by
-any intrinsic scale, follows from displacing it: lowering the typical starting size
+any intrinsic scale, follows from displacing it. Lowering the typical starting size
 $S_0$ (with log-normal initial conditions of increasing spread, which depress the
 median of $S_i(0)$ while the cross-section holds its mean at $1$) slides the minimum to
 follow, from $\bar S\approx1.07$ at $S_0\approx1.0$ down to $\bar S\approx0.46$ at
@@ -144,8 +144,8 @@ the common starting size (Eq.~\eqref{eq:sigma-journey}), any relaxation from a s
 initial condition gives a minimum at the start and rising flanks on either side,
 whatever the interactions are; the single slope a power-law fit reports is only where
 the two branches happen to balance, and it slides with the initial condition. The
-shape is therefore a property of the measurement, not of the network, and contains no
-size--variance exponent to read. Third, the V is transient: the shape relaxes to a
+shape is therefore a property of the measurement rather than of the network, and contains no
+size--variance exponent to read. Third, the V is transient. The shape relaxes to a
 fixed point, where every growth rate is exactly zero, so a deterministic GLV resting
 there has no stationary size--variance law to offer at all. The empirical $\sigma(S)$
 is a property of an economy that keeps fluctuating; reproducing it requires a genuinely
@@ -164,11 +164,11 @@ topologies, plotted raw, without per-series rescaling, as in \citet{moran2024}. 
 exponential and power-law graphs are sharply peaked at zero with broad, roughly
 exponential (tent-shaped) flanks spanning several decades; this reproduces the
 qualitative form reported by \citet{stanley1996} and \citet{amaral1997}, though not
-the precise shape. The regular graph does not reproduce it: its growth rates are about
+the precise shape. The regular graph does not reproduce it. Its growth rates are about
 an order of magnitude narrower and their flanks fall off steeply, with none of the fat
-tail, reflecting the much weaker size-dependent correlations on a degree-homogeneous
+tail, because the size-dependent correlations are much weaker on a degree-homogeneous
 network. So the fat-tailed form emerges from the critical dynamics only once the degree
-distribution is heterogeneous, and even there the match is in shape, not in detail.
+distribution is heterogeneous, and even there the match is in shape rather than in detail.
 
 \begin{figure}[htbp]
     \centering
@@ -188,14 +188,14 @@ Combining the two measurements gives a mixed answer to the question of the
 introduction. A static GLV network tuned to its critical point reproduces the
 non-Gaussian, fat-tailed shape of the growth-rate distribution. It does not, however,
 reproduce the empirical size--variance law. As Section~\ref{sec:relaxation-transient}
-shows, the model has no stationary size--variance relation at all: the measured
+shows, the model has no stationary size--variance relation at all. The measured
 $\sigma(\bar S)$ is a V produced by the relaxation of an arbitrary initial condition
-onto the critical attractor, and its minimum is set by where the firms start, not by
+onto the critical attractor, and its minimum is set by where the firms start rather than by
 any intrinsic scale. There is therefore no size--variance exponent to compare with the
-empirical $\beta\approx0.15$--$0.20$. The slow size--variance decay is thus left unexplained on both fronts: the granular
+empirical $\beta\approx0.15$--$0.20$. The slow size--variance decay is thus left unexplained on both fronts. The granular
 models are rejected by the data \citep{moran2024}, and a static, critical inter-firm
 network supplies the heavy tails but no stationary size--variance law. Recovering it
 seems to require a genuinely nonstationary state, where size-dependent correlations of
-the kind \citet{moran2024} call for can build up: an explicit noise term (a Langevin
+the kind \citet{moran2024} call for can build up, an explicit noise term (a Langevin
 GLV) or the chaotic $\sigma>1$ phase rather than the critical relaxation studied here.
 This direction is sketched in Chapter~\ref{chap:conclusion}.

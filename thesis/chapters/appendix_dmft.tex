@@ -58,14 +58,14 @@ replicator, and it is the term that turns the equation for absolute size into on
 relative size. From \eqref{eq:dmft-g}, $g(t) = \langle yF\rangle = \sum_j w_j F_j$ is the
 share-weighted average fitness of the whole economy, with shares $w_j = y_j/N = x_j/M$,
 and it equals the growth rate of the aggregate, $g(t) = d\ln M/dt$. Every firm feels the
-same $g(t)$: it is a global field, not something private to firm $i$. A firm therefore
+same $g(t)$. It is a global field common to all firms rather than something private to firm $i$. A firm therefore
 gains relative size, $\dot y_i > 0$, only when its own fitness $F_i$ exceeds the
 economy-wide average $g(t)$, so $-g(t)$ encodes the requirement to beat the field in
-order to gain ground. Its role is to enforce the constraint $\langle y\rangle = 1$: one
+order to gain ground. Its role is to enforce the constraint $\langle y\rangle = 1$. One
 checks from \eqref{eq:dmft-replicator} that $\frac{d}{dt}\langle y\rangle = \langle
 yF\rangle - g\langle y\rangle = g\,(1 - \langle y\rangle)$, so $\langle y\rangle = 1$ is
 preserved, and $g(t) = \langle yF\rangle$ is precisely the value that keeps it preserved.
-Because it is an average over the whole population, $g(t)$ self-averages: its fluctuations
+Because it is an average over the whole population, $g(t)$ self-averages. Its fluctuations
 are of order $1/\sqrt N$ and vanish in the thermodynamic limit, so it enters the mean-field
 description as a deterministic common drift rather than as a source of noise.
 
@@ -82,7 +82,7 @@ its fluctuation,
 \end{equation}
 where the neighbourhood average of the mean part tends to the global one, $-\mu M_1$ with
 $M_1 = \langle y\rangle$, and $h_i$ collects the disorder. The dynamical cavity argument
-\citep{bunin2017,galla2018} proceeds by removing node $i$: the cavity trajectories
+\citep{bunin2017,galla2018} proceeds by removing node $i$. The cavity trajectories
 $y_j^{(i)}$ are independent of the couplings $\{z_{ij}, z_{ji}\}$, and reinstating $i$
 perturbs each neighbour by linear response. The field that $i$ exerts on $j$ has
 fluctuating part $-\frac{\sigma}{\sqrt C} z_{ji} y_i$, so with the single-site response
@@ -114,7 +114,7 @@ process
 with $\eta$ a unit-strength Gaussian noise of covariance $\langle\eta(t)\eta(s)\rangle =
 C(t,s)$. Equation~\eqref{eq:dmft-singlesite} is the heterogeneous effective process of
 \citet{aguirrelopez} with carrying capacity $K=1$, the competition sign on the mean field,
-and the two structural additions forced by the scale invariance: the common drift $-g(t)$
+and the two structural additions forced by the scale invariance, namely the common drift $-g(t)$
 of Section~\ref{sec:dmft-model}, and the constraint that the mean abundance is pinned,
 $M_1\equiv 1$, rather than left free.
 
@@ -135,7 +135,7 @@ The disorder average is now carried by four functionals of the single-site law o
 \end{equation}
 The first is the normalisation, the middle two are the standard correlation and response
 that close the noise and the memory, and the last fixes the common drift. The closure for
-$g$ is forced rather than chosen: $\dot M_1 = \E[yF] - g M_1$, and demanding $\dot M_1 = 0$
+$g$ is forced rather than chosen. We have $\dot M_1 = \E[yF] - g M_1$, and demanding $\dot M_1 = 0$
 at $M_1 = 1$ gives $g(t) = \E[yF]$. This has the structure of a solvable random-replicator
 model, here carrying the GLV self-limitation as well. Solving these self-consistency
 conditions is the standard replicator mean-field problem \citep{galla2018,roy2020}; in the

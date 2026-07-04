@@ -47,8 +47,8 @@ set entirely by the Herfindahl index $H = \sum_i w_i^2$ of the sub-unit shares.
 
 This already tells us what the size--variance law requires. Suppose first that the units are
 of comparable size. Then $w_i \approx 1/K$ and $H \approx 1/K$, and with $K$ proportional to
-$S$ we obtain $\sigma(S) \propto S^{-1/2}$, that is $\beta = 1/2$. The measured exponent sits
-far below this. The shares therefore cannot be even: $H$ has to decay more slowly than $1/S$,
+$S$ we obtain $\sigma(S) \propto S^{-1/2}$, that is $\beta = 1/2$, well above the measured
+exponent, so the shares cannot be even. $H$ has to decay more slowly than $1/S$,
 and this happens only when a few large units carry a finite share of the firm and their shocks
 dominate the sum.
 
@@ -71,8 +71,8 @@ $\sigma(S) \propto S^{-(1 - 1/\nu)}$, so
 which lands anywhere between $0$ and $1/2$ as the tail runs from Zipf ($\nu \to 1$) to thin
 ($\nu \to 2$). A heavy-tailed distribution of sub-unit sizes thus delivers both facts at once. It
 gives a variance that falls too slowly with size, and a growth distribution that stays
-fat-tailed because the sum in $g$ is carried by a handful of dominant units. This is the granular model,
-and on the two facts it works.
+fat-tailed because the sum in $g$ is carried by a handful of dominant units. This is the granular
+model, and it reproduces both facts.
 
 \citet{moran2024} extract further predictions from the model, and when these predictions are
 tested on the data the model fails. The first new prediction comes from dividing each firm's
@@ -94,7 +94,7 @@ the first exponent is the size--variance law again, $\zeta_1 = \beta$. What the 
 how the higher exponents depend on the order $q$. If a firm's volatility is built from a sum of
 independent parts, the firm has a single volatility scale, and every moment is a fixed power of
 that one scale. The exponents are then locked to the first, $\zeta_q = q\,\zeta_1$, a straight
-line in $q$. The data do not follow it. Their $\zeta_q$ still rises with $q$, but more slowly
+line in $q$, which the data do not follow. Their $\zeta_q$ still rises with $q$, but more slowly
 than $q\,\zeta_1$, so it bends away from the straight line, and a single scale cannot bend it.
 This bending is what multiscaling means. The volatility is governed not by one scale but by a
 range of them, and the range widens as the firm grows. Granularity by itself is therefore not
@@ -109,7 +109,7 @@ truth links between firms rather than inside one. That firm-to-firm links carry 
 structure is the premise of the production-network account of the macroeconomy, where
 idiosyncratic shocks propagate along input--output linkages instead of averaging away, and so
 shape fluctuations at the level of the whole economy \citep{acemoglu2012, carvalho2019}. We take
-the same starting point one level down, at the firm-growth statistics: we treat the firms
+the same starting point one level down, at the firm-growth statistics. We treat the firms
 themselves as the interacting parts and the economy as the aggregate, and look for the
 size-dependent correlations between companies rather than within a single one.
 
@@ -130,9 +130,11 @@ origin lies in the interactions and not in any single firm. The model recovers t
 anomalous multiscaling of the higher moments, the test the granular picture fails, and the
 size--variance exponent comes out with the right sign as a clean power law. The exponent is not
 a single number but a function of the ratio $h/\tau$ of the measurement horizon $h$ to the
-memory time $\tau$ of the fluctuating state. At the model's own time unit it is about four times
-too steep. Read at the annual horizon of the data against a memory time of a few years, the
-scale over which firm sizes are seen to revert, most of that gap closes.
+memory time $\tau$ of the fluctuating state, and at the fixed yearly protocol it is about four
+times too steep, $\beta \approx 0.8$ against the empirical $0.15$--$0.20$. Its magnitude is
+therefore not reproduced. What the model does reproduce is the sign of the exponent and the
+order-dependence of its higher moments, the multiscaling that the granular picture cannot
+produce, and it is there that its evidence lies.
 
 The rest of the thesis is organized as follows. Chapter~\ref{chap:growing} sets out the model.
 It introduces the relative GLV and its scale-invariant growth, says why the obvious GLV will

@@ -77,7 +77,7 @@ it while keeping the same matrix $W$ gives
 The only change from \eqref{eq:abs-glv} is the two factors of $1/m$, and by construction they make
 the right-hand side homogeneous, since under $x \to c\,x$ the mean $m$ scales in the same way, the
 ratios $x_i/m$ and $(Wx)_i/m$ are unchanged, and the whole equation simply rescales, so that if
-$x(t)$ is a solution then so is $c\,x(t)$. The economy no longer has a preferred size. The change
+$x(t)$ is a solution then so is $c\,x(t)$, and the economy no longer has a preferred size. The change
 is also the economically natural one, since a competitor's pressure on firm $i$ is now set by its
 market share $x_j/m$ rather than by its absolute size, and a firm's own crowding is measured
 against the typical firm rather than against a fixed ceiling, so what drives the dynamics is
@@ -129,7 +129,7 @@ the standard correspondence between Lotka--Volterra and replicator dynamics \cit
 Because the relative model does not blow up, it is written in the same physical time $t$ in which
 $M$ grows, with no time rescaling. Above the disorder threshold $\sigma_c$
 \citep{diederich1989,opperdiederich1992} the replicator flow does not relax to a fixed point but stays chaotic, so
-the growth rates $\dot y_i / y_i = f_i - \langle f\rangle$ never vanish. This is the persistently
+the growth rates $\dot y_i / y_i = f_i - \langle f\rangle$ never vanish, which is the persistently
 fluctuating state we needed.
 
 Figure~\ref{fig:growing-churn} shows a single run in this regime. The total abundance (left)
@@ -237,7 +237,7 @@ describes the behaviour of the model and not a single tuned operating point.
     measured (blue, labelled MSB, for Moran--Secchi--Bouchaud). The band is bounded below by the
     freezing line, on the competitive side by $g_{\mathrm{eff}} = 0$, and in the strong-disorder corner by the
     explosive, divergent region. The star marks the operating point $\mu = -1.76$,
-    $\sigma = 1.75$. The band is an extended region, not a single point.}
+    $\sigma = 1.75$. The band is an extended region rather than a single point.}
     \label{fig:phase-diagram}
 \end{figure}
 
@@ -246,7 +246,7 @@ This phase structure has a mean-field underpinning. The relative model
 worked out in Appendix~\ref{app:dmft}, reduces the $N$-firm dynamics to a single representative
 firm in a self-consistent Gaussian field. This is the standard replicator mean-field
 \citep{galla2018,roy2020}, whose chaos transition is the mean-field counterpart of the freezing
-line: below it the shape relaxes to a fixed point and the growth rates vanish, above it the flow
+line. Below it the shape relaxes to a fixed point and the growth rates vanish, above it the flow
 never settles. The mean interaction enters every firm's fitness as the same uniform shift, so it
 cancels from the replicator and only sets the level of the growth rate $g_{\mathrm{eff}}$, moving
 the $g_{\mathrm{eff}} = 0$ line but not the freezing threshold. We locate the threshold and

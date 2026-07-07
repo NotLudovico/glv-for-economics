@@ -1,4 +1,0 @@
-# Generated compute artifacts (regenerable from the .py scripts)
-*.png
-*.npz
-*.log
